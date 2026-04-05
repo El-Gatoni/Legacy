@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Patrimoine</title>
+<title>Legacy</title>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Patrimoine">
+<meta name="apple-mobile-web-app-title" content="Legacy">
 <meta name="theme-color" content="#1a1a1a">
 <link rel="manifest" id="pwa-manifest">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -109,7 +109,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#f5f5f5;color:#1a
       <div id="pv-list"></div>
     </div>
     <div class="card">
-      <h3>Liquidites et Livrets</h3>
+      <h3>Liquidites et Autres Placements</h3>
       <div id="pat-liq-list"></div>
     </div>
     <div class="card">
@@ -120,11 +120,11 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#f5f5f5;color:#1a
 
   <!-- ===== SAISIE ===== -->
   <div id="saisie" class="page">
-    <div class="sec-title">Cash</div>
+    <div class="sec-title">Liquidites</div>
     <div id="cash-editors"></div>
     <button class="btn add" onclick="addCash()">+ Ajouter un compte</button>
 
-    <div class="sec-title">Livrets</div>
+    <div class="sec-title">Autres Placements</div>
     <div id="livret-editors"></div>
     <button class="btn add" onclick="addLivret()">+ Ajouter un livret</button>
 
@@ -259,7 +259,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#f5f5f5;color:#1a
       <b>Bitcoin :</b> somme des euros depenses en achats (hors ventes).<br>
       <b>Bourse :</b> PRU × quantite pour chaque titre (cout total).<br>
       <b>Immobilier :</b> (apport + compte bancaire) × part de detention + mes approvisionnements.<br>
-      <b>Cash / Livrets :</b> solde actuel.
+      <b>Liquidites / Autres Placements :</b> solde actuel.
     </div>
     <div class="infobox">
       <h4>Plus-values latentes</h4>
@@ -300,18 +300,14 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#f5f5f5;color:#1a
 // DATA
 // ============================================================
 const EMPTY={
-  cashAccounts:[{id:'c0',name:'Compte courant',value:0}],
-  livrets:[{id:'l0',name:'Livret A',value:0}],
+  cashAccounts:[{id:'c0',name:'Compte courant',value:0},{id:'c1',name:'Livret A',value:0}],
+  livrets:[{id:'l0',name:'Assurance-vie',value:0}],
   transactions:[],
   wallets:[{id:'w0',name:'Wallet 1',btcAlloc:0}],
   collPrets:[],
   biens:[],
   prets:[],
-  titres:[
-    {id:'t0',name:'WPEA - iShares MSCI World',symbol:'WPEA.PA',qty:0,pru:0,cours:0,useApi:true},
-    {id:'t1',name:'PAEEM - Amundi MSCI EM',symbol:'PAEEM.PA',qty:0,pru:0,cours:0,useApi:true},
-    {id:'t2',name:'ALCPB - Blockchain Group',symbol:'ALCPB.PA',qty:0,pru:0,cours:0,useApi:false}
-  ],
+  titres:[],
   btcPrice:0,
   apiKey:'',
   note:''
@@ -333,7 +329,7 @@ let D=(()=>{
       if(!p.btcPrice) p.btcPrice=0;
       if(!p.apiKey) p.apiKey='';
       if(!p.note) p.note='';
-      p.titres=(p.titres||EMPTY.titres).map((t,i)=>({id:t.id||'t'+i,...t,useApi:t.useApi!==undefined?t.useApi:true}));
+      p.titres=(p.titres||[]).map((t,i)=>({id:t.id||'t'+i,...t,useApi:t.useApi!==undefined?t.useApi:true}));
       return p;
     }
   }catch(e){}
@@ -447,7 +443,7 @@ function calcAll(){
     const gain=((est+bank)-(+(b.credit||0))-(+(b.apport||0))-totalCharges)*part-approsMe;
     immoVal+=est*part;
     immoGain+=gain;
-    immoCredit+=+(b.credit||0);
+    immoCredit+=(+(b.credit||0))*part; // only owner share
     immoInvested+=(+(b.apport||0)+bank)*part+approsMe;
   });
 
@@ -466,8 +462,8 @@ function calcAll(){
 
   // Allocation = montants investis (cash/livrets = solde actuel, autres = cout investi)
   const allocItems=[
-    {label:'Cash',value:totalCash,color:'#6a1b9a'},
-    {label:'Livrets',value:totalLivrets,color:'#2e7d32'},
+    {label:'Liquidites',value:totalCash,color:'#6a1b9a'},
+    {label:'Autres Placements',value:totalLivrets,color:'#2e7d32'},
     {label:'Bourse',value:bourseCost,color:'#1565c0'},
     {label:'Bitcoin &#x20BF;',value:btcInvested,color:'#f57c00'},
     {label:'Immobilier',value:immoInvested,color:'#c62828'}
@@ -541,17 +537,19 @@ function calcAll(){
   setT('p-total',fE(totalPassif));
   setH('p-immo-list',D.biens.filter(b=>+(b.credit||0)>0).map(b=>`
     <div class="passif-card"><h3>${esc(b.name||'Bien')}</h3>
-      <div class="row"><span class="lbl">Emprunt initial</span><span class="amt">${fE(b.empruntinitial)}</span></div>
-      <div class="row"><span class="lbl">Reste a rembourser</span><span class="amt" style="color:#c62828">${fE(b.credit)}</span></div>
+      <div class="row"><span class="lbl">Emprunt initial (votre part)</span><span class="amt">${fE((+b.empruntinitial||0)*(+(b.part||100)/100))}</span></div>
+      <div class="row"><span class="lbl">Reste a rembourser (votre part)</span><span class="amt" style="color:#c62828">${fE((+(b.credit||0))*(+(b.part||100)/100))}</span></div>
       <div class="row"><span class="lbl">Taux</span><span class="amt">${b.tauxPret||0}%</span></div>
+      <div class="row"><span class="lbl">Part de detention</span><span class="amt">${b.part||100}%</span></div>
       ${b.dateFinPret?`<div class="row"><span class="lbl">Fin du pret</span><span class="amt">${esc(b.dateFinPret)}</span></div>`:''}
     </div>`).join('')||'<p style="color:#aaa;font-size:12px">Aucun</p>');
 
   setH('p-prets-list',D.prets.map(p=>`
     <div class="passif-card"><h3>${esc(p.name)}</h3>
-      <div class="row"><span class="lbl">Montant</span><span class="amt">${fE(p.montant)}</span></div>
-      <div class="row"><span class="lbl">Reste</span><span class="amt" style="color:#c62828">${fE(p.restant)}</span></div>
+      <div class="row"><span class="lbl">Montant (votre part)</span><span class="amt">${fE((+p.montant||0)*((+p.part||100)/100))}</span></div>
+      <div class="row"><span class="lbl">Reste (votre part)</span><span class="amt" style="color:#c62828">${fE((+p.restant||0)*((+p.part||100)/100))}</span></div>
       <div class="row"><span class="lbl">Taux</span><span class="amt">${p.taux||0}%</span></div>
+      <div class="row"><span class="lbl">Votre part</span><span class="amt">${p.part||100}%</span></div>
       ${p.dateFin?`<div class="row"><span class="lbl">Fin</span><span class="amt">${esc(p.dateFin)}</span></div>`:''}
     </div>`).join('')||'<p style="color:#aaa;font-size:12px">Aucun</p>');
 
@@ -799,6 +797,9 @@ function renderPretsEditors(){
         <div class="ef"><label>Date de fin</label>
           <input type="date" value="${p.dateFin||''}" onchange="D.prets[${i}].dateFin=this.value;save();calcAll()">
         </div>
+        <div class="ef"><label>Votre part (%)</label>
+          <input type="number" inputmode="decimal" max="100" value="${p.part||100}" onchange="D.prets[${i}].part=+this.value;save();calcAll()">
+        </div>
       </div>
     </div>`).join(''));
 }
@@ -1030,8 +1031,8 @@ function importJSON(){
   };inp.click();
 }
 function installPWA(){
-  const m={name:'Patrimoine',short_name:'Patrimoine',start_url:'.',display:'standalone',background_color:'#f5f5f5',theme_color:'#1a1a1a',
-    icons:[{src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231a1a1a'/><text y='72' x='18' font-size='65' fill='white' font-family='system-ui'>P</text></svg>",sizes:'any',type:'image/svg+xml'}]};
+  const m={name:'Legacy',short_name:'Legacy',start_url:'.',display:'standalone',background_color:'#f5f5f5',theme_color:'#1a1a1a',
+    icons:[{src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231a1a1a'/><text y='72' x='18' font-size='65' fill='white' font-family='system-ui'>L</text></svg>",sizes:'any',type:'image/svg+xml'}]};
   document.getElementById('pwa-manifest').href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'}));
 }
 
