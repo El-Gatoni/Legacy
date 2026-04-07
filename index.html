@@ -106,11 +106,11 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .dn{background:var(--red-bg);color:var(--red)}
 
 /* PV items in sq */
-.pv-sq-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:3px 0}
+.pv-sq-row{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:4px 0}
 .pv-sq-row .lbl{color:rgba(255,255,255,0.75);display:flex;align-items:center;gap:3px}
 .pv-sq-row .vl{font-weight:700;color:var(--grn)}
 .pv-sq-row .vl.neg{color:var(--red)}
-.pv-sq-total{border-top:1px solid var(--bdr);margin-top:5px;padding-top:6px;display:flex;justify-content:space-between;font-size:12px}
+.pv-sq-total{border-top:1px solid var(--bdr);margin-top:5px;padding-top:6px;display:flex;justify-content:space-between;font-size:14px;font-weight:700}
 .pv-sq-total .lbl{color:rgba(255,255,255,0.75)}
 .pv-sq-total .vl{font-weight:800;color:var(--grn)}
 
@@ -390,7 +390,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
       <div class="pmenu-item" onclick="openSubPanel('sub-about')">
         <div class="pmenu-left">
           <div class="pmenu-icon">&#8505;</div>
-          <div><div class="pmenu-title">A propos</div><div class="pmenu-sub">Legacy v2.0</div></div>
+          <div><div class="pmenu-title">A propos</div><div class="pmenu-sub">Legacy v2.0.1</div></div>
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
@@ -488,32 +488,40 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 
   <!-- PAGE 0: ACCUEIL -->
   <div class="page" id="pg-accueil">
-    <div class="hdr">
-      <div><h1>Legacy</h1><p id="hdr-date"></p></div>
-      <div class="gear-btn" onclick="openParams()">
+    <div class="hdr" style="align-items:center">
+      <h1 style="font-size:26px;font-weight:800;letter-spacing:-.5px;flex-shrink:0">Legacy</h1>
+      <p id="hdr-date" style="font-size:11px;color:rgba(255,255,255,0.4);text-align:center;flex:1;padding:0 8px"></p>
+      <div class="gear-btn" onclick="openParams()" style="flex-shrink:0">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       </div>
     </div>
     <div class="card">
-      <div class="net-lbl">Patrimoine net</div>
+      <div class="net-lbl" style="text-transform:uppercase;letter-spacing:.08em;font-size:11px;color:#fff;font-weight:700;margin-bottom:6px">Patrimoine net</div>
       <div class="net-val" id="kpi-net">--</div>
       <div class="net-subs">
-        <div class="ns"><div class="ns-l">Brut</div><div class="ns-v" id="kpi-brut">--</div></div>
-        <div class="ns"><div class="ns-l">Financier</div><div class="ns-v" id="kpi-fin">--</div></div>
+        <div class="ns" style="text-align:center"><div class="ns-l">Brut</div><div class="ns-v" id="kpi-brut">--</div></div>
+        <div class="ns" style="text-align:center"><div class="ns-l">Financier</div><div class="ns-v" id="kpi-fin">--</div></div>
       </div>
     </div>
     <div class="sq-row">
       <div class="sq sq-btc">
-        <div class="sq-lbl">Bitcoin <span style="color:var(--btc)">₿</span></div>
-        <div>
-          <div class="sq-val" style="color:var(--btc)" id="sq-btc-price">--</div>
-          <div class="sq-sub" id="sq-btc-stack">--</div>
-          <div class="sq-badge up" id="sq-btc-chg" style="display:none"></div>
+        <div style="font-size:12px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Bitcoin <span style="color:var(--btc)">&#x20BF;</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px;flex:1;justify-content:center">
+          <div>
+            <div style="font-size:11px;color:rgba(245,158,11,0.6);margin-bottom:2px">Prix Bitcoin <span style="color:var(--btc)">&#x20BF;</span></div>
+            <div style="font-size:20px;font-weight:800;color:var(--btc);letter-spacing:-.5px" id="sq-btc-price">--</div>
+            <div class="sq-badge up" id="sq-btc-chg" style="display:none;margin-top:3px"></div>
+          </div>
+          <div style="border-top:1px solid rgba(245,158,11,0.15);padding-top:6px">
+            <div style="font-size:11px;color:rgba(245,158,11,0.6);margin-bottom:2px">Mon Stack <span style="color:var(--btc)">&#x20BF;</span></div>
+            <div style="font-size:14px;font-weight:700;color:var(--btc)" id="sq-btc-stack">--</div>
+            <div style="font-size:11px;color:rgba(245,158,11,0.45)" id="sq-btc-sats">--</div>
+          </div>
         </div>
       </div>
       <div class="sq">
-        <div class="sq-lbl">Plus-values</div>
-        <div id="pv-sq-content"><div class="pv-sq-row"><span class="lbl" style="color:var(--tx3)">Aucune donnee</span></div></div>
+        <div style="font-size:12px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Plus-values</div>
+        <div id="pv-sq-content"><div class="pv-sq-row"><span class="lbl" style="color:rgba(255,255,255,0.4)">Aucune donnee</span></div></div>
       </div>
     </div>
     <div class="card">
@@ -901,10 +909,11 @@ function calcAll(){
   // BTC square
   setT('sq-btc-price',fE(D.btcPrice));
   setT('sq-btc-stack',fB8(stackBtc));
+  const sqSats=document.getElementById('sq-btc-sats');if(sqSats)sqSats.textContent=Math.round(stackBtc*1e8).toLocaleString('fr-FR')+' sats';
 
   // PV square
   const pvRows=[];
-  if(btcInvested>0||btcEur>0){const p=(btcEur-btcInvested);pvRows.push({l:'Bitcoin ₿',v:p,f:btcInvested});}
+  if(btcInvested>0||btcEur>0){const p=(btcEur-btcInvested);pvRows.push({l:'Bitcoin <span style="color:var(--btc)">&#x20BF;</span>',v:p,f:btcInvested});}
   if(bourseCost>0||bourseTotal>0){pvRows.push({l:'Bourse 📈',v:boursePnl,f:bourseCost});}
   if(D.biens.length>0){pvRows.push({l:'Immo 🏢',v:immoGain,f:0,noRatio:true});}
   const pvTotal=pvRows.reduce((a,r)=>a+r.v,0);
@@ -920,7 +929,7 @@ function calcAll(){
     {l:'Liquidites',v:totalCash,c:'#6d28d9'},
     {l:'Autres Placements',v:totalLivrets,c:'#2e7d32'},
     {l:'Bourse 📈',v:bourseCost,c:'#2563eb'},
-    {l:'Bitcoin ₿',v:btcInvested,c:'#f59e0b'},
+    {l:'Bitcoin <span style="color:var(--btc)">&#x20BF;</span>',v:btcInvested,c:'#f59e0b'},
     {l:'Immobilier 🏢',v:immoInvested,c:'#dc2626'}
   ].filter(a=>a.v>0).sort((a,b)=>b.v-a.v);
   const aBase=allocItems.reduce((s,a)=>s+a.v,0)||1;
