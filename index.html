@@ -347,6 +347,14 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   <!-- Menu fleches -->
   <div id="params-menu">
     <div class="pmenu-card">
+      <div class="pmenu-item" onclick="openSubPanel('sub-config')">
+        <div class="pmenu-left">
+          <div class="pmenu-icon">&#9881;</div>
+          <div><div class="pmenu-title">Configuration</div><div class="pmenu-sub">Affichage, onglets, API</div></div>
+        </div>
+        <div class="pmenu-arrow">&#8250;</div>
+      </div>
+      <div class="pmenu-sep"></div>
       <div class="pmenu-item" onclick="openSubPanel('sub-save')">
         <div class="pmenu-left">
           <div class="pmenu-icon">&#128190;</div>
@@ -362,14 +370,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
-      <div class="pmenu-sep"></div>
-      <div class="pmenu-item" onclick="openSubPanel('sub-notes')">
-        <div class="pmenu-left">
-          <div class="pmenu-icon">&#128203;</div>
-          <div><div class="pmenu-title">Affichage des Notes</div><div class="pmenu-sub">Choisir les onglets</div></div>
-        </div>
-        <div class="pmenu-arrow">&#8250;</div>
-      </div>
+
       <div class="pmenu-sep"></div>
       <div class="pmenu-item" onclick="openSubPanel('sub-goal')">
         <div class="pmenu-left">
@@ -378,19 +379,12 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
-      <div class="pmenu-sep"></div>
-      <div class="pmenu-item" onclick="openSubPanel('sub-api')">
-        <div class="pmenu-left">
-          <div class="pmenu-icon">&#128200;</div>
-          <div><div class="pmenu-title">API Cours boursiers</div><div class="pmenu-sub" id="pmenu-api-sub">Yahoo Finance (defaut)</div></div>
-        </div>
-        <div class="pmenu-arrow">&#8250;</div>
-      </div>
+
       <div class="pmenu-sep"></div>
       <div class="pmenu-item" onclick="openSubPanel('sub-about')">
         <div class="pmenu-left">
           <div class="pmenu-icon">&#8505;</div>
-          <div><div class="pmenu-title">A propos</div><div class="pmenu-sub">Legacy v2.0.1</div></div>
+          <div><div class="pmenu-title">A propos</div><div class="pmenu-sub">Legacy v2.1.0</div></div>
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
@@ -398,6 +392,77 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   </div>
 
   <!-- SUB PANELS -->
+  <div id="sub-config" class="sub-panel" style="display:none">
+    <div class="sub-back" onclick="closeSubPanel()">&#8249; Parametres</div>
+    <div class="sub-title">Configuration</div>
+    <div class="card" style="margin-bottom:10px">
+      <div class="pmenu-item" style="padding:10px 0" onclick="">
+        <div class="pmenu-left" style="gap:10px">
+          <div><div class="pmenu-title" style="font-size:14px">Masquer les montants</div><div class="pmenu-sub">Affiche &#8226;&#8226;&#8226;&#8226; a la place</div></div>
+        </div>
+        <label class="toggle-wrap" onclick="event.stopPropagation()">
+          <input type="checkbox" id="toggle-hide-amounts" onchange="D.hideAmounts=this.checked;save();applyHideAmounts()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="pmenu-sep"></div>
+      <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-notes')">
+        <div class="pmenu-left" style="gap:10px">
+          <div><div class="pmenu-title" style="font-size:14px">Affichage des Notes</div><div class="pmenu-sub">Choisir les onglets</div></div>
+        </div>
+        <div class="pmenu-arrow">&#8250;</div>
+      </div>
+      <div class="pmenu-sep"></div>
+      <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-tabs')">
+        <div class="pmenu-left" style="gap:10px">
+          <div><div class="pmenu-title" style="font-size:14px">Barre d'onglets</div><div class="pmenu-sub">Ordre et visibilite</div></div>
+        </div>
+        <div class="pmenu-arrow">&#8250;</div>
+      </div>
+      <div class="pmenu-sep"></div>
+      <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-homecard')">
+        <div class="pmenu-left" style="gap:10px">
+          <div><div class="pmenu-title" style="font-size:14px">Carte Accueil</div><div class="pmenu-sub" id="pmenu-homecard-sub">Actif affiche : Bitcoin &#x20BF;</div></div>
+        </div>
+        <div class="pmenu-arrow">&#8250;</div>
+      </div>
+      <div class="pmenu-sep"></div>
+      <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-api')">
+        <div class="pmenu-left" style="gap:10px">
+          <div><div class="pmenu-title" style="font-size:14px">API Cours boursiers</div><div class="pmenu-sub" id="pmenu-api-sub">Yahoo Finance (defaut)</div></div>
+        </div>
+        <div class="pmenu-arrow">&#8250;</div>
+      </div>
+    </div>
+    <button class="btn btn-dark" onclick="closeSubPanel()">Retour</button>
+  </div>
+
+  <div id="sub-tabs" class="sub-panel" style="display:none">
+    <div class="sub-back" onclick="openSubPanel('sub-config')">&#8249; Configuration</div>
+    <div class="sub-title">Barre d'onglets</div>
+    <div class="card">
+      <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:12px;line-height:1.5">Masquez jusqu'a 2 onglets (hors Accueil). Glissez pour reordonner.</p>
+      <div id="tabs-config"></div>
+    </div>
+    <button class="btn btn-dark" onclick="applyTabsConfig();openSubPanel('sub-config')">Valider</button>
+  </div>
+
+  <div id="sub-homecard" class="sub-panel" style="display:none">
+    <div class="sub-back" onclick="openSubPanel('sub-config')">&#8249; Configuration</div>
+    <div class="sub-title">Carte Accueil</div>
+    <div class="card">
+      <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:12px">Choisissez l'actif a afficher dans la deuxieme carte de l'Accueil.</p>
+      <div class="ef" style="margin:0">
+        <label>Actif affiche</label>
+        <select id="homecard-select" onchange="D.homeCard=this.value;save();updateParamsMenu()">
+          <option value="btc">Bitcoin &#x20BF;</option>
+          <option value="bourse">Bourse (total)</option>
+          <option value="immo">Immobilier</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
   <div id="sub-save" class="sub-panel" style="display:none">
     <div class="sub-back" onclick="closeSubPanel()">&#8249; Parametres</div>
     <div class="sub-title">Sauvegarde</div>
@@ -462,7 +527,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
     <div class="sub-title">API Cours boursiers</div>
     <div class="card">
       <div class="ef" style="margin:0">
-        <label>Cle Twelve Data (optionnel)</label>
+        <label>Inserer cle API</label>
         <input type="text" id="e-apikey" placeholder="Laissez vide = Yahoo Finance" oninput="D.apiKey=this.value.trim();save();updateParamsMenu()">
         <span class="hint">Format symboles Euronext Paris : WPEA.PA, PAEEM.PA</span>
       </div>
@@ -477,7 +542,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
       <div class="row"><span class="rl">Version</span><span class="rv">2.0.0</span></div>
       <div class="row"><span class="rl">Stockage</span><span class="rv">Local (navigateur)</span></div>
       <div class="row"><span class="rl">Prix Bitcoin</span><span class="rv">CoinGecko API</span></div>
-      <div class="row"><span class="rl">Cours boursiers</span><span class="rv">Yahoo Finance / Twelve Data</span></div>
+      <div class="row"><span class="rl">Cours boursiers</span><span class="rv">Yahoo Finance (API optionnelle)</span></div>
     </div>
     <p style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:12px;text-align:center;line-height:1.6">Vos donnees ne quittent jamais votre appareil.<br>Aucun serveur, aucune publicite.</p>
   </div>
@@ -503,6 +568,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
         <div class="ns" style="text-align:center"><div class="ns-l">Financier</div><div class="ns-v" id="kpi-fin">--</div></div>
       </div>
     </div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.35);text-align:center;padding:2px 4px 10px;line-height:1.5;font-style:italic">En 2024, le patrimoine net median des Francais s'eleve a 148 100 € (Insee).</div>
     <div class="sq-row">
       <div class="sq sq-btc">
         <div style="font-size:12px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Bitcoin <span style="color:var(--btc)">&#x20BF;</span></div>
@@ -560,8 +626,8 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
         <div class="chg-badge up" id="btc-chg-badge" style="display:none"></div>
       </div>
       <div class="sdiv"></div>
-      <div class="srow"><span class="sl">Stack total Bitcoin <span style="color:var(--btc)">₿</span></span><span class="sv" id="c-stack-btc">--</span></div>
-      <div class="srow"><span class="sl">Valeur en euros</span><span class="sv w" id="c-stack-eur">--</span></div>
+      <div class="srow"><span style="color:#fff;font-size:14px;font-weight:600">Stack total Bitcoin <span style="color:var(--btc)">₿</span></span><span class="sv" id="c-stack-btc">--</span></div>
+      <div class="srow"><span style="color:#fff;font-size:14px">Valeur en euros</span><span style="font-weight:700;color:#fff;font-size:15px" id="c-stack-eur">--</span></div>
       <div class="prog-wrap">
         <div class="prog-top">
           <div class="prog-top-l">Objectif : <span id="prog-goal-lbl" style="color:var(--btc)">1 ₿</span> · <span id="prog-pct">--</span></div>
@@ -581,18 +647,24 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
       </div>
       <div class="row"><span class="rl">Montant investi</span><span class="rv" id="c-invested">--</span></div>
       <div class="row"><span class="rl">Valeur actuelle</span><span class="rv" id="c-valeur">--</span></div>
-      <div class="row"><span class="rl">Gain latent</span><span class="rv" id="c-pnl">--</span></div>
+      <div class="row"><span class="rl">Plus-value</span><span class="rv" id="c-pnl">--</span></div>
     </div>
     <div class="sec-hd">
       <div class="sec-hd-t">Wallets</div>
-      <button class="ct-add" onclick="addWallet()">+ Ajouter</button>
+      <button class="ct-add" id="wallet-edit-btn" onclick="toggleWalletEdit()">Modifier</button>
+    </div>
+    <div id="wallet-add-bar" style="display:none;margin-bottom:8px">
+      <button class="btn-add" style="padding:8px" onclick="addWallet()">+ Nouveau wallet</button>
     </div>
     <div class="unalloc"><span class="ul"><span style="color:var(--btc)">₿</span> restant a allouer</span><span class="uv" id="c-unalloc">--</span></div>
     <div id="c-alloc-err"></div>
     <div class="w-sq-grid" id="wallet-list"></div>
     <div class="sec-hd">
-      <div class="sec-hd-t">Collateral Bitcoin <span style="color:var(--btc)">₿</span></div>
-      <button class="ct-add" onclick="addColl()">+ Ajouter</button>
+      <div class="sec-hd-t">Prets collateralises <span style="color:var(--btc)">&#x20BF;</span></div>
+      <button class="ct-add" id="coll-edit-btn" onclick="toggleCollEdit()">Modifier</button>
+    </div>
+    <div id="coll-add-bar" style="display:none;margin-bottom:8px">
+      <button class="btn-add" style="padding:8px" onclick="addCollFromBitcoin()">+ Nouveau pret</button>
     </div>
     <div class="w-sq-grid" id="coll-list"></div>
     <div class="card card-btc" style="margin-top:2px">
@@ -640,12 +712,14 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
     <button class="btn-add" onclick="fetchBourse()" style="margin-bottom:12px">Actualiser les cours</button>
     <div class="sec-hd">
       <div class="sec-hd-t">Titres</div>
-      <button class="ct-add" onclick="addTitre()">+ Ajouter</button>
+      <button class="ct-add" id="bourse-edit-btn" onclick="toggleBourseEdit()">Modifier</button>
     </div>
     <div id="bourse-display"></div>
-    <!-- Saisie inline -->
-    <div class="sec-hd"><div class="sec-hd-t">Modifier les titres</div></div>
-    <div id="bourse-editors"></div>
+    <div id="bourse-edit-panel" style="display:none">
+      <button class="btn-add" style="padding:8px;margin-bottom:10px" onclick="addTitre()">+ Nouveau titre</button>
+      <div id="bourse-editors"></div>
+      <button class="btn btn-dark" style="margin-top:4px" onclick="toggleBourseEdit()">Valider</button>
+    </div>
     <div class="card" id="note-card-bourse" style="display:none">
       <div class="ct">Note</div>
       <textarea class="note-area" id="note-area-bourse" placeholder="Notes Bourse 📈..."></textarea>
@@ -660,12 +734,16 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       </div>
     </div>
-    <div id="biens-display"></div>
-    <div class="sec-hd">
-      <div class="sec-hd-t">Ajouter / modifier</div>
-      <button class="ct-add" onclick="addBien()">+ Bien</button>
+    <div class="sec-hd" style="margin-top:4px">
+      <div class="sec-hd-t">Biens</div>
+      <button class="ct-add" id="biens-edit-btn" onclick="toggleBiensEdit()">Modifier</button>
     </div>
-    <div id="biens-editors"></div>
+    <div id="biens-display"></div>
+    <div id="biens-edit-panel" style="display:none">
+      <button class="btn-add" style="padding:8px;margin-bottom:10px" onclick="addBien()">+ Nouveau bien</button>
+      <div id="biens-editors"></div>
+      <button class="btn btn-dark" style="margin-top:4px" onclick="toggleBiensEdit()">Valider</button>
+    </div>
     <div class="card" id="note-card-immo" style="display:none">
       <div class="ct">Note</div>
       <textarea class="note-area" id="note-area-immo" placeholder="Notes Immobilier 🏢..."></textarea>
@@ -684,10 +762,19 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
       <div class="ct">Total liquidites & placements</div>
       <div id="cash-total-display"></div>
     </div>
-    <div class="sec-hd"><div class="sec-hd-t">Liquidites</div><button class="ct-add" onclick="addCash()">+ Ajouter</button></div>
-    <div id="cash-editors"></div>
-    <div class="sec-hd"><div class="sec-hd-t">Autres Placements</div><button class="ct-add" onclick="addLivret()">+ Ajouter</button></div>
-    <div id="livret-editors"></div>
+    <div class="sec-hd">
+      <div class="sec-hd-t">Liquidites & Autres Placements</div>
+      <button class="ct-add" id="cash-edit-btn" onclick="toggleCashEdit()">Modifier</button>
+    </div>
+    <div id="cash-edit-panel" style="display:none">
+      <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Liquidites</div>
+      <div id="cash-editors"></div>
+      <button class="btn-add" style="padding:7px;margin-bottom:12px" onclick="addCash()">+ Compte</button>
+      <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Autres Placements</div>
+      <div id="livret-editors"></div>
+      <button class="btn-add" style="padding:7px;margin-bottom:10px" onclick="addLivret()">+ Placement</button>
+      <button class="btn btn-dark" onclick="toggleCashEdit()">Valider</button>
+    </div>
     <div class="card" id="note-card-cash" style="display:none">
       <div class="ct">Note</div>
       <textarea class="note-area" id="note-area-cash" placeholder="Notes Cash €..."></textarea>
@@ -704,7 +791,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
     </div>
     <div class="card card-red">
       <div class="ct">Total passif</div>
-      <div class="row" style="padding-top:0"><span class="rl">Total dettes</span><span class="rv" style="color:var(--red)" id="p-total">--</span></div>
+      <div class="row" style="padding-top:0"><span class="rl">Total dettes</span><span style="font-size:28px;font-weight:800;color:var(--red)" id="p-total">--</span></div>
     </div>
     <div class="sec-hd">
       <div class="sec-hd-t">Credits immobiliers</div>
@@ -712,16 +799,24 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
     <div id="p-immo-list"></div>
     <div class="sec-hd">
       <div class="sec-hd-t">Prets personnels</div>
-      <button class="ct-add" onclick="addPret()">+ Ajouter</button>
+      <button class="ct-add" id="prets-edit-btn" onclick="togglePretsEdit()">Modifier</button>
     </div>
     <div id="p-prets-list"></div>
-    <div id="prets-editors"></div>
+    <div id="prets-edit-panel" style="display:none">
+      <div id="prets-editors"></div>
+      <button class="btn-add" style="padding:8px;margin-bottom:8px" onclick="addPret()">+ Nouveau pret</button>
+      <button class="btn btn-dark" onclick="togglePretsEdit()">Valider</button>
+    </div>
     <div class="sec-hd">
-      <div class="sec-hd-t">Prets collateralises <span style="color:var(--btc)">₿</span></div>
-      <button class="ct-add" onclick="addCollPret()">+ Ajouter</button>
+      <div class="sec-hd-t">Prets collateralises <span style="color:var(--btc)">&#x20BF;</span></div>
+      <button class="ct-add" id="collprets-edit-btn" onclick="toggleCollPretsEdit()">Modifier</button>
     </div>
     <div id="p-colls-list"></div>
-    <div id="collprets-saisie"></div>
+    <div id="collprets-edit-panel" style="display:none">
+      <div id="collprets-saisie"></div>
+      <button class="btn-add" style="padding:8px;margin-bottom:8px" onclick="addCollPret()">+ Nouveau pret collateralise</button>
+      <button class="btn btn-dark" onclick="toggleCollPretsEdit()">Valider</button>
+    </div>
     <div class="card" id="note-card-passif" style="display:none">
       <div class="ct">Note</div>
       <textarea class="note-area" id="note-area-passif" placeholder="Notes Passif ⚖️..."></textarea>
@@ -778,6 +873,10 @@ const EMPTY={
   note:'',
   notePages:{accueil:true,bitcoin:false,bourse:false,immo:false,cash:false,passif:false},
   btcGoal:1,
+  hideAmounts:false,
+  homeCard:'btc',
+  hiddenTabs:[],
+  tabOrder:[1,2,3,4,5],
   notifEnabled:false,
   notifBtcHigh:0,
   notifBtcLow:0,
@@ -804,6 +903,10 @@ let D=(()=>{
       if(!p.notePages)p.notePages={accueil:true,bitcoin:false,bourse:false,immo:false,cash:false,passif:false}; if(!p.notePages.cash)p.notePages.cash=false;
       if(!p.btcGoal)p.btcGoal=1;
       if(!p.notifEnabled)p.notifEnabled=false;
+      if(p.hideAmounts===undefined)p.hideAmounts=false;
+      if(!p.homeCard)p.homeCard='btc';
+      if(!p.hiddenTabs)p.hiddenTabs=[];
+      if(!p.tabOrder)p.tabOrder=[1,2,3,4,5];
       if(!p.notifBtcHigh)p.notifBtcHigh=0;
       if(!p.notifBtcLow)p.notifBtcLow=0;
       if(!p.notifNetHigh)p.notifNetHigh=0;
@@ -1015,14 +1118,14 @@ function calcAll(){
       <div class="ct">${esc(b.name||'Bien')} 🏢</div>
       <div class="row" style="padding-top:0"><span class="rl">Reste (votre part)</span><span class="rv" style="color:var(--red)">${fE((+(b.credit||0))*(+(b.part||100)/100))}</span></div>
       <div class="row"><span class="rl">Taux</span><span class="rv">${b.tauxPret||0}%</span></div>
-      ${b.dateFinPret?`<div class="row"><span class="rl">Fin</span><span class="rv">${esc(b.dateFinPret)}</span></div>`:''}
+      ${b.dateFinPret?`<div class="row"><span class="rl">Fin</span><span class="rv">${fmtDate(b.dateFinPret)}</span></div>`:''}
     </div>`).join('')||'<p style="font-size:12px;color:var(--tx3);margin-bottom:8px">Aucun credit immobilier</p>');
   setH('p-colls-list',D.collPrets.map(c=>`
     <div class="passif-item">
       <div class="ct">${esc(c.name)} ₿</div>
       <div class="row" style="padding-top:0"><span class="rl">Emprunte</span><span class="rv" style="color:var(--red)">${fE(c.eurBorrowed)}</span></div>
       <div class="row"><span class="rl">Taux</span><span class="rv">${c.rate||0}%</span></div>
-      ${c.dueDate?`<div class="row"><span class="rl">Echeance</span><span class="rv">${esc(c.dueDate)}</span></div>`:''}
+      ${c.dueDate?`<div class="row"><span class="rl">Echeance</span><span class="rv">${fmtDate(c.dueDate)}</span></div>`:''}
     </div>`).join('')||'<p style="font-size:12px;color:var(--tx3);margin-bottom:8px">Aucun</p>');
 
   // Dynamic renders (display only)
@@ -1195,18 +1298,18 @@ function importTxCSV(){
 function renderWalletDisplay(){
   setH('wallet-list',D.wallets.map((w,wi)=>`
     <div class="w-sq" style="position:relative">
-      <button class="del-btn" style="position:absolute;top:6px;right:6px;font-size:15px;background:rgba(248,113,113,0.15);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;padding:0" onclick="D.wallets.splice(${wi},1);save();calcAll()">×</button>
+      <button class="del-btn" style="position:absolute;top:6px;right:6px;font-size:15px;background:rgba(248,113,113,0.15);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;padding:0;display:${_walletEditing?'flex':'none'}" onclick="D.wallets.splice(${wi},1);save();calcAll()">×</button>
       <div>
-        <input class="name-inp" value="${esc(w.name)}" style="font-size:14px;width:calc(100% - 32px);margin-bottom:10px" onchange="D.wallets[${wi}].name=this.value;save()">
+        ${_walletEditing ? '<input class="name-inp" value="'+esc(w.name)+'" style="font-size:14px;width:calc(100% - 32px);margin-bottom:10px" onchange="D.wallets['+wi+'].name=this.value;save()">' : '<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:10px;padding:2px 0">'+esc(w.name)+'</div>'}
         <div class="ef" style="margin:0">
-          <label style="font-size:11px;color:rgba(255,255,255,0.45)">BTC alloue <span style="color:var(--btc)">&#x20BF;</span></label>
+          <label style="font-size:11px;color:rgba(255,255,255,0.45)">BTC detenu <span style="color:var(--btc)">&#x20BF;</span></label>
           <div style="position:relative">
             <input type="number" inputmode="decimal" step="0.00000001" value="${w.btcAlloc||0}" style="font-size:14px;padding:7px 36px 7px 10px;width:100%"
               onchange="D.wallets[${wi}].btcAlloc=+this.value;save();calcAll()">
             <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--btc);font-weight:700;font-size:14px;pointer-events:none">&#x20BF;</span>
           </div>
         </div>
-        <div class="w-sq-eur" style="margin-top:6px">${fE((w.btcAlloc||0)*(D.btcPrice||0))}</div>
+        <div style="margin-top:6px;font-size:13px;font-weight:600;color:#fff">${fE((w.btcAlloc||0)*(D.btcPrice||0))}</div>
       </div>
     </div>`).join('')||'<p style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:8px">Aucun wallet</p>');
 }
@@ -1225,7 +1328,7 @@ function renderCollDisplay(){
         ${eur>0?ltvBadge(ltv):''}
       </div>
       <div>
-        <div class="c-sq-lbl">BTC engage <span style="color:var(--btc)">&#x20BF;</span></div>
+        <div class="c-sq-lbl"><span style="color:var(--btc)">&#x20BF;</span> en collateral</div>
         <div style="position:relative;margin-bottom:8px">
           <input type="number" inputmode="decimal" step="0.00000001" value="${c.btcAlloc||0}" style="font-size:13px;padding:5px 36px 5px 8px;width:100%;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;color:#fff"
             onchange="D.collPrets[${ci}].btcAlloc=+this.value;save();calcAll()">
@@ -1242,46 +1345,30 @@ function addColl(){addCollPret();goTo(4);}
 // BOURSE
 // ============================================================
 function renderBourseDisplay(){
+  const totPort=D.titres.reduce((a,t)=>a+(+t.qty||0)*(+t.cours||0),0);
   setH('bourse-display',D.titres.map(t=>{
     const val=(+t.qty||0)*(+t.cours||0),cost=(+t.qty||0)*(+t.pru||0);
-    const pct=cost>0?(val-cost)/cost*100:null;
+    const pvPct=cost>0?(val-cost)/cost*100:null;
+    const pvEur=val-cost;
+    const poids=totPort>0?val/totPort*100:0;
     return `<div class="titre-card">
       <div class="titre-top">
-        <div><div class="titre-name">${esc(t.name)}</div><div class="titre-sym">${esc(t.symbol)} · ${t.qty||0} titres</div></div>
+        <div><div class="titre-name">${esc(t.name)}</div><div class="titre-sym">${esc(t.symbol)} · ${t.qty||0} titres · <span style="color:rgba(255,255,255,0.45)">${poids.toFixed(1)}%</span></div></div>
         <div class="titre-val">
           <div class="titre-eur">${fE(val)}</div>
-          <div class="titre-pv">${pct!==null?`<span style="color:${pct>=0?'var(--grn)':'var(--red)'}">${pct>=0?'+':''}${pct.toFixed(1)}%</span>`:'--'}</div>
+          <div class="titre-pv">${pvPct!==null?`<span style="color:${pvPct>=0?'var(--grn)':'var(--red)'}">${pvPct>=0?'+':''}${pvPct.toFixed(1)}% (${pvPct>=0?'+':''}${fE(pvEur)})</span>`:'--'}</div>
         </div>
       </div>
       <div class="row" style="padding-top:0"><span class="rl">PRU</span><span class="rv">${fE2(t.pru)}</span></div>
-      <div class="row"><span class="rl">Cours</span><span class="rv">${fE2(t.cours)} <span style="font-size:10px;color:${t.useApi?'var(--grn)':'var(--tx3)'}">${t.useApi?'auto':'manuel'}</span></span></div>
-    </div>`;}).join('')||'<p style="font-size:12px;color:var(--tx3);margin-bottom:8px">Aucun titre — ajoutez via le bouton ci-dessous</p>');
-}
-function renderBourseEditors(){
-  setH('bourse-editors',D.titres.map((t,i)=>`
-    <div class="ibox">
-      <div class="ibox-hd">
-        <input class="name-inp" value="${esc(t.name)}" onchange="D.titres[${i}].name=this.value;save()">
-        <button class="del-btn" onclick="D.titres.splice(${i},1);save();renderBourseEditors();renderBourseDisplay();calcAll()">×</button>
-      </div>
-      <div class="g2">
-        <div class="ef"><label>Symbole (.PA)</label><input type="text" value="${esc(t.symbol)}" onchange="D.titres[${i}].symbol=this.value;save()"></div>
-        <div class="ef"><label>Quantite</label><input type="number" inputmode="numeric" value="${t.qty||0}" onchange="D.titres[${i}].qty=+this.value;save();calcAll()"></div>
-        <div class="ef"><label>PRU (EUR)</label><input type="number" inputmode="decimal" step="0.001" value="${t.pru||0}" onchange="D.titres[${i}].pru=+this.value;save();calcAll()"></div>
-        <div class="ef"><label>Cours (EUR)</label><input type="number" inputmode="decimal" step="0.01" value="${t.cours||0}" onchange="D.titres[${i}].cours=+this.value;save();calcAll()"></div>
-      </div>
-      <label style="font-size:12px;color:var(--tx2);display:flex;align-items:center;gap:6px;cursor:pointer">
-        <input type="checkbox" ${t.useApi?'checked':''} onchange="D.titres[${i}].useApi=this.checked;save();renderBourseEditors()" style="width:auto;margin:0">
-        Actualisation auto (Yahoo Finance)
-      </label>
-    </div>`).join(''));
+      <div class="row"><span class="rl">Cours</span><span class="rv">${fE2(t.cours)} <span style="font-size:10px;color:${t.useApi?'var(--grn)':'rgba(255,255,255,0.3)'}">${t.useApi?'auto':'manuel'}</span></span></div>
+    </div>`;}).join('')||'<p style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:8px">Aucun titre</p>');
 }
 function addTitre(){D.titres.push({id:uid(),name:'Nouveau titre',symbol:'',qty:0,pru:0,cours:0,useApi:true});save();renderBourseEditors();renderBourseDisplay();calcAll();}
 
 async function fetchBourse(){
   document.getElementById('b-dot').className='dot off';
   document.getElementById('b-txt').textContent='Chargement...';
-  let ok=0,fail=0,lastMsg='';
+  let ok=0,fail=0,lastMsg='';const _bourseOkIdx=new Set();
   for(let i=0;i<D.titres.length;i++){
     const t=D.titres[i];
     if(!t.useApi||!t.symbol)continue;
@@ -1299,12 +1386,13 @@ async function fetchBourse(){
         price=d?.chart?.result?.[0]?.meta?.regularMarketPrice;
         if(!price)lastMsg='Symbole introuvable';
       }
-      if(price){D.titres[i].cours=price;ok++;}else fail++;
+      if(price){D.titres[i].cours=price;ok++;_bourseOkIdx.add(i);}else fail++;
     }catch(e){lastMsg='Erreur reseau';fail++;}
   }
   save();calcAll();renderBourseEditors();
   document.getElementById('b-dot').className='dot '+(ok>0?'live':'off');
-  document.getElementById('b-txt').textContent=ok>0?ok+' cours mis a jour'+(fail?' — '+fail+' echec':''):'Echec: '+(lastMsg||'verifiez la cle');
+  const failNames=D.titres.filter((t,i)=>t.useApi&&t.symbol&&!_bourseOkIdx.has(i)).map(t=>t.symbol).join(', ');
+  document.getElementById('b-txt').textContent=ok>0?ok+' cours mis a jour'+(fail?' — '+fail+' echec'+(failNames?' ('+failNames+')':''):''):'Echec: '+(lastMsg||'verifiez la cle')+(failNames?' ('+failNames+')':'');
 }
 
 // ============================================================
@@ -1320,31 +1408,40 @@ function renderBiensDisplay(){
     const totalCharges=(b.charges||[]).reduce((s,c)=>s+(+c.value||0),0);
     const gain=((est+bank)-(+(b.credit||0))-(+(b.apport||0))-totalCharges)*part-approsMe;
     const remb=b.empruntinitial>0?Math.min(100,(1-(+(b.credit||0))/b.empruntinitial)*100):0;
-    // Rentabilite brute annuelle = (loyer*12) / (estimation * part) * 100
     const rentBrute=est*part>0&&loyer>0?(loyer*12)/(est*part)*100:null;
-    // Rentabilite nette = (loyer*12 - charges) / (estimation * part) * 100
-    const rentNette=est*part>0&&loyer>0?((loyer*12-totalCharges*part))/(est*part)*100:null;
-    return `<div class="bien-card">
-      <div class="bien-name">🏢 ${esc(b.name||'Bien')}</div>
-      <div class="row" style="padding-top:0"><span class="rl">Estimation (${b.part||100}%)</span><span class="rv">${fE(est*part)}</span></div>
+    const rentalChargesTotal=(b.rentalCharges||[]).reduce((a,rc)=>a+(+rc.value||0),0);
+    const rentNette=est*part>0&&loyer>0?((loyer*12-rentalChargesTotal))/(est*part)*100:null;
+    return `
+    <div class="bien-card">
+      <div class="bien-name">${esc(b.name||'Bien')}</div>
+      <div class="row" style="padding-top:0"><span class="rl">Surface</span><span class="rv">${b.surface||0} m² · ${fE2(b.prixm2)}/m²</span></div>
+      <div class="row"><span class="rl">Estimation (${b.part||100}%)</span><span class="rv">${fE(est*part)}</span></div>
       <div class="row"><span class="rl">Emprunt initial</span><span class="rv">${fE(b.empruntinitial)}</span></div>
       <div class="row"><span class="rl">Reste a rembourser</span><span class="rv" style="color:var(--red)">${fE(b.credit)}</span></div>
+      <div class="row"><span class="rl">Taux</span><span class="rv">${b.tauxPret||0}%</span></div>
       <div class="row"><span class="rl">Apport</span><span class="rv">${fE(b.apport)}</span></div>
-      ${(b.charges||[]).length>0?`<div class="row"><span class="rl">Charges (votre part)</span><span class="rv" style="color:var(--red)">-${fE(totalCharges*part)}</span></div>`:''}
+      ${totalCharges>0?`<div class="row"><span class="rl">Charges (votre part)</span><span class="rv" style="color:var(--red)">-${fE(totalCharges*part)}</span></div>`:''}
       <div class="row"><span class="rl">Compte bancaire</span><span class="rv">${fE(bank)}</span></div>
       ${(b.appros||[]).map(a=>`<div class="row"><span class="rl">${a.who==='me'?'Mes appros':esc(a.label||'Autre')}</span><span class="rv">${fE(a.amount)}</span></div>`).join('')}
       <div class="row"><span class="rl" style="font-weight:700">Gain potentiel</span><span class="badge ${gain>=0?'green':'red'}">${gain>=0?'+':''}${fE(gain)}</span></div>
-      ${loyer>0?`
-      <div class="row" style="margin-top:4px"><span class="rl">Loyer mensuel</span><span class="rv">${fE(loyer)}/mois</span></div>
+    </div>
+    <div class="card" style="background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.08);margin-top:-4px;border-radius:0 0 16px 16px;padding:12px 14px 14px">
+      <div class="prow" style="margin-bottom:3px"><span style="color:rgba(255,255,255,0.5);font-size:11px">Remboursement credit</span><span style="color:rgba(255,255,255,0.5);font-size:11px">${remb.toFixed(1)}%</span></div>
+      <div class="pbg"><div class="pfill" style="width:${remb.toFixed(1)}%"></div></div>
+    </div>
+    ${loyer>0?`
+    <div class="bien-card" style="margin-top:8px">
+      <div style="font-size:12px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Location</div>
+      <div class="row" style="padding-top:0"><span class="rl">Loyer mensuel</span><span class="rv">${fE(loyer)}/mois</span></div>
+      <div class="row"><span class="rl">Loyer annuel brut</span><span class="rv">${fE(loyer*12)}</span></div>
+      ${(b.rentalCharges||[]).map(rc=>rc.value>0?`<div class="row"><span class="rl" style="font-size:12px">${esc(rc.name)}</span><span class="rv" style="color:var(--red);font-size:12px">-${fE(rc.value)}/an</span></div>`:'').join('')}
+      <div class="row"><span class="rl">Revenu net annuel</span><span class="rv" style="color:var(--grn)">${fE(loyer*12-rentalChargesTotal)}</span></div>
       <div class="rent-grid">
         <div class="rent-item"><div class="rent-lbl">Rent. brute</div><div class="rent-val" style="color:var(--grn)">${rentBrute!==null?rentBrute.toFixed(2)+'%':'--'}</div></div>
         <div class="rent-item"><div class="rent-lbl">Rent. nette</div><div class="rent-val" style="color:${rentNette>=5?'var(--grn)':rentNette>=3?'var(--btc)':'var(--red)'}">${rentNette!==null?rentNette.toFixed(2)+'%':'--'}</div></div>
-      </div>`:''}
-      <div style="margin-top:10px">
-        <div class="prow" style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);margin-bottom:3px"><span>Rembourse</span><span>${remb.toFixed(1)}%</span></div>
-        <div class="pbg"><div class="pfill" style="width:${remb.toFixed(1)}%"></div></div>
       </div>
-    </div>`;}).join(''):'<p style="font-size:12px;color:var(--tx3);margin-bottom:8px">Ajoutez un bien</p>');
+    </div>`:''}`;
+  }).join(''):'<p style="font-size:13px;color:rgba(255,255,255,0.4);padding:8px 0">Ajoutez un bien via Modifier</p>');
 }
 
 function renderBiensEditors(){
@@ -1366,6 +1463,14 @@ function renderBiensEditors(){
       </div>
       <div class="ef"><label>Compte bancaire associe</label><input type="number" inputmode="decimal" value="${b.bankAccount||0}" onchange="D.biens[${bi}].bankAccount=+this.value;save();calcAll()"></div>
       <div class="ef"><label>Loyer mensuel (EUR) — 0 si pas de location</label><input type="number" inputmode="decimal" value="${b.loyer||0}" onchange="D.biens[${bi}].loyer=+this.value;save();calcAll()"></div>
+      <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.05em;margin:6px 0 4px">Charges annuelles (location)</div>
+      ${(b.rentalCharges||[]).map((rc,rci)=>`
+        <div style="display:flex;gap:7px;align-items:flex-end;margin-bottom:6px">
+          <div class="ef" style="flex:1;margin:0"><label>Nom</label><input type="text" value="${esc(rc.name||'')}" onchange="D.biens[${bi}].rentalCharges[${rci}].name=this.value;save()"></div>
+          <div class="ef" style="flex:1;margin:0"><label>Montant/an</label><input type="number" inputmode="decimal" value="${rc.value||0}" onchange="D.biens[${bi}].rentalCharges[${rci}].value=+this.value;save();calcAll()"></div>
+          <button class="del-btn" style="padding-bottom:6px" onclick="D.biens[${bi}].rentalCharges.splice(${rci},1);save();renderBiensEditors();calcAll()">x</button>
+        </div>`).join('')}
+      <button class="btn-add" style="padding:5px;font-size:12px;margin-bottom:8px" onclick="(D.biens[${bi}].rentalCharges=D.biens[${bi}].rentalCharges||[]).push({name:'Nouvelle charge',value:0});save();renderBiensEditors()">+ Charge de location</button>
       <div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:8px 0 6px">Approvisionnements</div>
       ${(b.appros||[]).map((a,ai)=>`
         <div class="ibox" style="background:rgba(255,255,255,0.03);margin-bottom:6px">
@@ -1392,7 +1497,7 @@ function renderBiensEditors(){
       <button class="btn-add" style="padding:7px" onclick="(D.biens[${bi}].charges=D.biens[${bi}].charges||[]).push({name:'',value:0});save();renderBiensEditors();calcAll()">+ Charge</button>
     </div>`).join(''));
 }
-function addBien(){D.biens.push({name:'',surface:0,prixm2:0,empruntinitial:0,credit:0,tauxPret:0,dateFinPret:'',part:100,apport:0,bankAccount:0,loyer:0,appros:[],charges:[]});save();renderBiensEditors();renderBiensDisplay();calcAll();}
+function addBien(){D.biens.push({name:'',surface:0,prixm2:0,empruntinitial:0,credit:0,tauxPret:0,dateFinPret:'',part:100,apport:0,bankAccount:0,loyer:0,appros:[],charges:[],rentalCharges:[{name:'Charges location',value:0},{name:'Charges copropriete',value:0},{name:'Electricite',value:0},{name:'Eau',value:0},{name:'Internet',value:0},{name:'Assurance',value:0}]});save();renderBiensEditors();renderBiensDisplay();calcAll();}
 
 // ============================================================
 // PRETS & COLLPRETS
@@ -1451,6 +1556,9 @@ function openSubPanel(id){
   document.getElementById(id).style.display='block';
   // Init sub panel content
   if(id==='sub-notes')renderNoteSettings();
+  if(id==='sub-tabs')renderTabsConfig();
+  if(id==='sub-homecard')updateHomecardSel();
+  if(id==='sub-config'){const tog=document.getElementById('toggle-hide-amounts');if(tog)tog.checked=!!D.hideAmounts;}
   if(id==='sub-goal'){renderGoalSel();}
   if(id==='sub-api'){const ak=document.getElementById('e-apikey');if(ak)ak.value=D.apiKey||'';}
   if(id==='sub-notif'){initNotifPanel();}
@@ -1464,7 +1572,8 @@ function updateParamsMenu(){
   const goalEl=document.getElementById('pmenu-goal-sub');
   if(goalEl)goalEl.textContent='Objectif actuel : '+(D.btcGoal||1)+' ₿';
   const apiEl=document.getElementById('pmenu-api-sub');
-  if(apiEl)apiEl.textContent=D.apiKey?'Twelve Data (cle configuree)':'Yahoo Finance (defaut)';
+  if(apiEl)apiEl.textContent=D.apiKey?'Cle API configuree':'Yahoo Finance (defaut)';
+  updateHomecardSel();
 }
 
 function renderNoteSettings(){
@@ -1490,6 +1599,166 @@ function renderGoalSel(){
 }
 
 function showGoalInParams(){openParams();setTimeout(()=>openSubPanel('sub-goal'),50);}
+
+// ---- TOGGLE EDIT PANELS ----
+let _walletEditing=false;
+function toggleWalletEdit(){
+  _walletEditing=!_walletEditing;
+  const bar=document.getElementById('wallet-add-bar');
+  const btn=document.getElementById('wallet-edit-btn');
+  if(bar)bar.style.display=_walletEditing?'block':'none';
+  if(btn)btn.textContent=_walletEditing?'Valider':'Modifier';
+  renderWalletDisplay();
+}
+
+let _collEditing=false;
+function toggleCollEdit(){
+  _collEditing=!_collEditing;
+  const bar=document.getElementById('coll-add-bar');
+  const btn=document.getElementById('coll-edit-btn');
+  if(bar)bar.style.display=_collEditing?'block':'none';
+  if(btn)btn.textContent=_collEditing?'Valider':'Modifier';
+  renderCollDisplay();
+}
+function addCollFromBitcoin(){addCollPret();}
+
+let _bourseEditing=false;
+function toggleBourseEdit(){
+  _bourseEditing=!_bourseEditing;
+  const panel=document.getElementById('bourse-edit-panel');
+  const btn=document.getElementById('bourse-edit-btn');
+  if(panel)panel.style.display=_bourseEditing?'block':'none';
+  if(btn)btn.textContent=_bourseEditing?'Modifier':'Modifier';
+  if(_bourseEditing)renderBourseEditors();
+}
+
+let _biensEditing=false;
+function toggleBiensEdit(){
+  _biensEditing=!_biensEditing;
+  const panel=document.getElementById('biens-edit-panel');
+  const btn=document.getElementById('biens-edit-btn');
+  if(panel)panel.style.display=_biensEditing?'block':'none';
+  if(btn)btn.textContent=_biensEditing?'Modifier':'Modifier';
+  if(_biensEditing)renderBiensEditors();
+}
+
+let _cashEditing=false;
+function toggleCashEdit(){
+  _cashEditing=!_cashEditing;
+  const panel=document.getElementById('cash-edit-panel');
+  const btn=document.getElementById('cash-edit-btn');
+  if(panel)panel.style.display=_cashEditing?'block':'none';
+  if(btn)btn.textContent=_cashEditing?'Modifier':'Modifier';
+  if(_cashEditing){renderCashEditors();renderLivretEditors();}
+}
+
+let _pretsEditing=false;
+function togglePretsEdit(){
+  _pretsEditing=!_pretsEditing;
+  const panel=document.getElementById('prets-edit-panel');
+  const btn=document.getElementById('prets-edit-btn');
+  if(panel)panel.style.display=_pretsEditing?'block':'none';
+  if(btn)btn.textContent=_pretsEditing?'Modifier':'Modifier';
+  if(_pretsEditing)renderPretsEditors();
+}
+
+let _collPretsEditing=false;
+function toggleCollPretsEdit(){
+  _collPretsEditing=!_collPretsEditing;
+  const panel=document.getElementById('collprets-edit-panel');
+  const btn=document.getElementById('collprets-edit-btn');
+  if(panel)panel.style.display=_collPretsEditing?'block':'none';
+  if(btn)btn.textContent=_collPretsEditing?'Modifier':'Modifier';
+  if(_collPretsEditing)renderCollPretsEditors();
+}
+
+// ---- HIDE AMOUNTS ----
+function applyHideAmounts(){
+  const mask=D.hideAmounts;
+  document.documentElement.style.setProperty('--amount-display',mask?'none':'inline');
+  document.documentElement.style.setProperty('--amount-mask-display',mask?'inline':'none');
+  const tog=document.getElementById('toggle-hide-amounts');
+  if(tog)tog.checked=!!mask;
+}
+
+// ---- TABS CONFIG ----
+const TAB_NAMES=['Bitcoin','Bourse','Immo','Cash','Passif'];
+function renderTabsConfig(){
+  const hidden=D.hiddenTabs||[];
+  setH('tabs-config',TAB_NAMES.map((name,i)=>{
+    const idx=i+1;
+    const isHidden=hidden.includes(idx);
+    return `<label style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bdr);font-size:14px;color:#fff;cursor:pointer">
+      <span>${name}</span>
+      <label class="toggle-wrap" onclick="event.stopPropagation()">
+        <input type="checkbox" ${isHidden?'':'checked'} onchange="toggleTabHide(${idx},!this.checked)" style="">
+        <span class="toggle-slider"></span>
+      </label>
+    </label>`;}).join(''));
+}
+function toggleTabHide(idx,hide){
+  if(!D.hiddenTabs)D.hiddenTabs=[];
+  if(hide){
+    // max 2 hidden
+    const visibleCount=TAB_NAMES.length-D.hiddenTabs.length;
+    if(visibleCount<=3){alert('Vous ne pouvez pas masquer plus de 2 onglets (hors Accueil).');renderTabsConfig();return;}
+    if(!D.hiddenTabs.includes(idx))D.hiddenTabs.push(idx);
+  }else{
+    D.hiddenTabs=D.hiddenTabs.filter(x=>x!==idx);
+  }
+  save();
+}
+function applyTabsConfig(){
+  const hidden=D.hiddenTabs||[];
+  document.querySelectorAll('.ni').forEach((ni,i)=>{
+    if(i===0)return;
+    ni.style.display=hidden.includes(i)?'none':'flex';
+  });
+  save();
+}
+
+// ---- HOME CARD CHOICE ----
+function updateHomecardSel(){
+  const sel=document.getElementById('homecard-select');
+  if(sel)sel.value=D.homeCard||'btc';
+  const sub=document.getElementById('pmenu-homecard-sub');
+  if(sub){
+    const map={btc:'Bitcoin ₿',bourse:'Bourse (total)',immo:'Immobilier'};
+    sub.textContent='Actif affiche : '+(map[D.homeCard]||'Bitcoin ₿');
+  }
+}
+
+// ---- DATE FORMAT DD/MM/YYYY ----
+function fmtDate(iso){
+  if(!iso)return '--';
+  const [y,m,d]=iso.split('-');
+  return (d||'--')+'/'+(m||'--')+'/'+(y||'--');
+}
+
+// ---- DEADLINE NOTIFICATIONS ----
+function checkDeadlines(){
+  if(!D.notifEnabled||Notification.permission!=='granted')return;
+  const now=new Date();
+  const alerts=[];
+  [...(D.prets||[]),...(D.collPrets||[])].forEach(p=>{
+    if(!p.dateFin&&!p.dueDate)return;
+    const dStr=p.dateFin||p.dueDate;
+    const d=new Date(dStr);
+    const diffDays=Math.round((d-now)/(1000*60*60*24));
+    const name=p.name||'Pret';
+    if(diffDays>=179&&diffDays<=181)alerts.push({name,days:180,label:'6 mois'});
+    if(diffDays>=29&&diffDays<=31)alerts.push({name,days:30,label:'1 mois'});
+  });
+  alerts.forEach(a=>{
+    const key='deadline_'+a.name+'_'+a.days;
+    if(!D._lastNotif)D._lastNotif={};
+    const last=D._lastNotif[key]||0;
+    if(Date.now()-last>23*3600000){
+      new Notification('Legacy — Echeance dans '+a.label,{body:a.name+' arrive a echeance dans '+a.label,tag:key});
+      D._lastNotif[key]=Date.now();
+    }
+  });
+}
 
 function initNotifPanel(){
   const st=document.getElementById('notif-status');
@@ -1544,6 +1813,30 @@ function checkNotifThresholds(btcPrice,netVal){
 }
 
 // ============================================================
+// BOURSE EDITORS
+// ============================================================
+function renderBourseEditors(){
+  setH('bourse-editors',D.titres.map((t,i)=>`
+    <div class="ibox">
+      <div class="ibox-hd">
+        <input class="name-inp" value="${esc(t.name)}" onchange="D.titres[${i}].name=this.value;save()">
+        <button class="del-btn" onclick="D.titres.splice(${i},1);save();renderBourseEditors();renderBourseDisplay();calcAll()">×</button>
+      </div>
+      <div class="g2">
+        <div class="ef"><label>Symbole (.PA)</label><input type="text" value="${esc(t.symbol)}" onchange="D.titres[${i}].symbol=this.value;save()"></div>
+        <div class="ef"><label>Quantite</label><input type="number" inputmode="numeric" value="${t.qty||0}" onchange="D.titres[${i}].qty=+this.value;save();calcAll()"></div>
+        <div class="ef"><label>PRU (EUR)</label><input type="number" inputmode="decimal" step="0.001" value="${t.pru||0}" onchange="D.titres[${i}].pru=+this.value;save();calcAll()"></div>
+        <div class="ef"><label>Cours (EUR)</label><input type="number" inputmode="decimal" step="0.01" value="${t.cours||0}" onchange="D.titres[${i}].cours=+this.value;save();calcAll()"></div>
+      </div>
+      <label style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:7px;cursor:pointer;padding:4px 0">
+        <input type="checkbox" ${t.useApi?'checked':''} onchange="D.titres[${i}].useApi=this.checked;save();renderBourseEditors()" style="width:auto;margin:0">
+        Actualisation auto (Yahoo Finance)
+      </label>
+    </div>`).join('')||'<p style="font-size:13px;color:rgba(255,255,255,0.4);padding:6px 0">Aucun titre</p>');
+}
+
+
+// ============================================================
 // NAVIGATION & SWIPE
 // ============================================================
 let _cur=0;
@@ -1582,7 +1875,7 @@ async function fetchBTC(){
   try{
     const r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=eur');
     const d=await r.json();
-    D.btcPrice=d.bitcoin.eur;save();calcAll();
+    D.btcPrice=d.bitcoin.eur;save();calcAll();checkDeadlines();
     document.getElementById('btc-dot').className='dot live';
     document.getElementById('btc-txt').textContent='Bitcoin ₿ temps reel — CoinGecko';
   }catch(e){
@@ -1661,6 +1954,8 @@ function initAll(){
 installPWA();
 setDate();
 initAll();
+applyHideAmounts();
+applyTabsConfig();
 fetchBTC();
 </script>
 </body>
