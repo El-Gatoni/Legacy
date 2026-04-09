@@ -329,6 +329,14 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 
 /* Rentabilite */
 .rent-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
+/* Hide amounts */
+body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
+.hide-amounts .sq-val,.hide-amounts .alloc-amt,.hide-amounts .pv-sq-row .vl,
+.hide-amounts .pv-sq-total .vl,.hide-amounts .w-sq-btc,.hide-amounts [id^="kpi-"],
+.hide-amounts [id^="sq-btc-"],.hide-amounts [id^="b-"],.hide-amounts [id^="c-"],
+.hide-amounts [id^="coll-"],.hide-amounts [id^="p-total"]{
+  filter:blur(8px);user-select:none;pointer-events:none;
+}
 .rent-item{background:var(--inner);border:1px solid var(--bdr);border-radius:11px;padding:8px 10px}
 .rent-lbl{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:2px}
 .rent-val{font-size:16px;font-weight:700}
@@ -384,7 +392,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
       <div class="pmenu-item" onclick="openSubPanel('sub-about')">
         <div class="pmenu-left">
           <div class="pmenu-icon">&#8505;</div>
-          <div><div class="pmenu-title">A propos</div><div class="pmenu-sub">Legacy v2.1.0</div></div>
+          <div><div class="pmenu-title">A propos</div><div class="pmenu-sub">Legacy v2.1.1</div></div>
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
@@ -454,7 +462,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
       <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:12px">Choisissez l'actif a afficher dans la deuxieme carte de l'Accueil.</p>
       <div class="ef" style="margin:0">
         <label>Actif affiche</label>
-        <select id="homecard-select" onchange="D.homeCard=this.value;save();updateParamsMenu()">
+        <select id="homecard-select" onchange="D.homeCard=this.value;save();updateParamsMenu();calcAll()">
           <option value="btc">Bitcoin &#x20BF;</option>
           <option value="bourse">Bourse (total)</option>
           <option value="immo">Immobilier</option>
@@ -527,7 +535,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
     <div class="sub-title">API Cours boursiers</div>
     <div class="card">
       <div class="ef" style="margin:0">
-        <label>Inserer cle API</label>
+        <label>Cle API Finnhub (optionnel)</label>
         <input type="text" id="e-apikey" placeholder="Laissez vide = Yahoo Finance" oninput="D.apiKey=this.value.trim();save();updateParamsMenu()">
         <span class="hint">Format symboles Euronext Paris : WPEA.PA, PAEEM.PA</span>
       </div>
@@ -542,7 +550,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
       <div class="row"><span class="rl">Version</span><span class="rv">2.0.0</span></div>
       <div class="row"><span class="rl">Stockage</span><span class="rv">Local (navigateur)</span></div>
       <div class="row"><span class="rl">Prix Bitcoin</span><span class="rv">CoinGecko API</span></div>
-      <div class="row"><span class="rl">Cours boursiers</span><span class="rv">Yahoo Finance (API optionnelle)</span></div>
+      <div class="row"><span class="rl">Cours boursiers</span><span class="rv">Yahoo Finance / Finnhub</span></div>
     </div>
     <p style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:12px;text-align:center;line-height:1.6">Vos donnees ne quittent jamais votre appareil.<br>Aucun serveur, aucune publicite.</p>
   </div>
@@ -668,8 +676,8 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
     </div>
     <div class="w-sq-grid" id="coll-list"></div>
     <div class="card card-btc" style="margin-top:2px">
-      <div class="ct">Total Collateral Bitcoin <span style="color:var(--btc)">₿</span></div>
-      <div class="row"><span class="rl">Bitcoin ₿ engage</span><span class="rv" style="color:var(--btc)" id="coll-total-btc">--</span></div>
+      <div class="ct">Synthese des prets</div>
+      <div class="row"><span class="rl"><span style="color:var(--btc)">&#x20BF;</span> en collateral</span><span class="rv" style="color:var(--btc)" id="coll-total-btc">--</span></div>
       <div class="row"><span class="rl">Valeur euros</span><span class="rv" id="coll-total-eur">--</span></div>
       <div class="row"><span class="rl">Emprunt total</span><span class="rv" style="color:var(--red)" id="coll-total-emp">--</span></div>
     </div>
@@ -983,18 +991,19 @@ function calcAll(){
   const bourseCost=D.titres.reduce((a,t)=>a+(+t.qty||0)*(+t.pru||0),0);
   const boursePnl=bourseTotal-bourseCost;
 
-  let immoVal=0,immoGain=0,immoInvested=0,immoCredit=0;
+  let immoVal=0,immoGainVente=0,immoInvested=0,immoCredit=0;
   D.biens.forEach(b=>{
     const est=(+b.surface||0)*(+b.prixm2||0);
     const part=(+b.part||100)/100;
     const bank=+(b.bankAccount||0);
+    const apport=+(b.apport||0);
+    const credit=+(b.credit||0);
     const approsMe=(b.appros||[]).filter(a=>a.who==='me').reduce((s,a)=>s+(+a.amount||0),0);
-    const totalCharges=(b.charges||[]).reduce((s,c)=>s+(+c.value||0),0);
-    const gain=((est+bank)-(+(b.credit||0))-(+(b.apport||0))-totalCharges)*part-approsMe;
+    const gainVente=((est+bank)-credit-apport)*part-approsMe;
     immoVal+=est*part;
-    immoGain+=gain;
-    immoCredit+=(+(b.credit||0))*part;
-    immoInvested+=(+(b.apport||0)+bank)*part+approsMe;
+    immoGainVente+=gainVente;
+    immoCredit+=credit*part;
+    immoInvested+=(apport+bank)*part+approsMe;
   });
 
   const pretsDette=D.prets.reduce((a,p)=>a+(+p.restant||0)*((+p.part||100)/100),0);
@@ -1002,23 +1011,25 @@ function calcAll(){
   const totalPassif=immoCredit+pretsDette+collDette;
   const financier=totalCash+totalLivrets+bourseTotal+btcEur;
   const brut=financier+immoVal;
-  const net=financier+immoGain-pretsDette-collDette;
+  const net=financier+immoGainVente-pretsDette-collDette;
   checkNotifThresholds(D.btcPrice||0,net);
 
   // ACCUEIL
   setT('kpi-net',fE(net));
   setT('kpi-brut',fE(brut));
   setT('kpi-fin',fE(financier));
-  // BTC square
+  // BTC square (or chosen asset card)
   setT('sq-btc-price',fE(D.btcPrice));
   setT('sq-btc-stack',fB8(stackBtc));
   const sqSats=document.getElementById('sq-btc-sats');if(sqSats)sqSats.textContent=Math.round(stackBtc*1e8).toLocaleString('fr-FR')+' sats';
+  // Update accueil sq-btc card label based on homeCard choice
+  updateHomecardDisplay(bourseTotal,boursePnl,immoGainVente);
 
   // PV square
   const pvRows=[];
   if(btcInvested>0||btcEur>0){const p=(btcEur-btcInvested);pvRows.push({l:'Bitcoin <span style="color:var(--btc)">&#x20BF;</span>',v:p,f:btcInvested});}
   if(bourseCost>0||bourseTotal>0){pvRows.push({l:'Bourse 📈',v:boursePnl,f:bourseCost});}
-  if(D.biens.length>0){pvRows.push({l:'Immo 🏢',v:immoGain,f:0,noRatio:true});}
+  if(D.biens.length>0){pvRows.push({l:'Immo 🏢',v:immoGainVente,f:0,noRatio:true});}
   const pvTotal=pvRows.reduce((a,r)=>a+r.v,0);
   setH('pv-sq-content',pvRows.length?pvRows.map(r=>`
     <div class="pv-sq-row">
@@ -1302,7 +1313,7 @@ function renderWalletDisplay(){
       <div>
         ${_walletEditing ? '<input class="name-inp" value="'+esc(w.name)+'" style="font-size:14px;width:calc(100% - 32px);margin-bottom:10px" onchange="D.wallets['+wi+'].name=this.value;save()">' : '<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:10px;padding:2px 0">'+esc(w.name)+'</div>'}
         <div class="ef" style="margin:0">
-          <label style="font-size:11px;color:rgba(255,255,255,0.45)">BTC detenu <span style="color:var(--btc)">&#x20BF;</span></label>
+          <label style="font-size:11px;color:rgba(255,255,255,0.45)">BTC detenu</label>
           <div style="position:relative">
             <input type="number" inputmode="decimal" step="0.00000001" value="${w.btcAlloc||0}" style="font-size:14px;padding:7px 36px 7px 10px;width:100%"
               onchange="D.wallets[${wi}].btcAlloc=+this.value;save();calcAll()">
@@ -1368,31 +1379,33 @@ function addTitre(){D.titres.push({id:uid(),name:'Nouveau titre',symbol:'',qty:0
 async function fetchBourse(){
   document.getElementById('b-dot').className='dot off';
   document.getElementById('b-txt').textContent='Chargement...';
-  let ok=0,fail=0,lastMsg='';const _bourseOkIdx=new Set();
+  let ok=0,fail=0;
+  const failed=[];
   for(let i=0;i<D.titres.length;i++){
     const t=D.titres[i];
-    if(!t.useApi||!t.symbol)continue;
+    if(!t.symbol||!t.useApi)continue;
     try{
       let price=null;
-      if(D.apiKey){
-        const r=await fetch('https://api.twelvedata.com/time_series?symbol='+encodeURIComponent(t.symbol)+'&interval=1day&outputsize=1&apikey='+D.apiKey);
-        const d=await r.json();
-        if(d.values&&d.values[0])price=+d.values[0].close;
-        else lastMsg=d.message||'Echec';
+      if(D.apiKey&&D.apiKey.trim()!==''){
+        const res=await fetch('https://finnhub.io/api/v1/quote?symbol='+encodeURIComponent(t.symbol)+'&token='+D.apiKey.trim());
+        const data=await res.json();
+        price=data.c;
       }else{
         const yfUrl='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(t.symbol)+'?interval=1d&range=1d';
-        const r=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(yfUrl));
-        const w=await r.json();const d=JSON.parse(w.contents);
+        const res=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(yfUrl));
+        const w=await res.json();
+        const d=JSON.parse(w.contents);
         price=d?.chart?.result?.[0]?.meta?.regularMarketPrice;
-        if(!price)lastMsg='Symbole introuvable';
       }
-      if(price){D.titres[i].cours=price;ok++;_bourseOkIdx.add(i);}else fail++;
-    }catch(e){lastMsg='Erreur reseau';fail++;}
+      if(price&&price>0){D.titres[i].cours=price;ok++;}
+      else{fail++;failed.push(t.symbol);}
+    }catch(e){fail++;failed.push(t.symbol);}
   }
   save();calcAll();renderBourseEditors();
-  document.getElementById('b-dot').className='dot '+(ok>0?'live':'off');
-  const failNames=D.titres.filter((t,i)=>t.useApi&&t.symbol&&!_bourseOkIdx.has(i)).map(t=>t.symbol).join(', ');
-  document.getElementById('b-txt').textContent=ok>0?ok+' cours mis a jour'+(fail?' — '+fail+' echec'+(failNames?' ('+failNames+')':''):''):'Echec: '+(lastMsg||'verifiez la cle')+(failNames?' ('+failNames+')':'');
+  document.getElementById('b-dot').className=ok>0?'dot live':'dot off';
+  document.getElementById('b-txt').textContent=ok>0
+    ?(ok+' cours mis a jour'+(fail?' — '+fail+' echec'+(failed.length?' ('+failed.join(', ')+')':''  ):''  ))
+    :'Echec — verifiez la connexion ou la cle API';
 }
 
 // ============================================================
@@ -1406,7 +1419,7 @@ function renderBiensDisplay(){
     const loyer=+(b.loyer||0);
     const approsMe=(b.appros||[]).filter(a=>a.who==='me').reduce((s,a)=>s+(+a.amount||0),0);
     const totalCharges=(b.charges||[]).reduce((s,c)=>s+(+c.value||0),0);
-    const gain=((est+bank)-(+(b.credit||0))-(+(b.apport||0))-totalCharges)*part-approsMe;
+    const gainVente=((est+bank)-(+(b.credit||0))-(+(b.apport||0)))*part-approsMe;
     const remb=b.empruntinitial>0?Math.min(100,(1-(+(b.credit||0))/b.empruntinitial)*100):0;
     const rentBrute=est*part>0&&loyer>0?(loyer*12)/(est*part)*100:null;
     const rentalChargesTotal=(b.rentalCharges||[]).reduce((a,rc)=>a+(+rc.value||0),0);
@@ -1423,10 +1436,10 @@ function renderBiensDisplay(){
       ${totalCharges>0?`<div class="row"><span class="rl">Charges (votre part)</span><span class="rv" style="color:var(--red)">-${fE(totalCharges*part)}</span></div>`:''}
       <div class="row"><span class="rl">Compte bancaire</span><span class="rv">${fE(bank)}</span></div>
       ${(b.appros||[]).map(a=>`<div class="row"><span class="rl">${a.who==='me'?'Mes appros':esc(a.label||'Autre')}</span><span class="rv">${fE(a.amount)}</span></div>`).join('')}
-      <div class="row"><span class="rl" style="font-weight:700">Gain potentiel</span><span class="badge ${gain>=0?'green':'red'}">${gain>=0?'+':''}${fE(gain)}</span></div>
+      <div class="row"><span class="rl" style="font-weight:700">Gain estime a la vente</span><span class="badge ${gainVente>=0?'green':'red'}">${gainVente>=0?'+':''}${fE(gainVente)}</span></div>
     </div>
     <div class="card" style="background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.08);margin-top:-4px;border-radius:0 0 16px 16px;padding:12px 14px 14px">
-      <div class="prow" style="margin-bottom:3px"><span style="color:rgba(255,255,255,0.5);font-size:11px">Remboursement credit</span><span style="color:rgba(255,255,255,0.5);font-size:11px">${remb.toFixed(1)}%</span></div>
+      <div class="prow" style="margin-bottom:3px"><span style="color:rgba(255,255,255,0.5);font-size:11px">Remboursement credit</span><span style="color:rgba(255,255,255,0.5);font-size:11px">${remb.toFixed(1)} %</span></div>
       <div class="pbg"><div class="pfill" style="width:${remb.toFixed(1)}%"></div></div>
     </div>
     ${loyer>0?`
@@ -1461,16 +1474,7 @@ function renderBiensEditors(){
         <div class="ef"><label>Date fin pret</label><input type="date" value="${b.dateFinPret||''}" onchange="D.biens[${bi}].dateFinPret=this.value;save();calcAll()"></div>
         <div class="ef"><label>Apport</label><input type="number" inputmode="decimal" value="${b.apport||0}" onchange="D.biens[${bi}].apport=+this.value;save();calcAll()"></div>
       </div>
-      <div class="ef"><label>Compte bancaire associe</label><input type="number" inputmode="decimal" value="${b.bankAccount||0}" onchange="D.biens[${bi}].bankAccount=+this.value;save();calcAll()"></div>
-      <div class="ef"><label>Loyer mensuel (EUR) — 0 si pas de location</label><input type="number" inputmode="decimal" value="${b.loyer||0}" onchange="D.biens[${bi}].loyer=+this.value;save();calcAll()"></div>
-      <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.05em;margin:6px 0 4px">Charges annuelles (location)</div>
-      ${(b.rentalCharges||[]).map((rc,rci)=>`
-        <div style="display:flex;gap:7px;align-items:flex-end;margin-bottom:6px">
-          <div class="ef" style="flex:1;margin:0"><label>Nom</label><input type="text" value="${esc(rc.name||'')}" onchange="D.biens[${bi}].rentalCharges[${rci}].name=this.value;save()"></div>
-          <div class="ef" style="flex:1;margin:0"><label>Montant/an</label><input type="number" inputmode="decimal" value="${rc.value||0}" onchange="D.biens[${bi}].rentalCharges[${rci}].value=+this.value;save();calcAll()"></div>
-          <button class="del-btn" style="padding-bottom:6px" onclick="D.biens[${bi}].rentalCharges.splice(${rci},1);save();renderBiensEditors();calcAll()">x</button>
-        </div>`).join('')}
-      <button class="btn-add" style="padding:5px;font-size:12px;margin-bottom:8px" onclick="(D.biens[${bi}].rentalCharges=D.biens[${bi}].rentalCharges||[]).push({name:'Nouvelle charge',value:0});save();renderBiensEditors()">+ Charge de location</button>
+      <div class="ef"><label>Compte bancaire associe (EUR)</label><input type="number" inputmode="decimal" value="${b.bankAccount||0}" onchange="D.biens[${bi}].bankAccount=+this.value;save();calcAll()"></div>
       <div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:8px 0 6px">Approvisionnements</div>
       ${(b.appros||[]).map((a,ai)=>`
         <div class="ibox" style="background:rgba(255,255,255,0.03);margin-bottom:6px">
@@ -1485,7 +1489,7 @@ function renderBiensEditors(){
           <div class="ef" style="margin:0"><label>Montant (EUR)</label><input type="number" inputmode="decimal" value="${a.amount||0}" onchange="D.biens[${bi}].appros[${ai}].amount=+this.value;save();calcAll()"></div>
         </div>`).join('')}
       <button class="btn-add" style="margin-bottom:8px;padding:7px" onclick="(D.biens[${bi}].appros=D.biens[${bi}].appros||[]).push({label:'',who:'me',amount:0});save();renderBiensEditors();calcAll()">+ Approvisionnement</button>
-      <div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:6px 0">Charges</div>
+      <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.05em;margin:6px 0">Charges du bien</div>
       ${(b.charges||[]).map((c,ci)=>`
         <div class="ibox" style="background:rgba(255,255,255,0.03);margin-bottom:6px">
           <div class="ibox-hd">
@@ -1494,9 +1498,20 @@ function renderBiensEditors(){
           </div>
           <div class="ef" style="margin:0"><label>Montant (EUR)</label><input type="number" inputmode="decimal" value="${c.value||0}" onchange="D.biens[${bi}].charges[${ci}].value=+this.value;save();calcAll()"></div>
         </div>`).join('')}
-      <button class="btn-add" style="padding:7px" onclick="(D.biens[${bi}].charges=D.biens[${bi}].charges||[]).push({name:'',value:0});save();renderBiensEditors();calcAll()">+ Charge</button>
+      <button class="btn-add" style="padding:7px;margin-bottom:10px" onclick="(D.biens[${bi}].charges=D.biens[${bi}].charges||[]).push({name:'',value:0});save();renderBiensEditors();calcAll()">+ Charge</button>
+      <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.05em;margin:6px 0 4px">Loyer et location</div>
+      <div class="ef"><label>Loyer mensuel (EUR) — 0 si pas de location</label><input type="number" inputmode="decimal" value="${b.loyer||0}" onchange="D.biens[${bi}].loyer=+this.value;save();calcAll()"></div>
+      <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.05em;margin:4px 0">Charges annuelles (location)</div>
+      ${(b.rentalCharges||[]).map((rc,rci)=>`
+        <div style="display:flex;gap:7px;align-items:flex-end;margin-bottom:6px">
+          <div class="ef" style="flex:1;margin:0"><label>Nom</label><input type="text" value="${esc(rc.name||'')}" onchange="D.biens[${bi}].rentalCharges[${rci}].name=this.value;save()"></div>
+          <div class="ef" style="flex:1;margin:0"><label>Montant/an</label><input type="number" inputmode="decimal" value="${rc.value||0}" onchange="D.biens[${bi}].rentalCharges[${rci}].value=+this.value;save();calcAll()"></div>
+          <button class="del-btn" style="padding-bottom:6px" onclick="D.biens[${bi}].rentalCharges.splice(${rci},1);save();renderBiensEditors();calcAll()">x</button>
+        </div>`).join('')}
+      <button class="btn-add" style="padding:5px;font-size:12px;margin-bottom:4px" onclick="(D.biens[${bi}].rentalCharges=D.biens[${bi}].rentalCharges||[]).push({name:'Nouvelle charge',value:0});save();renderBiensEditors()">+ Charge de location</button>
     </div>`).join(''));
 }
+
 function addBien(){D.biens.push({name:'',surface:0,prixm2:0,empruntinitial:0,credit:0,tauxPret:0,dateFinPret:'',part:100,apport:0,bankAccount:0,loyer:0,appros:[],charges:[],rentalCharges:[{name:'Charges location',value:0},{name:'Charges copropriete',value:0},{name:'Electricite',value:0},{name:'Eau',value:0},{name:'Internet',value:0},{name:'Assurance',value:0}]});save();renderBiensEditors();renderBiensDisplay();calcAll();}
 
 // ============================================================
@@ -1675,8 +1690,7 @@ function toggleCollPretsEdit(){
 // ---- HIDE AMOUNTS ----
 function applyHideAmounts(){
   const mask=D.hideAmounts;
-  document.documentElement.style.setProperty('--amount-display',mask?'none':'inline');
-  document.documentElement.style.setProperty('--amount-mask-display',mask?'inline':'none');
+  document.body.classList.toggle('hide-amounts',!!mask);
   const tog=document.getElementById('toggle-hide-amounts');
   if(tog)tog.checked=!!mask;
 }
@@ -1699,14 +1713,13 @@ function renderTabsConfig(){
 function toggleTabHide(idx,hide){
   if(!D.hiddenTabs)D.hiddenTabs=[];
   if(hide){
-    // max 2 hidden
     const visibleCount=TAB_NAMES.length-D.hiddenTabs.length;
     if(visibleCount<=3){alert('Vous ne pouvez pas masquer plus de 2 onglets (hors Accueil).');renderTabsConfig();return;}
     if(!D.hiddenTabs.includes(idx))D.hiddenTabs.push(idx);
   }else{
     D.hiddenTabs=D.hiddenTabs.filter(x=>x!==idx);
   }
-  save();
+  save();applyTabsConfig();renderTabsConfig();
 }
 function applyTabsConfig(){
   const hidden=D.hiddenTabs||[];
@@ -1835,6 +1848,19 @@ function renderBourseEditors(){
     </div>`).join('')||'<p style="font-size:13px;color:rgba(255,255,255,0.4);padding:6px 0">Aucun titre</p>');
 }
 
+
+function updateHomecardDisplay(bourseTotal,boursePnl,immoGain){
+  const label=document.querySelector('.sq.sq-btc > div:first-child');
+  if(!label)return;
+  const hc=D.homeCard||'btc';
+  if(hc==='btc'){
+    label.innerHTML='Bitcoin <span style="color:var(--btc)">&#x20BF;</span>';
+  }else if(hc==='bourse'){
+    label.innerHTML='Bourse 📈 <span style="color:var(--grn)">"+fE(bourseTotal)+"</span>';
+  }else if(hc==='immo'){
+    label.innerHTML='Immobilier 🏢 <span style="color:var(--grn)">"+fE(immoGain)+"</span>';
+  }
+}
 
 // ============================================================
 // NAVIGATION & SWIPE
