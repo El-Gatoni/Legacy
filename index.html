@@ -932,6 +932,9 @@ let _uid=Date.now();
 function uid(){return 'x'+(++_uid);}
 function save(){try{localStorage.setItem('legacyV2',JSON.stringify(D));}catch(e){}}
 
+// Timestamps internes des notifications — stockés séparément, hors du modèle de données
+let _lastNotif={};
+
 // ============================================================
 // FORMATTERS
 // ============================================================
@@ -1035,7 +1038,7 @@ function calcAll(){
   setT('kpi-brut',fE(brut));
   setT('kpi-fin',fE(financier));
   // Homecard (gauche) + PV card (droite) — tout rendu par updateHomecardDisplay
-  updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,immoGainVente);
+  updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,immoGainVente,pru,btcInvested,bourseCost);
 
   // Allocation
   const allocItems=[
@@ -1076,7 +1079,7 @@ function calcAll(){
     const el=document.getElementById(`note-card-${k}`);
     if(el)el.style.display=D.notePages[k]?'block':'none';
   });
-  const na=document.getElementById('note-area'); const naCash=document.getElementById('note-area-cash'); if(naCash&&document.activeElement!==naCash)naCash.value=D.note||'';
+  const na=document.getElementById('note-area');
   if(na&&document.activeElement!==na)na.value=D.note||'';
 
   // BITCOIN
@@ -1299,8 +1302,10 @@ function exportTxCSV(){
   const rows=[['Type','Date','BTC','EUR','Satoshis','Prix EUR/BTC','Note']];
   D.transactions.forEach(tx=>{rows.push([tx.type,tx.date||'',tx.type!=='frais'?(tx.btc||0):'',tx.type!=='frais'?(tx.eur||0):'',tx.type==='frais'?(tx.sats||0):'',tx.btc&&tx.eur?(tx.eur/tx.btc).toFixed(2):'',tx.note||'']);});
   const csv='\uFEFF'+rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
-  a.download='tx_btc_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+  const a=document.createElement('a');
+  const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.href=url;a.download='tx_btc_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();URL.revokeObjectURL(url);
 }
 function importTxCSV(){
   const inp=document.createElement('input');
@@ -1416,7 +1421,7 @@ function renderCollDisplay(){
       </div>
     </div>`;}).join('')||'<p style="font-size:12px;color:var(--tx3);margin-bottom:8px">Ajoutez un pret dans Passif</p>');
 }
-function addColl(){addCollPret();goTo(4);}
+function addColl(){addCollPret();goTo(5);}
 
 // ============================================================
 // BOURSE
@@ -1449,30 +1454,35 @@ async function fetchBourse(){
   document.getElementById('b-txt').textContent='Chargement...';
   let ok=0,fail=0;
   const failed=[];
-  for(let i=0;i<D.titres.length;i++){
-    const t=D.titres[i];
-    if(!t.symbol||!t.useApi)continue;
+
+  async function fetchPrice(t){
+    if(!t.symbol||!t.useApi)return null;
+    if(D.apiKey&&D.apiKey.trim()!==''){
+      const res=await fetch('https://finnhub.io/api/v1/quote?symbol='+encodeURIComponent(t.symbol)+'&token='+D.apiKey.trim());
+      const data=await res.json();
+      return data.c||null;
+    }else{
+      const yfUrl='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(t.symbol)+'?interval=1d&range=1d';
+      const res=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(yfUrl));
+      const w=await res.json();
+      const d=JSON.parse(w.contents);
+      return d?.chart?.result?.[0]?.meta?.regularMarketPrice||null;
+    }
+  }
+
+  await Promise.all(D.titres.map(async(t,i)=>{
+    if(!t.symbol||!t.useApi)return;
     try{
-      let price=null;
-      if(D.apiKey&&D.apiKey.trim()!==''){
-        const res=await fetch('https://finnhub.io/api/v1/quote?symbol='+encodeURIComponent(t.symbol)+'&token='+D.apiKey.trim());
-        const data=await res.json();
-        price=data.c;
-      }else{
-        const yfUrl='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(t.symbol)+'?interval=1d&range=1d';
-        const res=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(yfUrl));
-        const w=await res.json();
-        const d=JSON.parse(w.contents);
-        price=d?.chart?.result?.[0]?.meta?.regularMarketPrice;
-      }
+      const price=await fetchPrice(t);
       if(price&&price>0){D.titres[i].cours=price;ok++;}
       else{fail++;failed.push(t.symbol);}
     }catch(e){fail++;failed.push(t.symbol);}
-  }
+  }));
+
   save();calcAll();renderBourseEditors();
   document.getElementById('b-dot').className=ok>0?'dot live':'dot off';
   document.getElementById('b-txt').textContent=ok>0
-    ?(ok+' cours mis a jour'+(fail?' — '+fail+' echec'+(failed.length?' ('+failed.join(', ')+')':''  ):''  ))
+    ?(ok+' cours mis a jour'+(fail?' — '+fail+' echec'+(failed.length?' ('+failed.join(', ')+')':''):''))
     :'Echec — verifiez la connexion ou la cle API';
 }
 
@@ -1742,7 +1752,7 @@ function toggleBourseEdit(){
   const panel=document.getElementById('bourse-edit-panel');
   const btn=document.getElementById('bourse-edit-btn');
   if(panel)panel.style.display=_bourseEditing?'block':'none';
-  if(btn)btn.textContent=_bourseEditing?'Modifier':'Modifier';
+  if(btn)btn.textContent=_bourseEditing?'Valider':'Modifier';
   if(_bourseEditing)renderBourseEditors();
 }
 
@@ -1752,7 +1762,7 @@ function toggleBiensEdit(){
   const panel=document.getElementById('biens-edit-panel');
   const btn=document.getElementById('biens-edit-btn');
   if(panel)panel.style.display=_biensEditing?'block':'none';
-  if(btn)btn.textContent=_biensEditing?'Modifier':'Modifier';
+  if(btn)btn.textContent=_biensEditing?'Valider':'Modifier';
   if(_biensEditing)renderBiensEditors();
 }
 
@@ -1762,7 +1772,7 @@ function toggleCashEdit(){
   const panel=document.getElementById('cash-edit-panel');
   const btn=document.getElementById('cash-edit-btn');
   if(panel)panel.style.display=_cashEditing?'block':'none';
-  if(btn)btn.textContent=_cashEditing?'Modifier':'Modifier';
+  if(btn)btn.textContent=_cashEditing?'Valider':'Modifier';
   if(_cashEditing){renderCashEditors();renderLivretEditors();}
 }
 
@@ -1772,7 +1782,7 @@ function togglePretsEdit(){
   const panel=document.getElementById('prets-edit-panel');
   const btn=document.getElementById('prets-edit-btn');
   if(panel)panel.style.display=_pretsEditing?'block':'none';
-  if(btn)btn.textContent=_pretsEditing?'Modifier':'Modifier';
+  if(btn)btn.textContent=_pretsEditing?'Valider':'Modifier';
   if(_pretsEditing)renderPretsEditors();
 }
 
@@ -1782,7 +1792,7 @@ function toggleCollPretsEdit(){
   const panel=document.getElementById('collprets-edit-panel');
   const btn=document.getElementById('collprets-edit-btn');
   if(panel)panel.style.display=_collPretsEditing?'block':'none';
-  if(btn)btn.textContent=_collPretsEditing?'Modifier':'Modifier';
+  if(btn)btn.textContent=_collPretsEditing?'Valider':'Modifier';
   if(_collPretsEditing)renderCollPretsEditors();
 }
 
@@ -1884,11 +1894,10 @@ function checkDeadlines(){
   });
   alerts.forEach(a=>{
     const key='deadline_'+a.name+'_'+a.days;
-    if(!D._lastNotif)D._lastNotif={};
-    const last=D._lastNotif[key]||0;
+    const last=_lastNotif[key]||0;
     if(Date.now()-last>23*3600000){
       new Notification('Legacy — Echeance dans '+a.label,{body:a.name+' arrive a echeance dans '+a.label,tag:key});
-      D._lastNotif[key]=Date.now();
+      _lastNotif[key]=Date.now();
     }
   });
 }
@@ -1927,21 +1936,20 @@ function toggleNotifs(checked){
 function checkNotifThresholds(btcPrice,netVal){
   if(!D.notifEnabled||Notification.permission!=='granted')return;
   const now=Date.now();
-  if(!D._lastNotif)D._lastNotif={};
   // BTC high
-  if(D.notifBtcHigh&&btcPrice>D.notifBtcHigh&&(!D._lastNotif.btcHigh||now-D._lastNotif.btcHigh>3600000)){
-    new Notification('Legacy — Bitcoin ₿',{body:'Prix Bitcoin ₿ a depasse '+new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(D.notifBtcHigh),icon:'',tag:'btc-high'});
-    D._lastNotif.btcHigh=now;
+  if(D.notifBtcHigh&&btcPrice>D.notifBtcHigh&&(!_lastNotif.btcHigh||now-_lastNotif.btcHigh>3600000)){
+    new Notification('Legacy — Bitcoin ₿',{body:'Prix Bitcoin ₿ a depasse '+fE(D.notifBtcHigh),icon:'',tag:'btc-high'});
+    _lastNotif.btcHigh=now;
   }
   // BTC low
-  if(D.notifBtcLow&&btcPrice>0&&btcPrice<D.notifBtcLow&&(!D._lastNotif.btcLow||now-D._lastNotif.btcLow>3600000)){
-    new Notification('Legacy — Bitcoin ₿',{body:'Prix Bitcoin ₿ est passe sous '+new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(D.notifBtcLow),icon:'',tag:'btc-low'});
-    D._lastNotif.btcLow=now;
+  if(D.notifBtcLow&&btcPrice>0&&btcPrice<D.notifBtcLow&&(!_lastNotif.btcLow||now-_lastNotif.btcLow>3600000)){
+    new Notification('Legacy — Bitcoin ₿',{body:'Prix Bitcoin ₿ est passe sous '+fE(D.notifBtcLow),icon:'',tag:'btc-low'});
+    _lastNotif.btcLow=now;
   }
   // Net high
-  if(D.notifNetHigh&&netVal>D.notifNetHigh&&(!D._lastNotif.netHigh||now-D._lastNotif.netHigh>3600000)){
-    new Notification('Legacy — Patrimoine',{body:'Patrimoine net a depasse '+new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(D.notifNetHigh),icon:'',tag:'net-high'});
-    D._lastNotif.netHigh=now;
+  if(D.notifNetHigh&&netVal>D.notifNetHigh&&(!_lastNotif.netHigh||now-_lastNotif.netHigh>3600000)){
+    new Notification('Legacy — Patrimoine',{body:'Patrimoine net a depasse '+fE(D.notifNetHigh),icon:'',tag:'net-high'});
+    _lastNotif.netHigh=now;
   }
 }
 
@@ -1969,7 +1977,7 @@ function renderBourseEditors(){
 }
 
 
-function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,immoGainVente){
+function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,immoGainVente,pru,btcInvested,bourseCost){
   const hc=D.homeCard||'btc';
   const row=document.getElementById('homecard-row');
   if(!row)return;
@@ -1986,9 +1994,7 @@ function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,imm
 
   // ── PV card (always right) ──
   const pvRows=[];
-  const btcInvested=totalBuyEur();
   if(btcInvested>0||btcEur>0)pvRows.push({l:'Bitcoin <span style="color:var(--btc)">&#x20BF;</span>',v:btcEur-btcInvested});
-  const bourseCost=D.titres.reduce((a,t)=>a+(+t.qty||0)*(+t.pru||0),0);
   if(bourseCost>0||bourseTotal>0)pvRows.push({l:'Bourse 📈',v:boursePnl});
   if(D.biens.length>0)pvRows.push({l:'Immo 🏢',v:immoGainVente});
   const pvTotal=pvRows.reduce((a,r)=>a+r.v,0);
@@ -2013,7 +2019,6 @@ function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,imm
   let leftHTML='';
 
   if(hc==='btc'){
-    const pru=pruFromTx();
     const perf=pru>0&&D.btcPrice>0?(D.btcPrice-pru)/pru*100:null;
     leftHTML=`
       <div class="sq" style="background:var(--g);border-color:var(--gb)">
@@ -2136,7 +2141,7 @@ function goTo(idx){
   swiper.style.transform=`translateX(-${idx*(100/6).toFixed(4)}%)`;
   niEls.forEach((n,i)=>n.classList.toggle('active',i===idx));
   // Reset scroll
-  document.querySelectorAll('.page').forEach((p,i)=>{if(i===idx)p.scrollTop=0;});
+  document.querySelectorAll('.page')[idx].scrollTop=0;
 }
 
 // Swipe
@@ -2177,8 +2182,9 @@ async function fetchBTC(){
 // ============================================================
 function exportJSON(){
   const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([JSON.stringify(D,null,2)],{type:'application/json'}));
-  a.download='legacy_'+new Date().toISOString().slice(0,10)+'.json';a.click();
+  const url=URL.createObjectURL(new Blob([JSON.stringify(D,null,2)],{type:'application/json'}));
+  a.href=url;a.download='legacy_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();URL.revokeObjectURL(url);
 }
 function importJSON(){
   const inp=document.createElement('input');inp.type='file';inp.accept='.json';
