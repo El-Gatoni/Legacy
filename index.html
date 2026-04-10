@@ -206,13 +206,35 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .titre-eur{font-size:18px;font-weight:800;color:#fff}
 .titre-pv{font-size:11px;margin-top:2px}
 
-/* Immo */
-.bien-card{background:var(--g);border:1px solid var(--gb);border-radius:16px;padding:13px;margin-bottom:10px;backdrop-filter:blur(16px)}
+/* Immo summary card */
+.immo-summary{background:var(--g);border:1px solid var(--gb);border-radius:18px;padding:14px;margin-bottom:10px}
+.immo-sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.immo-sum-item{background:var(--inner);border:1px solid var(--bdr);border-radius:11px;padding:8px 10px}
+.immo-sum-lbl{font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:3px}
+.immo-sum-val{font-size:15px;font-weight:700;color:#fff}
+
+/* Bien square cards (2-col grid like wallets) */
+.bien-sq-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.bien-sq{background:var(--g);border:1px solid var(--gb);border-radius:16px;padding:12px;backdrop-filter:blur(16px);display:flex;flex-direction:column;gap:6px;min-height:150px}
+.bien-sq-name{font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.bien-sq-lbl{font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:1px}
+.bien-sq-val{font-size:14px;font-weight:700;color:#fff}
+.bien-sq-sep{height:1px;background:rgba(255,255,255,0.07);margin:4px 0}
+
+/* Titre square cards (2-col grid) */
+.titre-sq-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.titre-sq{background:var(--g);border:1px solid var(--gb);border-radius:16px;padding:12px;backdrop-filter:blur(16px);display:flex;flex-direction:column;gap:4px;min-height:130px}
+.titre-sq-name{font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.titre-sq-sym{font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:2px}
+.titre-sq-cours{font-size:16px;font-weight:800;color:#fff;letter-spacing:-.3px}
+.titre-sq-val{font-size:12px;color:rgba(255,255,255,0.55);margin-top:auto}
+
 .bien-name{font-size:17px;font-weight:800;margin-bottom:10px;color:#fff;display:flex;align-items:center;gap:6px}
 .pbg{height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;margin-top:4px}
 .pfill{height:100%;border-radius:3px;background:var(--grn);transition:width .4s}
 
-/* Passif cards */
+/* Immo */
+.bien-card{background:var(--g);border:1px solid var(--gb);border-radius:16px;padding:13px;margin-bottom:10px;backdrop-filter:blur(16px)}
 .passif-item{background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.16);border-radius:14px;padding:11px 13px;margin-bottom:8px}
 .passif-item .ct{color:var(--red);font-size:14px}
 
@@ -464,8 +486,9 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
         <label>Actif affiche</label>
         <select id="homecard-select" onchange="D.homeCard=this.value;save();updateParamsMenu();calcAll()">
           <option value="btc">Bitcoin &#x20BF;</option>
-          <option value="bourse">Bourse (total)</option>
+          <option value="bourse">Bourse</option>
           <option value="immo">Immobilier</option>
+          <div id="homecard-titre-options"></div>
         </select>
       </div>
     </div>
@@ -577,27 +600,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
       </div>
     </div>
     <div style="font-size:12px;color:rgba(255,255,255,0.35);text-align:center;padding:2px 4px 10px;line-height:1.5;font-style:italic">En 2024, le patrimoine net median des Francais s'eleve a 148 100 € (Insee).</div>
-    <div class="sq-row">
-      <div class="sq sq-btc">
-        <div style="font-size:12px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Bitcoin <span style="color:var(--btc)">&#x20BF;</span></div>
-        <div style="display:flex;flex-direction:column;gap:6px;flex:1;justify-content:center">
-          <div>
-            <div style="font-size:11px;color:rgba(245,158,11,0.6);margin-bottom:2px">Prix Bitcoin <span style="color:var(--btc)">&#x20BF;</span></div>
-            <div style="font-size:20px;font-weight:800;color:var(--btc);letter-spacing:-.5px" id="sq-btc-price">--</div>
-            <div class="sq-badge up" id="sq-btc-chg" style="display:none;margin-top:3px"></div>
-          </div>
-          <div style="border-top:1px solid rgba(245,158,11,0.15);padding-top:6px">
-            <div style="font-size:11px;color:rgba(245,158,11,0.6);margin-bottom:2px">Mon Stack <span style="color:var(--btc)">&#x20BF;</span></div>
-            <div style="font-size:14px;font-weight:700;color:var(--btc)" id="sq-btc-stack">--</div>
-            <div style="font-size:11px;color:rgba(245,158,11,0.45)" id="sq-btc-sats">--</div>
-          </div>
-        </div>
-      </div>
-      <div class="sq">
-        <div style="font-size:12px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Plus-values</div>
-        <div id="pv-sq-content"><div class="pv-sq-row"><span class="lbl" style="color:rgba(255,255,255,0.4)">Aucune donnee</span></div></div>
-      </div>
-    </div>
+    <div class="sq-row" id="homecard-row"></div>
     <div class="card">
       <div class="ct">Allocation — investis</div>
       <div class="alloc-bar" id="alloc-bar"></div>
@@ -972,6 +975,19 @@ function pruFromTx(){
 }
 function totalBuyEur(){return D.transactions.filter(t=>t.type==='achat').reduce((a,t)=>a+(+t.eur||0),0);}
 
+
+// ── Loyer effectif : units si presents, sinon loyer legacy ──
+function bienLoyer(b){
+  if(b.units&&b.units.length>0)
+    return b.units.reduce((s,u)=>s+(+u.loyer||0),0);
+  return +(b.loyer||0);
+}
+function bienChargesLocatives(b){
+  if(b.units&&b.units.length>0)
+    return b.units.reduce((s,u)=>s+(+u.charges||0),0);
+  return (b.rentalCharges||[]).reduce((s,rc)=>s+(+rc.value||0),0);
+}
+
 // ============================================================
 // MAIN CALC — only updates display elements, never re-renders editors
 // ============================================================
@@ -999,7 +1015,7 @@ function calcAll(){
     const apport=+(b.apport||0);
     const credit=+(b.credit||0);
     const approsMe=(b.appros||[]).filter(a=>a.who==='me').reduce((s,a)=>s+(+a.amount||0),0);
-    const gainVente=((est+bank)-credit-apport)*part-approsMe;
+    const gainVente=(est*part)-(credit*part)+bank-apport-approsMe;
     immoVal+=est*part;
     immoGainVente+=gainVente;
     immoCredit+=credit*part;
@@ -1018,25 +1034,8 @@ function calcAll(){
   setT('kpi-net',fE(net));
   setT('kpi-brut',fE(brut));
   setT('kpi-fin',fE(financier));
-  // BTC square (or chosen asset card)
-  setT('sq-btc-price',fE(D.btcPrice));
-  setT('sq-btc-stack',fB8(stackBtc));
-  const sqSats=document.getElementById('sq-btc-sats');if(sqSats)sqSats.textContent=Math.round(stackBtc*1e8).toLocaleString('fr-FR')+' sats';
-  // Update accueil sq-btc card label based on homeCard choice
-  updateHomecardDisplay(bourseTotal,boursePnl,immoGainVente);
-
-  // PV square
-  const pvRows=[];
-  if(btcInvested>0||btcEur>0){const p=(btcEur-btcInvested);pvRows.push({l:'Bitcoin <span style="color:var(--btc)">&#x20BF;</span>',v:p,f:btcInvested});}
-  if(bourseCost>0||bourseTotal>0){pvRows.push({l:'Bourse 📈',v:boursePnl,f:bourseCost});}
-  if(D.biens.length>0){pvRows.push({l:'Immo 🏢',v:immoGainVente,f:0,noRatio:true});}
-  const pvTotal=pvRows.reduce((a,r)=>a+r.v,0);
-  setH('pv-sq-content',pvRows.length?pvRows.map(r=>`
-    <div class="pv-sq-row">
-      <span class="lbl">${r.l}</span>
-      <span class="vl ${r.v<0?'neg':''}">${r.v>=0?'+':''}${fE(r.v)}</span>
-    </div>`).join('')+`<div class="pv-sq-total"><span class="lbl">Total</span><span class="vl ${pvTotal<0?'neg':''}">${pvTotal>=0?'+':''}${fE(pvTotal)}</span></div>`
-    :'<div class="pv-sq-row"><span class="lbl" style="color:var(--tx3)">Aucune donnee</span></div>');
+  // Homecard (gauche) + PV card (droite) — tout rendu par updateHomecardDisplay
+  updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,immoGainVente);
 
   // Allocation
   const allocItems=[
@@ -1124,13 +1123,19 @@ function calcAll(){
 
   // PASSIF
   setT('p-total',fE(totalPassif));
-  setH('p-immo-list',D.biens.filter(b=>+(b.credit||0)>0).map(b=>`
+  setH('p-immo-list',D.biens.filter(b=>+(b.credit||0)>0).map(b=>{
+    const remb=b.empruntinitial>0?Math.min(100,(1-(+(b.credit||0))/b.empruntinitial)*100):0;
+    return `
     <div class="passif-item">
       <div class="ct">${esc(b.name||'Bien')} 🏢</div>
       <div class="row" style="padding-top:0"><span class="rl">Reste (votre part)</span><span class="rv" style="color:var(--red)">${fE((+(b.credit||0))*(+(b.part||100)/100))}</span></div>
       <div class="row"><span class="rl">Taux</span><span class="rv">${b.tauxPret||0}%</span></div>
       ${b.dateFinPret?`<div class="row"><span class="rl">Fin</span><span class="rv">${fmtDate(b.dateFinPret)}</span></div>`:''}
-    </div>`).join('')||'<p style="font-size:12px;color:var(--tx3);margin-bottom:8px">Aucun credit immobilier</p>');
+      <div style="margin-top:8px">
+        <div class="prow" style="margin-bottom:3px;display:flex;justify-content:space-between"><span style="color:rgba(255,255,255,0.5);font-size:11px">Remboursement credit</span><span style="color:rgba(255,255,255,0.5);font-size:11px">${remb.toFixed(1)} %</span></div>
+        <div class="pbg"><div class="pfill" style="width:${remb.toFixed(1)}%"></div></div>
+      </div>
+    </div>`;}).join('')||'<p style="font-size:12px;color:var(--tx3);margin-bottom:8px">Aucun credit immobilier</p>');
   setH('p-colls-list',D.collPrets.map(c=>`
     <div class="passif-item">
       <div class="ct">${esc(c.name)} ₿</div>
@@ -1138,6 +1143,21 @@ function calcAll(){
       <div class="row"><span class="rl">Taux</span><span class="rv">${c.rate||0}%</span></div>
       ${c.dueDate?`<div class="row"><span class="rl">Echeance</span><span class="rv">${fmtDate(c.dueDate)}</span></div>`:''}
     </div>`).join('')||'<p style="font-size:12px;color:var(--tx3);margin-bottom:8px">Aucun</p>');
+
+  // Prets personnels display (barres de progression)
+  setH('p-prets-list',D.prets.filter(p=>+(p.montant||0)>0||+(p.restant||0)>0).map(p=>{
+    const remb=p.montant>0?Math.min(100,(1-(+(p.restant||0))/(+(p.montant||0)))*100):0;
+    return `
+    <div class="passif-item">
+      <div class="ct">${esc(p.name||'Pret')}</div>
+      <div class="row" style="padding-top:0"><span class="rl">Reste (votre part)</span><span class="rv" style="color:var(--red)">${fE((+(p.restant||0))*(+(p.part||100)/100))}</span></div>
+      <div class="row"><span class="rl">Taux</span><span class="rv">${p.taux||0}%</span></div>
+      ${p.dateFin?`<div class="row"><span class="rl">Fin</span><span class="rv">${fmtDate(p.dateFin)}</span></div>`:''}
+      <div style="margin-top:8px">
+        <div class="prow" style="margin-bottom:3px;display:flex;justify-content:space-between"><span style="color:rgba(255,255,255,0.5);font-size:11px">Remboursement credit</span><span style="color:rgba(255,255,255,0.5);font-size:11px">${remb.toFixed(1)} %</span></div>
+        <div class="pbg"><div class="pfill" style="width:${remb.toFixed(1)}%"></div></div>
+      </div>
+    </div>`;}).join('')||'');
 
   // Dynamic renders (display only)
   renderWalletDisplay();
@@ -1283,23 +1303,69 @@ function exportTxCSV(){
   a.download='tx_btc_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
 }
 function importTxCSV(){
-  const inp=document.createElement('input');inp.type='file';inp.accept='.csv';
+  const inp=document.createElement('input');
+  inp.type='file';
+  inp.accept='.csv';
   inp.onchange=e=>{
+    const file=e.target.files[0];
+    if(!file)return;
     const reader=new FileReader();
     reader.onload=ev=>{
       try{
-        const lines=ev.target.result.replace(/^\uFEFF/,'').split('\n').slice(1).filter(l=>l.trim());
-        let n=0;
-        lines.forEach(line=>{
-          const cols=line.split(',').map(c=>c.replace(/^"|"$/g,'').replace(/""/g,'"'));
-          const [type,date,btc,eur,sats,,note]=cols;
-          if(!['achat','vente','frais'].includes(type))return;
-          D.transactions.push({type,date:date||'',btc:+btc||0,eur:+eur||0,sats:+sats||0,note:note||''});n++;
-        });
-        save();calcAll();alert(n+' transaction(s) importee(s).');
-      }catch(err){alert('Erreur CSV: '+err.message);}
+        let text=ev.target.result.replace(/^\uFEFF/,'').trim();
+        const lines=text.split('\n').filter(l=>l.trim()!=='');
+        if(lines.length<2){alert('Le fichier CSV semble vide ou invalide.');return;}
+        let imported=0,skipped=0;
+        const headerLine=lines[0].toLowerCase();
+        const isSemicolon=headerLine.includes(';');
+        for(let i=1;i<lines.length;i++){
+          let line=lines[i].trim();
+          if(!line)continue;
+          let cols=isSemicolon
+            ?line.split(';').map(c=>c.trim().replace(/^"|"$/g,'').replace(/""/g,'"'))
+            :line.split(',').map(c=>c.trim().replace(/^"|"$/g,'').replace(/""/g,'"'));
+          if(cols.length<2){skipped++;continue;}
+          let dateStr='',rawType='',btcAmount=0,eurAmount=0,asset='';
+          for(let col of cols){
+            const lower=col.toLowerCase();
+            if(!dateStr&&(/^\d{4}-\d{2}-\d{2}/.test(col)||lower.includes('date')||lower.includes('time')||lower.includes('timestamp'))){
+              dateStr=col.slice(0,10);
+            }
+            if(!rawType){
+              if(lower.includes('buy')||lower.includes('purchase')||lower.includes('achat'))rawType='buy';
+              else if(lower.includes('sell')||lower.includes('vente'))rawType='sell';
+              else if(lower.includes('fee')||lower.includes('frais')||lower.includes('commission'))rawType='fee';
+            }
+            if(lower.includes('btc')||lower.includes('bitcoin')||lower.includes('\u20bf')){asset='btc';}
+            const num=parseFloat(col.replace(',','.').replace(/[^0-9.\-]/g,''));
+            if(!isNaN(num)&&num!==0){
+              if(asset==='btc'||lower.includes('btc')||lower.includes('\u20bf')){
+                if(btcAmount===0)btcAmount=num;
+              }else if(lower.includes('eur')||lower.includes('\u20ac')||lower.includes('total')||lower.includes('value')){
+                if(eurAmount===0)eurAmount=num;
+              }
+            }
+          }
+          let type='';
+          if(rawType==='buy')type='achat';
+          else if(rawType==='sell')type='vente';
+          else if(rawType==='fee')type='frais';
+          else{skipped++;continue;}
+          if(btcAmount===0){skipped++;continue;}
+          if(type==='frais'){
+            const sats=Math.round(Math.abs(btcAmount)*1e8);
+            D.transactions.push({type:'frais',sats,date:dateStr,note:'Import CSV'});
+          }else{
+            const btc=type==='vente'?-Math.abs(btcAmount):Math.abs(btcAmount);
+            D.transactions.push({type,btc,eur:eurAmount||0,date:dateStr,note:'Import CSV'});
+          }
+          imported++;
+        }
+        save();calcAll();
+        alert(imported+' transaction(s) importee(s) avec succes.\n'+skipped+' ligne(s) ignoree(s) (non BTC ou type non reconnu).');
+      }catch(err){alert('Erreur lors de l\'import CSV : '+err.message);console.error(err);}
     };
-    reader.readAsText(e.target.files[0],'UTF-8');
+    reader.readAsText(file,'UTF-8');
   };inp.click();
 }
 
@@ -1357,24 +1423,26 @@ function addColl(){addCollPret();goTo(4);}
 // ============================================================
 function renderBourseDisplay(){
   const totPort=D.titres.reduce((a,t)=>a+(+t.qty||0)*(+t.cours||0),0);
-  setH('bourse-display',D.titres.map(t=>{
+  if(!D.titres.length){
+    setH('bourse-display','<p style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:8px">Aucun titre</p>');
+    return;
+  }
+  setH('bourse-display',`<div class="titre-sq-grid">${D.titres.map(t=>{
     const val=(+t.qty||0)*(+t.cours||0),cost=(+t.qty||0)*(+t.pru||0);
     const pvPct=cost>0?(val-cost)/cost*100:null;
     const pvEur=val-cost;
     const poids=totPort>0?val/totPort*100:0;
-    return `<div class="titre-card">
-      <div class="titre-top">
-        <div><div class="titre-name">${esc(t.name)}</div><div class="titre-sym">${esc(t.symbol)} · ${t.qty||0} titres · <span style="color:rgba(255,255,255,0.45)">${poids.toFixed(1)}%</span></div></div>
-        <div class="titre-val">
-          <div class="titre-eur">${fE(val)}</div>
-          <div class="titre-pv">${pvPct!==null?`<span style="color:${pvPct>=0?'var(--grn)':'var(--red)'}">${pvPct>=0?'+':''}${pvPct.toFixed(1)}% (${pvPct>=0?'+':''}${fE(pvEur)})</span>`:'--'}</div>
-        </div>
+    return `<div class="titre-sq">
+      <div><div class="titre-sq-name">${esc(t.name)}</div><div class="titre-sq-sym">${esc(t.symbol||'--')} &middot; ${poids.toFixed(1)}%</div></div>
+      <div><div class="titre-sq-cours">${fE2(t.cours||0)}</div><div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:1px">${t.qty||0} titres &middot; <span style="color:${t.useApi?'var(--grn)':'rgba(255,255,255,0.25)'}">${t.useApi?'auto':'manuel'}</span></div></div>
+      <div style="margin-top:auto">
+        <div style="font-size:13px;font-weight:700;color:#fff">${fE(val)}</div>
+        ${pvPct!==null?`<span class="badge ${pvPct>=0?'green':'red'}" style="margin-top:3px">${pvPct>=0?'+':''}${pvPct.toFixed(1)}% &middot; ${pvEur>=0?'+':''}${fE(pvEur)}</span>`:''}
       </div>
-      <div class="row" style="padding-top:0"><span class="rl">PRU</span><span class="rv">${fE2(t.pru)}</span></div>
-      <div class="row"><span class="rl">Cours</span><span class="rv">${fE2(t.cours)} <span style="font-size:10px;color:${t.useApi?'var(--grn)':'rgba(255,255,255,0.3)'}">${t.useApi?'auto':'manuel'}</span></span></div>
-    </div>`;}).join('')||'<p style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:8px">Aucun titre</p>');
+    </div>`;
+  }).join('')}</div>`);
 }
-function addTitre(){D.titres.push({id:uid(),name:'Nouveau titre',symbol:'',qty:0,pru:0,cours:0,useApi:true});save();renderBourseEditors();renderBourseDisplay();calcAll();}
+function addTitre(){D.titres.push({id:uid(),name:'Nouveau titre',symbol:'',qty:0,pru:0,cours:0,useApi:true});save();renderBourseEditors();renderBourseDisplay();updateHomecardSel();calcAll();}
 
 async function fetchBourse(){
   document.getElementById('b-dot').className='dot off';
@@ -1412,49 +1480,68 @@ async function fetchBourse(){
 // IMMOBILIER
 // ============================================================
 function renderBiensDisplay(){
-  setH('biens-display',D.biens.length?D.biens.map(b=>{
-    const est=(+b.surface||0)*(+b.prixm2||0);
-    const part=(+b.part||100)/100;
-    const bank=+(b.bankAccount||0);
-    const loyer=+(b.loyer||0);
+  if(!D.biens.length){
+    setH('biens-display','<p style="font-size:13px;color:rgba(255,255,255,0.4);padding:8px 0">Ajoutez un bien via Modifier</p>');
+    return;
+  }
+  let totalBrut=0,totalCredit=0,totalGain=0,totalLoyerNet=0,hasLocation=false;
+  D.biens.forEach(b=>{
+    const est=(+b.surface||0)*(+b.prixm2||0),part=(+b.part||100)/100;
+    const credit=+(b.credit||0),apport=+(b.apport||0),bank=+(b.bankAccount||0);
+    const loyer=bienLoyer(b);
     const approsMe=(b.appros||[]).filter(a=>a.who==='me').reduce((s,a)=>s+(+a.amount||0),0);
-    const totalCharges=(b.charges||[]).reduce((s,c)=>s+(+c.value||0),0);
-    const gainVente=((est+bank)-(+(b.credit||0))-(+(b.apport||0)))*part-approsMe;
-    const remb=b.empruntinitial>0?Math.min(100,(1-(+(b.credit||0))/b.empruntinitial)*100):0;
-    const rentBrute=est*part>0&&loyer>0?(loyer*12)/(est*part)*100:null;
-    const rentalChargesTotal=(b.rentalCharges||[]).reduce((a,rc)=>a+(+rc.value||0),0);
+    const rentalChargesTotal=bienChargesLocatives(b);
+    totalBrut+=est*part; totalCredit+=credit*part;
+    totalGain+=(est*part)-(credit*part)+bank-apport-approsMe;
+    if(loyer>0){totalLoyerNet+=loyer*12-rentalChargesTotal;hasLocation=true;}
+  });
+  const ltv=totalBrut>0?totalCredit/totalBrut*100:0;
+  const ltvColor=ltv<=50?'var(--grn)':ltv<=75?'var(--btc)':'var(--red)';
+  const rentGlobale=totalBrut>0&&hasLocation?totalLoyerNet/totalBrut*100:null;
+  const summaryHTML=`
+  <div class="immo-summary">
+    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Synthese &mdash; ${D.biens.length} bien${D.biens.length>1?'s':''}</div>
+    <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-1px;line-height:1.1">${fE(totalBrut)}</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:10px">Patrimoine brut total</div>
+    <div class="immo-sum-grid">
+      <div class="immo-sum-item"><div class="immo-sum-lbl">Encours credit</div><div class="immo-sum-val" style="color:var(--red)">${fE(totalCredit)}</div></div>
+      <div class="immo-sum-item"><div class="immo-sum-lbl">LTV globale</div><div class="immo-sum-val" style="color:${ltvColor}">${ltv.toFixed(1)}%</div></div>
+      <div class="immo-sum-item"><div class="immo-sum-lbl">Gain net vente</div><div class="immo-sum-val" style="color:${totalGain>=0?'var(--grn)':'var(--red)'}">${totalGain>=0?'+':''}${fE(totalGain)}</div></div>
+      <div class="immo-sum-item"><div class="immo-sum-lbl">${hasLocation?'Loyer net / an':'Biens'}</div><div class="immo-sum-val" style="color:${hasLocation?'var(--grn)':'#fff'}">${hasLocation?fE(totalLoyerNet):D.biens.length}</div></div>
+    </div>
+    ${rentGlobale!==null?`<div style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.4)">Rendement net global : <span style="color:${rentGlobale>=5?'var(--grn)':rentGlobale>=3?'var(--btc)':'var(--red)'};font-weight:700">${rentGlobale.toFixed(2)}%</span></div>`:''}
+  </div>`;
+  const biensHTML=`<div class="bien-sq-grid">${D.biens.map(b=>{
+    const est=(+b.surface||0)*(+b.prixm2||0),part=(+b.part||100)/100;
+    const credit=+(b.credit||0),apport=+(b.apport||0),bank=+(b.bankAccount||0);
+    const approsMe=(b.appros||[]).filter(a=>a.who==='me').reduce((s,a)=>s+(+a.amount||0),0);
+    const loyer=bienLoyer(b);
+    const rentalChargesTotal=bienChargesLocatives(b);
+    const gainVente=(est*part)-(credit*part)+bank-apport-approsMe;
+    const remb=b.empruntinitial>0?Math.min(100,(1-(credit/b.empruntinitial))*100):0;
     const rentNette=est*part>0&&loyer>0?((loyer*12-rentalChargesTotal))/(est*part)*100:null;
-    return `
-    <div class="bien-card">
-      <div class="bien-name">${esc(b.name||'Bien')}</div>
-      <div class="row" style="padding-top:0"><span class="rl">Surface</span><span class="rv">${b.surface||0} m² · ${fE2(b.prixm2)}/m²</span></div>
-      <div class="row"><span class="rl">Estimation (${b.part||100}%)</span><span class="rv">${fE(est*part)}</span></div>
-      <div class="row"><span class="rl">Emprunt initial</span><span class="rv">${fE(b.empruntinitial)}</span></div>
-      <div class="row"><span class="rl">Reste a rembourser</span><span class="rv" style="color:var(--red)">${fE(b.credit)}</span></div>
-      <div class="row"><span class="rl">Taux</span><span class="rv">${b.tauxPret||0}%</span></div>
-      <div class="row"><span class="rl">Apport</span><span class="rv">${fE(b.apport)}</span></div>
-      ${totalCharges>0?`<div class="row"><span class="rl">Charges (votre part)</span><span class="rv" style="color:var(--red)">-${fE(totalCharges*part)}</span></div>`:''}
-      <div class="row"><span class="rl">Compte bancaire</span><span class="rv">${fE(bank)}</span></div>
-      ${(b.appros||[]).map(a=>`<div class="row"><span class="rl">${a.who==='me'?'Mes appros':esc(a.label||'Autre')}</span><span class="rv">${fE(a.amount)}</span></div>`).join('')}
-      <div class="row"><span class="rl" style="font-weight:700">Gain estime a la vente</span><span class="badge ${gainVente>=0?'green':'red'}">${gainVente>=0?'+':''}${fE(gainVente)}</span></div>
-    </div>
-    <div class="card" style="background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.08);margin-top:-4px;border-radius:0 0 16px 16px;padding:12px 14px 14px">
-      <div class="prow" style="margin-bottom:3px"><span style="color:rgba(255,255,255,0.5);font-size:11px">Remboursement credit</span><span style="color:rgba(255,255,255,0.5);font-size:11px">${remb.toFixed(1)} %</span></div>
-      <div class="pbg"><div class="pfill" style="width:${remb.toFixed(1)}%"></div></div>
-    </div>
-    ${loyer>0?`
-    <div class="bien-card" style="margin-top:8px">
-      <div style="font-size:12px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Location</div>
-      <div class="row" style="padding-top:0"><span class="rl">Loyer mensuel</span><span class="rv">${fE(loyer)}/mois</span></div>
-      <div class="row"><span class="rl">Loyer annuel brut</span><span class="rv">${fE(loyer*12)}</span></div>
-      ${(b.rentalCharges||[]).map(rc=>rc.value>0?`<div class="row"><span class="rl" style="font-size:12px">${esc(rc.name)}</span><span class="rv" style="color:var(--red);font-size:12px">-${fE(rc.value)}/an</span></div>`:'').join('')}
-      <div class="row"><span class="rl">Revenu net annuel</span><span class="rv" style="color:var(--grn)">${fE(loyer*12-rentalChargesTotal)}</span></div>
-      <div class="rent-grid">
-        <div class="rent-item"><div class="rent-lbl">Rent. brute</div><div class="rent-val" style="color:var(--grn)">${rentBrute!==null?rentBrute.toFixed(2)+'%':'--'}</div></div>
-        <div class="rent-item"><div class="rent-lbl">Rent. nette</div><div class="rent-val" style="color:${rentNette>=5?'var(--grn)':rentNette>=3?'var(--btc)':'var(--red)'}">${rentNette!==null?rentNette.toFixed(2)+'%':'--'}</div></div>
+    return `<div class="bien-sq">
+      <div><div class="bien-sq-name">${esc(b.name||'Bien')}</div><div style="font-size:11px;color:rgba(255,255,255,0.3)">${b.surface||0} m&sup2; &middot; ${b.part||100}%</div></div>
+      <div class="bien-sq-sep"></div>
+      <div><div class="bien-sq-lbl">Estimation</div><div class="bien-sq-val">${fE(est*part)}</div></div>
+      ${credit>0?`<div><div class="bien-sq-lbl">Credit restant</div><div class="bien-sq-val" style="color:var(--red);font-size:13px">${fE(credit*part)}</div><div class="pbg" style="margin-top:4px"><div class="pfill" style="width:${remb.toFixed(1)}%"></div></div></div>`:''}
+      <div class="bien-sq-sep"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:11px;color:rgba(255,255,255,0.4)">Gain vente</span>
+        <span class="badge ${gainVente>=0?'green':'red'}" style="font-size:11px">${gainVente>=0?'+':''}${fE(gainVente)}</span>
       </div>
-    </div>`:''}`;
-  }).join(''):'<p style="font-size:13px;color:rgba(255,255,255,0.4);padding:8px 0">Ajoutez un bien via Modifier</p>');
+      ${loyer>0?`
+      <div class="bien-sq-sep"></div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:2px">${b.units&&b.units.length>0?b.units.length+' unite'+(b.units.length>1?'s':''):'Location'}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:13px;font-weight:700;color:var(--grn)">${fE(loyer)}<span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.4)">/mois</span></span>
+        <span style="font-size:12px;font-weight:700;color:${rentNette>=5?'var(--grn)':rentNette>=3?'var(--btc)':'var(--red)'}">${rentNette!==null?rentNette.toFixed(1)+'%':''}</span>
+      </div>
+      ${b.units&&b.units.length>0?b.units.map(u=>`<div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:1px">${esc(u.name||'Unite')} &middot; ${fE(u.loyer||0)}/mois</div>`).join(''):''}
+      `:''}
+    </div>`;
+  }).join('')}</div>`;
+  setH('biens-display', summaryHTML+biensHTML);
 }
 
 function renderBiensEditors(){
@@ -1499,20 +1586,28 @@ function renderBiensEditors(){
           <div class="ef" style="margin:0"><label>Montant (EUR)</label><input type="number" inputmode="decimal" value="${c.value||0}" onchange="D.biens[${bi}].charges[${ci}].value=+this.value;save();calcAll()"></div>
         </div>`).join('')}
       <button class="btn-add" style="padding:7px;margin-bottom:10px" onclick="(D.biens[${bi}].charges=D.biens[${bi}].charges||[]).push({name:'',value:0});save();renderBiensEditors();calcAll()">+ Charge</button>
-      <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.05em;margin:6px 0 4px">Loyer et location</div>
-      <div class="ef"><label>Loyer mensuel (EUR) — 0 si pas de location</label><input type="number" inputmode="decimal" value="${b.loyer||0}" onchange="D.biens[${bi}].loyer=+this.value;save();calcAll()"></div>
-      <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.05em;margin:4px 0">Charges annuelles (location)</div>
-      ${(b.rentalCharges||[]).map((rc,rci)=>`
-        <div style="display:flex;gap:7px;align-items:flex-end;margin-bottom:6px">
-          <div class="ef" style="flex:1;margin:0"><label>Nom</label><input type="text" value="${esc(rc.name||'')}" onchange="D.biens[${bi}].rentalCharges[${rci}].name=this.value;save()"></div>
-          <div class="ef" style="flex:1;margin:0"><label>Montant/an</label><input type="number" inputmode="decimal" value="${rc.value||0}" onchange="D.biens[${bi}].rentalCharges[${rci}].value=+this.value;save();calcAll()"></div>
-          <button class="del-btn" style="padding-bottom:6px" onclick="D.biens[${bi}].rentalCharges.splice(${rci},1);save();renderBiensEditors();calcAll()">x</button>
+      <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.05em;margin:10px 0 6px">Unites locatives</div>
+      <p style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:8px;line-height:1.5">Ajoutez une unite par logement ou espace loue (appartement, dependance, local...).</p>
+      ${(b.units||[]).map((u,ui)=>`
+        <div class="ibox" style="background:rgba(255,255,255,0.03);margin-bottom:6px">
+          <div class="ibox-hd">
+            <input class="name-inp" style="font-size:14px" value="${esc(u.name||'')}" placeholder="ex: Appartement T2, Dependance..." onchange="D.biens[${bi}].units[${ui}].name=this.value;save();calcAll()">
+            <button class="del-btn" onclick="D.biens[${bi}].units.splice(${ui},1);save();renderBiensEditors();calcAll()">×</button>
+          </div>
+          <div class="g2">
+            <div class="ef" style="margin:0"><label>Loyer mensuel (EUR)</label><input type="number" inputmode="decimal" value="${u.loyer||0}" onchange="D.biens[${bi}].units[${ui}].loyer=+this.value;save();calcAll()"></div>
+            <div class="ef" style="margin:0"><label>Charges annuelles (EUR)</label><input type="number" inputmode="decimal" value="${u.charges||0}" onchange="D.biens[${bi}].units[${ui}].charges=+this.value;save();calcAll()"></div>
+          </div>
         </div>`).join('')}
-      <button class="btn-add" style="padding:5px;font-size:12px;margin-bottom:4px" onclick="(D.biens[${bi}].rentalCharges=D.biens[${bi}].rentalCharges||[]).push({name:'Nouvelle charge',value:0});save();renderBiensEditors()">+ Charge de location</button>
+      ${(b.units||[]).length===0&&(b.loyer||0)>0?`
+        <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:9px 12px;margin-bottom:8px;font-size:12px;color:rgba(245,158,11,0.85)">
+          Loyer global existant : <strong>${fE(b.loyer||0)}/mois</strong> — il sera utilise si aucune unite n'est ajoutee.
+        </div>`:''}
+      <button class="btn-add" style="padding:7px;margin-bottom:4px" onclick="(D.biens[${bi}].units=D.biens[${bi}].units||[]).push({name:'',loyer:0,charges:0});save();renderBiensEditors();calcAll()">+ Ajouter une unite locative</button>
     </div>`).join(''));
 }
 
-function addBien(){D.biens.push({name:'',surface:0,prixm2:0,empruntinitial:0,credit:0,tauxPret:0,dateFinPret:'',part:100,apport:0,bankAccount:0,loyer:0,appros:[],charges:[],rentalCharges:[{name:'Charges location',value:0},{name:'Charges copropriete',value:0},{name:'Electricite',value:0},{name:'Eau',value:0},{name:'Internet',value:0},{name:'Assurance',value:0}]});save();renderBiensEditors();renderBiensDisplay();calcAll();}
+function addBien(){D.biens.push({name:'',surface:0,prixm2:0,empruntinitial:0,credit:0,tauxPret:0,dateFinPret:'',part:100,apport:0,bankAccount:0,loyer:0,appros:[],charges:[],rentalCharges:[],units:[]});save();renderBiensEditors();renderBiensDisplay();calcAll();}
 
 // ============================================================
 // PRETS & COLLPRETS
@@ -1532,7 +1627,11 @@ function renderPretsEditors(){
         <div class="ef"><label>Date de fin</label><input type="date" value="${p.dateFin||''}" onchange="D.prets[${i}].dateFin=this.value;save();calcAll()"></div>
       </div>
     </div>`).join(''));
-  setH('p-prets-list','');// editors are in p-prets area
+  // p-prets-list is now rendered by calcAll (display cards with progress bars)
+  // Hide display cards when editing panel is open
+  const pretsList=document.getElementById('p-prets-list');
+  const pretsPanel=document.getElementById('prets-edit-panel');
+  if(pretsList&&pretsPanel)pretsList.style.display=pretsPanel.style.display==='none'?'block':'none';
 }
 function addPret(){D.prets.push({name:'Pret '+(D.prets.length+1),montant:0,restant:0,taux:0,part:100,dateFin:''});save();renderPretsEditors();calcAll();}
 
@@ -1733,11 +1832,32 @@ function applyTabsConfig(){
 // ---- HOME CARD CHOICE ----
 function updateHomecardSel(){
   const sel=document.getElementById('homecard-select');
-  if(sel)sel.value=D.homeCard||'btc';
+  if(sel){
+    // Rebuild dynamic options (titres boursiers)
+    // Keep the 3 static options, remove old dynamic ones
+    while(sel.options.length>3)sel.remove(3);
+    D.titres.forEach((t,i)=>{
+      const opt=document.createElement('option');
+      opt.value='titre_'+i;
+      opt.textContent='Titre : '+(t.name||t.symbol||'Titre '+(i+1));
+      sel.appendChild(opt);
+    });
+    sel.value=D.homeCard||'btc';
+    // If saved value no longer exists (e.g. titre deleted), fall back to btc
+    if(!sel.value){D.homeCard='btc';sel.value='btc';}
+  }
   const sub=document.getElementById('pmenu-homecard-sub');
   if(sub){
-    const map={btc:'Bitcoin ₿',bourse:'Bourse (total)',immo:'Immobilier'};
-    sub.textContent='Actif affiche : '+(map[D.homeCard]||'Bitcoin ₿');
+    const hc=D.homeCard||'btc';
+    let label='Bitcoin ₿';
+    if(hc==='bourse')label='Bourse (total)';
+    else if(hc==='immo')label='Immobilier';
+    else if(hc.startsWith('titre_')){
+      const idx=+hc.split('_')[1];
+      const t=D.titres[idx];
+      label=t?'Titre : '+(t.name||t.symbol):'Titre (supprime)';
+    }
+    sub.textContent='Actif affiche : '+label;
   }
 }
 
@@ -1833,7 +1953,7 @@ function renderBourseEditors(){
     <div class="ibox">
       <div class="ibox-hd">
         <input class="name-inp" value="${esc(t.name)}" onchange="D.titres[${i}].name=this.value;save()">
-        <button class="del-btn" onclick="D.titres.splice(${i},1);save();renderBourseEditors();renderBourseDisplay();calcAll()">×</button>
+        <button class="del-btn" onclick="D.titres.splice(${i},1);save();renderBourseEditors();renderBourseDisplay();updateHomecardSel();calcAll()">×</button>
       </div>
       <div class="g2">
         <div class="ef"><label>Symbole (.PA)</label><input type="text" value="${esc(t.symbol)}" onchange="D.titres[${i}].symbol=this.value;save()"></div>
@@ -1849,17 +1969,159 @@ function renderBourseEditors(){
 }
 
 
-function updateHomecardDisplay(bourseTotal,boursePnl,immoGain){
-  const label=document.querySelector('.sq.sq-btc > div:first-child');
-  if(!label)return;
+function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,immoGainVente){
   const hc=D.homeCard||'btc';
+  const row=document.getElementById('homecard-row');
+  if(!row)return;
+
+  // ── helpers ──
+  const sqLabel=(txt,color='rgba(255,255,255,0.45)')=>
+    `<div style="font-size:11px;color:${color};margin-bottom:2px">${txt}</div>`;
+  const sqVal=(txt,color='#fff',size=20)=>
+    `<div style="font-size:${size}px;font-weight:800;color:${color};letter-spacing:-.5px;line-height:1.15">${txt}</div>`;
+  const sqSub=(txt,color='rgba(255,255,255,0.4)')=>
+    `<div style="font-size:12px;color:${color};margin-top:2px">${txt}</div>`;
+  const divider=(color='rgba(255,255,255,0.08)')=>
+    `<div style="border-top:1px solid ${color};padding-top:6px;margin-top:6px"></div>`;
+
+  // ── PV card (always right) ──
+  const pvRows=[];
+  const btcInvested=totalBuyEur();
+  if(btcInvested>0||btcEur>0)pvRows.push({l:'Bitcoin <span style="color:var(--btc)">&#x20BF;</span>',v:btcEur-btcInvested});
+  const bourseCost=D.titres.reduce((a,t)=>a+(+t.qty||0)*(+t.pru||0),0);
+  if(bourseCost>0||bourseTotal>0)pvRows.push({l:'Bourse 📈',v:boursePnl});
+  if(D.biens.length>0)pvRows.push({l:'Immo 🏢',v:immoGainVente});
+  const pvTotal=pvRows.reduce((a,r)=>a+r.v,0);
+  const pvCardHTML=`
+    <div class="sq" style="background:var(--g);border-color:var(--gb)">
+      <div style="font-size:12px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Plus-values</div>
+      <div id="pv-sq-content">
+        ${pvRows.length?pvRows.map(r=>`
+          <div class="pv-sq-row">
+            <span class="lbl">${r.l}</span>
+            <span class="vl ${r.v<0?'neg':''}">${r.v>=0?'+':''}${fE(r.v)}</span>
+          </div>`).join('')+
+          `<div class="pv-sq-total">
+            <span class="lbl">Total</span>
+            <span class="vl ${pvTotal<0?'neg':''}">${pvTotal>=0?'+':''}${fE(pvTotal)}</span>
+          </div>`
+        :'<div class="pv-sq-row"><span class="lbl" style="color:var(--tx3)">Aucune donnee</span></div>'}
+      </div>
+    </div>`;
+
+  // ── LEFT CARD per mode ──
+  let leftHTML='';
+
   if(hc==='btc'){
-    label.innerHTML='Bitcoin <span style="color:var(--btc)">&#x20BF;</span>';
+    const pru=pruFromTx();
+    const perf=pru>0&&D.btcPrice>0?(D.btcPrice-pru)/pru*100:null;
+    leftHTML=`
+      <div class="sq" style="background:var(--g);border-color:var(--gb)">
+        <div style="font-size:12px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Bitcoin <span style="color:var(--btc)">&#x20BF;</span></div>
+        <div style="display:flex;flex-direction:column;gap:5px;flex:1;justify-content:center">
+          <div>
+            ${sqLabel('Prix Bitcoin','rgba(245,158,11,0.65)')}
+            ${sqVal(fE(D.btcPrice),'var(--btc)',19)}
+            ${perf!==null?`<div style="margin-top:3px"><span class="sq-badge ${perf>=0?'up':'dn'}">${perf>=0?'+':''}${perf.toFixed(1)}%</span></div>`:''}
+          </div>
+          <div style="border-top:1px solid rgba(245,158,11,0.15);padding-top:6px">
+            ${sqLabel('Mon Stack','rgba(245,158,11,0.65)')}
+            <div style="font-size:14px;font-weight:700;color:var(--btc)" id="sq-btc-stack">${fB8(stackBtc)}</div>
+            <div style="font-size:11px;color:rgba(245,158,11,0.45)" id="sq-btc-sats">${Math.round(stackBtc*1e8).toLocaleString('fr-FR')} sats</div>
+          </div>
+        </div>
+      </div>`;
+
   }else if(hc==='bourse'){
-    label.innerHTML='Bourse 📈 <span style="color:var(--grn)">"+fE(bourseTotal)+"</span>';
+    // Titre le plus performant
+    let bestT=null,bestPerf=null;
+    D.titres.forEach(t=>{
+      const val=(+t.qty||0)*(+t.cours||0),cost=(+t.qty||0)*(+t.pru||0);
+      if(cost>0){const p=(val-cost)/cost*100;if(bestPerf===null||p>bestPerf){bestPerf=p;bestT=t;}}
+    });
+    leftHTML=`
+      <div class="sq" style="background:var(--g);border-color:var(--gb)">
+        <div style="font-size:12px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Bourse 📈</div>
+        <div style="display:flex;flex-direction:column;gap:5px;flex:1;justify-content:center">
+          <div>
+            ${sqLabel('Valorisation totale')}
+            ${sqVal(fE(bourseTotal),'var(--grn)',18)}
+            <div style="margin-top:3px"><span class="sq-badge ${boursePnl>=0?'up':'dn'}">${boursePnl>=0?'+':''}${fE(boursePnl)}</span></div>
+          </div>
+          ${bestT?`
+          <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:6px;margin-top:2px">
+            ${sqLabel('Meilleure perf.')}
+            <div style="font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(bestT.name||bestT.symbol)}</div>
+            <span class="sq-badge ${bestPerf>=0?'up':'dn'}" style="margin-top:3px">${bestPerf>=0?'+':''}${bestPerf.toFixed(1)}%</span>
+          </div>`:''}
+        </div>
+      </div>`;
+
   }else if(hc==='immo'){
-    label.innerHTML='Immobilier 🏢 <span style="color:var(--grn)">"+fE(immoGain)+"</span>';
+    // Bien avec le gain estimé le plus élevé
+    let bestBien=null,bestGain=-Infinity;
+    D.biens.forEach(b=>{
+      const est=(+b.surface||0)*(+b.prixm2||0);
+      const part=(+b.part||100)/100;
+      const credit=+(b.credit||0);
+      const apport=+(b.apport||0);
+      const bank=+(b.bankAccount||0);
+      const approsMe=(b.appros||[]).filter(a=>a.who==='me').reduce((s,a)=>s+(+a.amount||0),0);
+      const g=(est*part)-(credit*part)+bank-apport-approsMe;
+      if(g>bestGain){bestGain=g;bestBien=b;}
+    });
+    leftHTML=`
+      <div class="sq" style="background:var(--g);border-color:var(--gb)">
+        <div style="font-size:12px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Immobilier 🏢</div>
+        <div style="display:flex;flex-direction:column;gap:5px;flex:1;justify-content:center">
+          <div>
+            ${sqLabel('Patrimoine brut')}
+            ${sqVal(fE(immoVal),'#fff',18)}
+          </div>
+          ${bestBien?`
+          <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:6px;margin-top:2px">
+            ${sqLabel('Meilleur gain vente')}
+            <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(bestBien.name||'Bien')}</div>
+            <span class="sq-badge ${bestGain>=0?'up':'dn'}" style="margin-top:3px">${bestGain>=0?'+':''}${fE(bestGain)}</span>
+          </div>`:''}
+        </div>
+      </div>`;
+
+  }else if(hc.startsWith('titre_')){
+    const idx=+hc.split('_')[1];
+    const t=D.titres[idx];
+    if(t){
+      const val=(+t.qty||0)*(+t.cours||0);
+      const cost=(+t.qty||0)*(+t.pru||0);
+      const pvPct=cost>0?(val-cost)/cost*100:null;
+      const pvEur=val-cost;
+      leftHTML=`
+        <div class="sq" style="background:var(--g);border-color:var(--gb)">
+          <div style="font-size:12px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t.name||t.symbol)}</div>
+          <div style="display:flex;flex-direction:column;gap:5px;flex:1;justify-content:center">
+            <div>
+              ${sqLabel('Cours actuel')}
+              ${sqVal(fE2(t.cours||0),'#fff',18)}
+              ${pvPct!==null?`<span class="sq-badge ${pvPct>=0?'up':'dn'}" style="margin-top:3px">${pvPct>=0?'+':''}${pvPct.toFixed(1)}%</span>`:''}
+            </div>
+            <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:6px;margin-top:2px">
+              ${sqLabel('Valeur totale ('+( t.qty||0)+' titres)')}
+              ${sqVal(fE(val),'var(--grn)',16)}
+              ${pvPct!==null?`${sqSub((pvEur>=0?'+':'')+fE(pvEur)+(pvEur>=0?' ✓':''),pvEur>=0?'var(--grn)':'var(--red)')}`:''}
+            </div>
+          </div>
+        </div>`;
+    }else{
+      // titre supprimé, fallback btc
+      D.homeCard='btc';save();
+      leftHTML=`<div class="sq" style="background:var(--g);border-color:var(--gb)"><div style="font-size:13px;color:var(--tx3);padding:12px 0">Titre non trouve</div></div>`;
+    }
+  }else{
+    // Mode générique / futur (gold, etc.) — affiche juste le label et la valeur si D.customCards[hc] existe
+    leftHTML=`<div class="sq" style="background:var(--g);border-color:var(--gb)"><div style="font-size:13px;color:var(--tx3);padding:12px 0">--</div></div>`;
   }
+
+  row.innerHTML=leftHTML+pvCardHTML;
 }
 
 // ============================================================
