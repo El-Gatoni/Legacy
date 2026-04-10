@@ -436,6 +436,22 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
         </label>
       </div>
       <div class="pmenu-sep"></div>
+      <div class="pmenu-item" style="padding:10px 0">
+        <div class="pmenu-left" style="gap:10px">
+          <div>
+            <div class="pmenu-title" style="font-size:14px">Ajouter les frais au PRU</div>
+            <div class="pmenu-sub" style="line-height:1.45;color:rgba(255,255,255,0.7)">
+              Frais (commission, spread, premium...) inclus dans le co&#251;t d&apos;acquisition.<br>
+              <span style="color:var(--grn)">Recommand&#233; pour un PRU r&#233;aliste.</span>
+            </div>
+          </div>
+        </div>
+        <label class="toggle-wrap" onclick="event.stopPropagation()">
+          <input type="checkbox" id="toggle-add-fees-pru" checked onchange="D.addFeesToPRU=this.checked;save()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="pmenu-sep"></div>
       <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-notes')">
         <div class="pmenu-left" style="gap:10px">
           <div><div class="pmenu-title" style="font-size:14px">Affichage des Notes</div><div class="pmenu-sub">Choisir les onglets</div></div>
@@ -891,7 +907,8 @@ const EMPTY={
   notifEnabled:false,
   notifBtcHigh:0,
   notifBtcLow:0,
-  notifNetHigh:0
+  notifNetHigh:0,
+  addFeesToPRU:true
 };
 
 let D=(()=>{
@@ -921,6 +938,7 @@ let D=(()=>{
       if(!p.notifBtcHigh)p.notifBtcHigh=0;
       if(!p.notifBtcLow)p.notifBtcLow=0;
       if(!p.notifNetHigh)p.notifNetHigh=0;
+      if(p.addFeesToPRU===undefined)p.addFeesToPRU=true;
       p.titres=p.titres.map((t,i)=>({id:t.id||'t'+i,...t,useApi:t.useApi!==undefined?t.useApi:true}));
       return p;
     }
@@ -1317,58 +1335,231 @@ function importTxCSV(){
     const reader=new FileReader();
     reader.onload=ev=>{
       try{
-        let text=ev.target.result.replace(/^\uFEFF/,'').trim();
-        const lines=text.split('\n').filter(l=>l.trim()!=='');
-        if(lines.length<2){alert('Le fichier CSV semble vide ou invalide.');return;}
+        const text=ev.target.result.replace(/^\uFEFF/,'').trim();
+        const rawLines=text.split(/\r?\n/).filter(l=>l.trim());
+        if(rawLines.length<2){alert('Fichier CSV vide ou invalide.');return;}
+
+        // Detecter le separateur
+        const sep=rawLines[0].split(';').length>rawLines[0].split(',').length?';':',';
+
+        // Parser CSV robuste (gere les guillemets et virgules dans les champs)
+        function parseLine(line){
+          const res=[];let cur='',inQ=false;
+          for(let k=0;k<line.length;k++){
+            const c=line[k];
+            if(c==='"'){if(inQ&&line[k+1]==='"'){cur+='"';k++;}else inQ=!inQ;}
+            else if(c===sep&&!inQ){res.push(cur.trim());cur='';}
+            else cur+=c;
+          }
+          res.push(cur.trim());
+          return res;
+        }
+
+        // Construire l'index des colonnes a partir des en-tetes
+        const headerCols=parseLine(rawLines[0]);
+        // Normaliser : minuscules, sans espaces/tirets/underscores
+        const headers=headerCols.map(h=>h.toLowerCase().replace(/[\s\-_\/\.]/g,''));
+
+        // Trouver l'index d'une colonne par mot-cle(s)
+        const ci=(...keys)=>headers.findIndex(h=>keys.some(k=>h.includes(k)));
+        // Valeur d'une colonne par mot-cle(s)
+        const cv=(row,...keys)=>{const i=ci(...keys);return i>=0?(row[i]||''):'';}
+        // Parser un nombre (tolere virgule decimale et symboles)
+        const pf=s=>parseFloat((s||'').replace(',','.').replace(/[^0-9.\-]/g,''))||0;
+
+        // ── Detection de la plateforme ──
+        const h=headers.join(' ');
+        let platform='generic';
+        // Relai : colonne specifique "outsellamount"
+        if(headers.some(c=>c.includes('outsellamount')||c.includes('outbuycurrency')))
+          platform='relai';
+        // Crypto.com : "transactionkind" ou "transactiondescription"
+        else if(headers.some(c=>c.includes('transactionkind')||c.includes('transactiondescription')))
+          platform='crypto.com';
+        // Nexo : "transaction" + "currency" + "amount" (sans "kind" ni "description")
+        else if(h.includes('transaction')&&h.includes('currency')&&h.includes('amount'))
+          platform='nexo';
+        // Stackinsat / PocketBitcoin
+        else if(headers.some(c=>c==='btc'||c.includes('amountbtc')||c.includes('montantbtc')||c.includes('bitcoinamount')))
+          platform='stackinsat';
+        // Peach Bitcoin
+        else if(headers.some(c=>c.includes('premium')))
+          platform='peach';
+        // Bitpanda
+        else if(headers.some(c=>c.includes('transactionid'))&&headers.some(c=>c.includes('assetclass')||c.includes('assetname')))
+          platform='bitpanda';
+        // Bitstack
+        else if(headers.some(c=>c.includes('bitstack')))
+          platform='bitstack';
+
         let imported=0,skipped=0;
-        const headerLine=lines[0].toLowerCase();
-        const isSemicolon=headerLine.includes(';');
-        for(let i=1;i<lines.length;i++){
-          let line=lines[i].trim();
-          if(!line)continue;
-          let cols=isSemicolon
-            ?line.split(';').map(c=>c.trim().replace(/^"|"$/g,'').replace(/""/g,'"'))
-            :line.split(',').map(c=>c.trim().replace(/^"|"$/g,'').replace(/""/g,'"'));
-          if(cols.length<2){skipped++;continue;}
-          let dateStr='',rawType='',btcAmount=0,eurAmount=0,asset='';
-          for(let col of cols){
-            const lower=col.toLowerCase();
-            if(!dateStr&&(/^\d{4}-\d{2}-\d{2}/.test(col)||lower.includes('date')||lower.includes('time')||lower.includes('timestamp'))){
-              dateStr=col.slice(0,10);
-            }
-            if(!rawType){
-              if(lower.includes('buy')||lower.includes('purchase')||lower.includes('achat'))rawType='buy';
-              else if(lower.includes('sell')||lower.includes('vente'))rawType='sell';
-              else if(lower.includes('fee')||lower.includes('frais')||lower.includes('commission'))rawType='fee';
-            }
-            if(lower.includes('btc')||lower.includes('bitcoin')||lower.includes('\u20bf')){asset='btc';}
-            const num=parseFloat(col.replace(',','.').replace(/[^0-9.\-]/g,''));
-            if(!isNaN(num)&&num!==0){
-              if(asset==='btc'||lower.includes('btc')||lower.includes('\u20bf')){
-                if(btcAmount===0)btcAmount=num;
-              }else if(lower.includes('eur')||lower.includes('\u20ac')||lower.includes('total')||lower.includes('value')){
-                if(eurAmount===0)eurAmount=num;
+
+        for(let i=1;i<rawLines.length;i++){
+          const row=parseLine(rawLines[i]);
+          if(row.length<2||row.every(c=>!c)){skipped++;continue;}
+          let type=null,btc=0,eur=0,date='';
+
+          // ──────────── NEXO ────────────
+          // Format: Transaction,Currency,Amount,USD Equivalent,Details,Outstanding Loan,Date / Time
+          if(platform==='nexo'){
+            const currency=cv(row,'currency').toUpperCase();
+            if(currency!=='BTC'){skipped++;continue;}
+            const txType=cv(row,'transaction').toLowerCase();
+            const amount=pf(cv(row,'amount'));
+            // USD Equivalent comme approximation du montant fiat (Nexo ne donne pas EUR directement)
+            const usdEq=Math.abs(pf(cv(row,'usd','equivalent')));
+            date=cv(row,'date','time').slice(0,10);
+            if((txType.includes('buy')||txType.includes('exchange'))&&amount>0){
+              btc=amount;eur=usdEq;type='achat';
+            }else if((txType.includes('sell')||txType.includes('exchange'))&&amount<0){
+              btc=Math.abs(amount);type='vente';
+            }else if(txType.includes('interest')||txType.includes('reward')||txType.includes('cashback')||txType.includes('bonus')){
+              btc=Math.abs(amount);eur=0;type='achat';
+            }else{skipped++;continue;}
+
+          // ──────────── CRYPTO.COM ────────────
+          // Format: Timestamp,Transaction Description,Currency,Amount,To Currency,To Amount,Native Currency,Native Amount,Native Amount (in USD),Transaction Kind
+          }else if(platform==='crypto.com'){
+            const currency=cv(row,'currency').toUpperCase();
+            const toCurrency=cv(row,'tocurrency').toUpperCase();
+            const amount=pf(cv(row,'amount'));
+            const toAmount=pf(cv(row,'toamount'));
+            const nativeAmt=Math.abs(pf(cv(row,'nativeamount')));
+            const kind=cv(row,'transactionkind','kind').toLowerCase();
+            const desc=cv(row,'transactiondescription','description').toLowerCase();
+            date=cv(row,'timestamp','date').slice(0,10);
+            if(toCurrency==='BTC'&&toAmount>0){
+              // Achat EUR → BTC
+              btc=toAmount;
+              eur=currency==='EUR'?Math.abs(amount):nativeAmt;
+              type='achat';
+            }else if(currency==='BTC'&&amount>0&&(kind.includes('reward')||kind.includes('earn')||kind.includes('interest')||kind.includes('cashback')||desc.includes('reward')||desc.includes('earn'))){
+              btc=amount;eur=0;type='achat';
+            }else if(currency==='BTC'&&amount<0&&(kind.includes('sell')||kind.includes('trade'))){
+              btc=Math.abs(amount);type='vente';
+            }else{skipped++;continue;}
+
+          // ──────────── RELAI ────────────
+          // Format: Date,OutSellAmount,OutSellCurrency,OutBuyAmount,OutBuyCurrency,NetworkFee,NetworkFeeCurrency,...
+          }else if(platform==='relai'){
+            const outBuyCur=cv(row,'outbuycurrency').toUpperCase();
+            const outSellCur=cv(row,'outsellcurrency').toUpperCase();
+            const outBuyAmt=pf(cv(row,'outbuyamount'));
+            const outSellAmt=pf(cv(row,'outsellamount'));
+            date=cv(row,'date').slice(0,10);
+            if(outBuyCur==='BTC'&&outBuyAmt>0){
+              // Achat : EUR → BTC
+              btc=outBuyAmt;eur=outSellAmt;type='achat';
+            }else if(outSellCur==='BTC'&&outSellAmt>0){
+              // Vente : BTC → EUR
+              btc=outSellAmt;type='vente';
+            }else{skipped++;continue;}
+
+          // ──────────── STACKINSAT / POCKETBITCOIN ────────────
+          // Format variable ; detection par noms de colonnes
+          }else if(platform==='stackinsat'){
+            const txType=cv(row,'type','kind','operation').toLowerCase();
+            date=cv(row,'date','datetime','timestamp').slice(0,10);
+            btc=pf(cv(row,'btc','amountbtc','montantbtc','bitcoinamount'));
+            eur=pf(cv(row,'eur','euro','amounteur','montanteur','fiat','price'));
+            const feeEur=pf(cv(row,'fee','frais','commission','feeeur'));
+            if(txType.includes('achat')||txType.includes('buy')||txType.includes('dca')||txType.includes('purchase')){
+              type='achat';
+              if(D.addFeesToPRU&&feeEur>0)eur+=feeEur;
+            }else if(txType.includes('vente')||txType.includes('sell')){
+              type='vente';
+            }else if(btc>0){
+              // Pas de type explicite mais du BTC → considere comme achat
+              type='achat';
+              if(D.addFeesToPRU&&feeEur>0)eur+=feeEur;
+            }else{skipped++;continue;}
+
+          // ──────────── PEACH BITCOIN ────────────
+          }else if(platform==='peach'){
+            const txType=cv(row,'type','side','role').toLowerCase();
+            const sats=pf(cv(row,'sats','satoshi'));
+            eur=pf(cv(row,'eur','price','amount','total'));
+            const premium=pf(cv(row,'premium'));
+            const rawDate=cv(row,'date','datetime');
+            // Format DD/MM/YYYY ou ISO
+            date=rawDate.includes('/')?rawDate.split('/').reverse().join('-'):rawDate.slice(0,10);
+            if(txType.includes('bought')||txType.includes('buy')){
+              btc=sats>1?sats/1e8:sats;
+              if(D.addFeesToPRU&&premium>0)eur*=(1+premium/100);
+              type='achat';
+            }else{skipped++;continue;}
+
+          // ──────────── BITPANDA ────────────
+          }else if(platform==='bitpanda'){
+            const txType=cv(row,'type','transactiontype').toLowerCase();
+            const asset=cv(row,'assetname','cryptocurrencyname','asset').toUpperCase();
+            if(!asset.includes('BTC')&&!asset.includes('BITCOIN')){skipped++;continue;}
+            const assetAmt=pf(cv(row,'amount','assetamount','cryptocurrencyamount'));
+            const fiatAmt=pf(cv(row,'eurprice','price','fiatamount','in eur'));
+            const fee=pf(cv(row,'fee','tradingfee'));
+            date=cv(row,'datetime','date','time').slice(0,10);
+            if(txType==='buy'||txType.includes('achat')){
+              btc=assetAmt;
+              eur=D.addFeesToPRU?fiatAmt+fee:fiatAmt;
+              type='achat';
+            }else if(txType==='sell'||txType.includes('vente')){
+              btc=assetAmt;type='vente';
+            }else{skipped++;continue;}
+
+          // ──────────── BITSTACK ────────────
+          }else if(platform==='bitstack'){
+            const txType=cv(row,'type','operation').toLowerCase();
+            btc=pf(cv(row,'btc','montantbtc','amountbtc'));
+            eur=pf(cv(row,'eur','montanteur','amounteur','price'));
+            const feeEur=pf(cv(row,'fee','frais','feeeur'));
+            date=cv(row,'date','datetime').slice(0,10);
+            if(txType.includes('change')||txType.includes('achat')||txType.includes('buy')){
+              if(btc>0){type='achat';if(D.addFeesToPRU&&feeEur>0)eur+=feeEur;}
+            }else if(txType.includes('retrait')||txType.includes('sell')||txType.includes('vente')){
+              if(btc<0){btc=Math.abs(btc);type='vente';}
+            }else{skipped++;continue;}
+
+          // ──────────── GENERIQUE (autres plateformes) ────────────
+          }else{
+            // Detecter date
+            for(const c of row)if(!date&&/^\d{4}-\d{2}-\d{2}/.test(c))date=c.slice(0,10);
+            // Detecter type
+            let rawType='';
+            for(const c of row){
+              const l=c.toLowerCase();
+              if(!rawType){
+                if(l.includes('buy')||l.includes('achat')||l.includes('purchase'))rawType='achat';
+                else if(l.includes('sell')||l.includes('vente'))rawType='vente';
+                else if(l.includes('fee')||l.includes('frais'))rawType='frais';
+              }
+              if(l.includes('btc')||l.includes('bitcoin')){
+                const n=pf(c);if(n!==0&&!btc)btc=Math.abs(n);
+              }
+              if(l.includes('eur')||l.includes('\u20ac')){
+                const n=pf(c);if(n>0&&!eur)eur=n;
               }
             }
+            if(!rawType||!btc){skipped++;continue;}
+            type=rawType;
           }
-          let type='';
-          if(rawType==='buy')type='achat';
-          else if(rawType==='sell')type='vente';
-          else if(rawType==='fee')type='frais';
-          else{skipped++;continue;}
-          if(btcAmount===0){skipped++;continue;}
-          if(type==='frais'){
-            const sats=Math.round(Math.abs(btcAmount)*1e8);
-            D.transactions.push({type:'frais',sats,date:dateStr,note:'Import CSV'});
-          }else{
-            const btc=type==='vente'?-Math.abs(btcAmount):Math.abs(btcAmount);
-            D.transactions.push({type,btc,eur:eurAmount||0,date:dateStr,note:'Import CSV'});
-          }
-          imported++;
+
+          // ── Enregistrer la transaction ──
+          if(type&&btc>1e-8){
+            if(type==='frais'){
+              D.transactions.unshift({type:'frais',sats:Math.round(btc*1e8),date,note:'Import '+platform});
+            }else{
+              D.transactions.unshift({type,btc,eur:Math.abs(eur)||0,date,note:'Import '+platform});
+            }
+            imported++;
+          }else skipped++;
         }
+
         save();calcAll();
-        alert(imported+' transaction(s) importee(s) avec succes.\n'+skipped+' ligne(s) ignoree(s) (non BTC ou type non reconnu).');
-      }catch(err){alert('Erreur lors de l\'import CSV : '+err.message);console.error(err);}
+        alert('Import '+platform.toUpperCase()+' termine !\n\n'+imported+' transaction(s) importee(s)\n'+skipped+' ligne(s) ignoree(s)');
+      }catch(err){
+        alert('Erreur import CSV : '+err.message);
+        console.error(err);
+      }
     };
     reader.readAsText(file,'UTF-8');
   };inp.click();
@@ -1682,7 +1873,10 @@ function openSubPanel(id){
   if(id==='sub-notes')renderNoteSettings();
   if(id==='sub-tabs')renderTabsConfig();
   if(id==='sub-homecard')updateHomecardSel();
-  if(id==='sub-config'){const tog=document.getElementById('toggle-hide-amounts');if(tog)tog.checked=!!D.hideAmounts;}
+  if(id==='sub-config'){
+    const tog=document.getElementById('toggle-hide-amounts');if(tog)tog.checked=!!D.hideAmounts;
+    const togFees=document.getElementById('toggle-add-fees-pru');if(togFees)togFees.checked=D.addFeesToPRU!==false;
+  }
   if(id==='sub-goal'){renderGoalSel();}
   if(id==='sub-api'){const ak=document.getElementById('e-apikey');if(ak)ak.value=D.apiKey||'';}
   if(id==='sub-notif'){initNotifPanel();}
