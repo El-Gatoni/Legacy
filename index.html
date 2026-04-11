@@ -923,6 +923,7 @@ let D=(()=>{
       p.wallets=p.wallets.map((w,i)=>({id:w.id||'w'+i,name:w.name,btcAlloc:+(w.btcAlloc||0)}));
       if(!p.collPrets)p.collPrets=[];
       if(!p.biens)p.biens=[];
+      p.biens=p.biens.map(b=>({...b,apportMe:b.apportMe!==undefined?b.apportMe:(b.apport||0)}));
       if(!p.prets)p.prets=[];
       if(!p.titres)p.titres=[];
       if(!p.btcPrice)p.btcPrice=0;
@@ -1033,14 +1034,15 @@ function calcAll(){
     const est=(+b.surface||0)*(+b.prixm2||0);
     const part=(+b.part||100)/100;
     const bank=+(b.bankAccount||0);
-    const apport=+(b.apport||0);
+    const apport=+(b.apport||0);       // total — utilisé pour la rentabilité globale
+    const apportMe=+(b.apportMe||0);   // part perso — utilisé pour gainVente et capital investi
     const credit=+(b.credit||0);
     const approsMe=(b.appros||[]).filter(a=>a.who==='me').reduce((s,a)=>s+(+a.amount||0),0);
-    const gainVente=(est*part)-(credit*part)+bank-apport-approsMe;
+    const gainVente=(est*part)-(credit*part)+bank-apportMe-approsMe;
     immoVal+=est*part;
     immoGainVente+=gainVente;
     immoCredit+=credit*part;
-    immoInvested+=(apport+bank)*part+approsMe;
+    immoInvested+=apportMe+bank*part+approsMe;
   });
 
   const pretsDette=D.prets.reduce((a,p)=>a+(+p.restant||0)*((+p.part||100)/100),0);
@@ -1688,12 +1690,12 @@ function renderBiensDisplay(){
   let totalBrut=0,totalCredit=0,totalGain=0,totalLoyerNet=0,hasLocation=false;
   D.biens.forEach(b=>{
     const est=(+b.surface||0)*(+b.prixm2||0),part=(+b.part||100)/100;
-    const credit=+(b.credit||0),apport=+(b.apport||0),bank=+(b.bankAccount||0);
+    const credit=+(b.credit||0),apportMe=+(b.apportMe||0),bank=+(b.bankAccount||0);
     const loyer=bienLoyer(b);
     const approsMe=(b.appros||[]).filter(a=>a.who==='me').reduce((s,a)=>s+(+a.amount||0),0);
     const rentalChargesTotal=bienChargesLocatives(b);
     totalBrut+=est*part; totalCredit+=credit*part;
-    totalGain+=(est*part)-(credit*part)+bank-apport-approsMe;
+    totalGain+=(est*part)-(credit*part)+bank-apportMe-approsMe;
     if(loyer>0){totalLoyerNet+=loyer*12-rentalChargesTotal;hasLocation=true;}
   });
   const ltv=totalBrut>0?totalCredit/totalBrut*100:0;
@@ -1714,11 +1716,11 @@ function renderBiensDisplay(){
   </div>`;
   const biensHTML=`<div class="bien-sq-grid">${D.biens.map(b=>{
     const est=(+b.surface||0)*(+b.prixm2||0),part=(+b.part||100)/100;
-    const credit=+(b.credit||0),apport=+(b.apport||0),bank=+(b.bankAccount||0);
+    const credit=+(b.credit||0),apportMe=+(b.apportMe||0),bank=+(b.bankAccount||0);
     const approsMe=(b.appros||[]).filter(a=>a.who==='me').reduce((s,a)=>s+(+a.amount||0),0);
     const loyer=bienLoyer(b);
     const rentalChargesTotal=bienChargesLocatives(b);
-    const gainVente=(est*part)-(credit*part)+bank-apport-approsMe;
+    const gainVente=(est*part)-(credit*part)+bank-apportMe-approsMe;
     const remb=b.empruntinitial>0?Math.min(100,(1-(credit/b.empruntinitial))*100):0;
     const rentNette=est*part>0&&loyer>0?((loyer*12-rentalChargesTotal))/(est*part)*100:null;
     return `<div class="bien-sq">
@@ -1760,7 +1762,8 @@ function renderBiensEditors(){
         <div class="ef"><label>Reste a rembourser</label><input type="number" inputmode="decimal" value="${b.credit||0}" onchange="D.biens[${bi}].credit=+this.value;save();calcAll()"></div>
         <div class="ef"><label>Taux (%)</label><input type="number" inputmode="decimal" step="0.01" value="${b.tauxPret||0}" onchange="D.biens[${bi}].tauxPret=+this.value;save()"></div>
         <div class="ef"><label>Date fin pret</label><input type="date" value="${b.dateFinPret||''}" onchange="D.biens[${bi}].dateFinPret=this.value;save();calcAll()"></div>
-        <div class="ef"><label>Apport</label><input type="number" inputmode="decimal" value="${b.apport||0}" onchange="D.biens[${bi}].apport=+this.value;save();calcAll()"></div>
+        <div class="ef"><label>Apport initial total (&#8364;)</label><input type="number" inputmode="decimal" value="${b.apport||0}" onchange="D.biens[${bi}].apport=+this.value;save()"></div>
+        <div class="ef"><label>Dont votre part (&#8364;)</label><input type="number" inputmode="decimal" value="${b.apportMe||0}" placeholder="Votre mise personnelle" onchange="D.biens[${bi}].apportMe=+this.value;save();calcAll()"><span class="hint">Utilise pour le gain net vente et votre capital investi</span></div>
       </div>
       <div class="ef"><label>Compte bancaire associe (EUR)</label><input type="number" inputmode="decimal" value="${b.bankAccount||0}" onchange="D.biens[${bi}].bankAccount=+this.value;save();calcAll()"></div>
       <div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:8px 0 6px">Approvisionnements</div>
@@ -1808,7 +1811,7 @@ function renderBiensEditors(){
     </div>`).join(''));
 }
 
-function addBien(){D.biens.push({name:'',surface:0,prixm2:0,empruntinitial:0,credit:0,tauxPret:0,dateFinPret:'',part:100,apport:0,bankAccount:0,loyer:0,appros:[],charges:[],rentalCharges:[],units:[]});save();renderBiensEditors();renderBiensDisplay();calcAll();}
+function addBien(){D.biens.push({name:'',surface:0,prixm2:0,empruntinitial:0,credit:0,tauxPret:0,dateFinPret:'',part:100,apport:0,apportMe:0,bankAccount:0,loyer:0,appros:[],charges:[],rentalCharges:[],units:[]});save();renderBiensEditors();renderBiensDisplay();calcAll();}
 
 // ============================================================
 // PRETS & COLLPRETS
@@ -2263,10 +2266,10 @@ function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,imm
       const est=(+b.surface||0)*(+b.prixm2||0);
       const part=(+b.part||100)/100;
       const credit=+(b.credit||0);
-      const apport=+(b.apport||0);
+      const apportMe=+(b.apportMe||0);
       const bank=+(b.bankAccount||0);
       const approsMe=(b.appros||[]).filter(a=>a.who==='me').reduce((s,a)=>s+(+a.amount||0),0);
-      const g=(est*part)-(credit*part)+bank-apport-approsMe;
+      const g=(est*part)-(credit*part)+bank-apportMe-approsMe;
       if(g>bestGain){bestGain=g;bestBien=b;}
     });
     leftHTML=`
