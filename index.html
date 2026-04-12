@@ -2643,12 +2643,12 @@ function goTo(pageIdx,pushState=true){
   }
   newPage.style.transition=`transform ${dur}`;
   newPage.style.transform='translateX(0%)';
-  newPage.addEventListener('transitionend',()=>{
-    _animating=false;
-    // Stabiliser : passer aux classes CSS
-    newPage.style.transform='';newPage.style.transition='';newPage.style.visibility='';
-    newPage.classList.add('active-page');
-  },{once:true});
+  {
+    let fired=false;
+    const done=()=>{if(fired)return;fired=true;_animating=false;newPage.style.transform='';newPage.style.transition='';newPage.style.visibility='';newPage.classList.add('active-page');};
+    newPage.addEventListener('transitionend',done,{once:true});
+    setTimeout(done,350);
+  }
 
   const prev=_cur;
   _cur=pageIdx;
@@ -2696,14 +2696,29 @@ function _resetPages(pageId){
 // ── Swipe fluide ──
 let _sx=0,_sy=0,_st=0,_sw=false,_dragging=false,_swipeDir=null;
 let _prevId=null,_nextId=null;
+let _touchActive=false; // true uniquement si le touchstart a commencé hors animation
+
+// Lance une animation et libère _animating quand elle se termine,
+// avec un timeout de sécurité au cas où transitionend ne se déclenche pas.
+function _startAnim(el,cb){
+  _animating=true;
+  let fired=false;
+  const done=()=>{if(fired)return;fired=true;_animating=false;cb();};
+  el.addEventListener('transitionend',done,{once:true});
+  setTimeout(done,350);
+}
 
 swiper.addEventListener('touchstart',e=>{
+  // Toujours réinitialiser l'état du geste, même pendant une animation
+  _sw=false;_dragging=false;_swipeDir=null;
+  _prevId=null;_nextId=null;
+  _touchActive=false;
   if(_animating)return;
+
+  _touchActive=true;
   _sx=e.touches[0].clientX;
   _sy=e.touches[0].clientY;
   _st=Date.now();
-  _sw=false;_dragging=false;_swipeDir=null;
-  _prevId=null;_nextId=null;
 
   const order=getPageOrder();
   const pos=order.indexOf(_cur);
@@ -2726,6 +2741,7 @@ swiper.addEventListener('touchstart',e=>{
 },{passive:true});
 
 swiper.addEventListener('touchmove',e=>{
+  if(!_touchActive)return;
   const dx=e.touches[0].clientX-_sx;
   const dy=e.touches[0].clientY-_sy;
   if(!_sw&&!_dragging){
@@ -2753,24 +2769,21 @@ swiper.addEventListener('touchmove',e=>{
 },{passive:false});
 
 swiper.addEventListener('touchend',e=>{
-  if(_animating)return;
+  if(!_touchActive)return;
+  _touchActive=false;
   const dx=e.changedTouches[0].clientX-_sx;
   const dt=Date.now()-_st;
   const velocity=dx!==0?Math.abs(dx)/Math.max(dt,1):0;
   const threshold=_W()*0.35;
   const ps=_pages();
   const ease='.22s cubic-bezier(.25,0,.2,1)';
-
-  // Page précédente avant décision (pour animation)
   const oldCur=_cur;
 
   if(!_sw){
-    ps[_cur].style.transition=`transform ${ease}`;
-    ps[_cur].style.transform='translateX(0%)';
-    if(_prevId!==null){ps[_prevId].style.transition=`transform ${ease}`;ps[_prevId].style.transform='translateX(-100%)';}
-    if(_nextId!==null){ps[_nextId].style.transition=`transform ${ease}`;ps[_nextId].style.transform='translateX(100%)';}
-    _animating=true;
-    ps[_cur].addEventListener('transitionend',()=>{_animating=false;_resetPages(_cur);},{once:true});
+    // Pas de swipe horizontal : reset direct sans attendre transitionend
+    // (la page courante n'a pas bougé → aucun transitionend garanti)
+    ps[_cur].style.transition='';
+    _resetPages(_cur);
     return;
   }
 
@@ -2781,33 +2794,37 @@ swiper.addEventListener('touchend',e=>{
   }
 
   if(target===oldCur){
-    // Snap retour
-    _animating=true;
+    // Snap retour à la position d'origine
     ps[oldCur].style.transition=`transform ${ease}`;
     ps[oldCur].style.transform='translateX(0%)';
     if(_prevId!==null){ps[_prevId].style.transition=`transform ${ease}`;ps[_prevId].style.transform='translateX(-100%)';}
     if(_nextId!==null){ps[_nextId].style.transition=`transform ${ease}`;ps[_nextId].style.transform='translateX(100%)';}
-    ps[oldCur].addEventListener('transitionend',()=>{_animating=false;_resetPages(oldCur);},{once:true});
+    _startAnim(ps[oldCur],()=>_resetPages(oldCur));
   }else{
-    // Mettre à jour la nav IMMÉDIATEMENT (pas d'attente transitionend)
-    _animating=true;
+    // Navigation vers la page cible
     _cur=target;
     document.querySelectorAll('.ni').forEach(n=>n.classList.toggle('active',+n.dataset.tab===target));
-    // Compléter l'animation sur les deux pages impliquées
     const goRight=dx>0;
     ps[oldCur].style.transition=`transform ${ease}`;
     ps[target].style.transition=`transform ${ease}`;
     ps[oldCur].style.transform=goRight?'translateX(100%)':'translateX(-100%)';
     ps[target].style.transform='translateX(0%)';
-    ps[target].addEventListener('transitionend',()=>{
-      _animating=false;
+    _startAnim(ps[target],()=>{
       _resetPages(target);
       if(target===0&&oldCur!==0)history.go(-1);                    // swipe vers Accueil : dépile
       else if(oldCur===0)_hist.push({page:target},'#p'+target);    // quitte Accueil : push
       else _hist.replace({page:target},'#p'+target);               // entre onglets : replace
-    },{once:true});
+    });
   }
 },{passive:true});
+
+// Geste interrompu par le système (appel entrant, notification…)
+swiper.addEventListener('touchcancel',()=>{
+  if(!_touchActive)return;
+  _touchActive=false;
+  _sw=false;
+  _resetPages(_cur);
+});
 
 // ============================================================
 // API
