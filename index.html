@@ -2134,8 +2134,7 @@ function updateTabRankByPos(pos,assetId){
     D.tabOrder[prev]=displaced;
   }
   D.tabOrder[assetId]=pos;
-  // Re-render pour mettre à jour les selects
-  renderTabsConfig();
+  save();applyTabsConfig();renderTabsConfig();
 }
 
 function toggleTabHide(id,hide){
