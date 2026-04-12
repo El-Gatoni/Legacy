@@ -2555,10 +2555,15 @@ function goTo(pageIdx,pushState=true){
     newPage.classList.add('active-page');
   },{once:true});
 
+  const prev=_cur;
   _cur=pageIdx;
   newPage.scrollTop=0;
   document.querySelectorAll('.ni').forEach(n=>n.classList.toggle('active',+n.dataset.tab===pageIdx));
-  if(pushState)_hist.push({page:pageIdx},'#p'+pageIdx);
+  if(pushState){
+    if(pageIdx===0&&prev!==0)history.back();                       // clic Accueil : dépile
+    else if(prev===0)_hist.push({page:pageIdx},'#p'+pageIdx);      // quitte Accueil : push
+    else _hist.replace({page:pageIdx},'#p'+pageIdx);               // entre onglets : replace
+  }
 }
 
 // Bouton retour téléphone
@@ -2694,7 +2699,9 @@ swiper.addEventListener('touchend',e=>{
     ps[target].style.transform='translateX(0%)';
     ps[target].addEventListener('transitionend',()=>{
       _resetPages(target);
-      _hist.push({page:target},'#p'+target);
+      if(target===0&&oldCur!==0)history.go(-1);                    // swipe vers Accueil : dépile
+      else if(oldCur===0)_hist.push({page:target},'#p'+target);    // quitte Accueil : push
+      else _hist.replace({page:target},'#p'+target);               // entre onglets : replace
     },{once:true});
   }
 },{passive:true});
