@@ -507,7 +507,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     <button class="btn btn-dark" onclick="closeSubPanel()">Retour</button>
   </div>
 
-  <div id="sub-tabs" class="sub-panel" style="display:none">
+  <div id="sub-tabs" class="sub-panel" data-parent="sub-config" style="display:none">
     <div class="sub-back" onclick="openSubPanel('sub-config')">&#8249; Configuration</div>
     <div class="sub-title">Barre d'onglets</div>
     <div class="card">
@@ -517,7 +517,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     <button class="btn btn-dark" onclick="applyTabsConfig();openSubPanel('sub-config')">Valider</button>
   </div>
 
-  <div id="sub-homecard" class="sub-panel" style="display:none">
+  <div id="sub-homecard" class="sub-panel" data-parent="sub-config" style="display:none">
     <div class="sub-back" onclick="openSubPanel('sub-config')">&#8249; Configuration</div>
     <div class="sub-title">Carte Accueil</div>
     <div class="card">
@@ -576,8 +576,8 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     <p style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:8px;line-height:1.5;padding:0 4px">Les notifications fonctionnent quand l'app est ouverte. Pour des alertes en arriere-plan, l'app doit etre installee en PWA sur votre ecran d'accueil.</p>
   </div>
 
-  <div id="sub-notes" class="sub-panel" style="display:none">
-    <div class="sub-back" onclick="closeSubPanel()">&#8249; Parametres</div>
+  <div id="sub-notes" class="sub-panel" data-parent="sub-config" style="display:none">
+    <div class="sub-back" onclick="openSubPanel('sub-config')">&#8249; Configuration</div>
     <div class="sub-title">Affichage des Notes</div>
     <div class="card">
       <p style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:10px">Choisissez dans quel(s) onglet(s) afficher l'encart note.</p>
@@ -593,8 +593,8 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     </div>
   </div>
 
-  <div id="sub-api" class="sub-panel" style="display:none">
-    <div class="sub-back" onclick="closeSubPanel()">&#8249; Parametres</div>
+  <div id="sub-api" class="sub-panel" data-parent="sub-config" style="display:none">
+    <div class="sub-back" onclick="openSubPanel('sub-config')">&#8249; Configuration</div>
     <div class="sub-title">API Cours boursiers</div>
     <div class="card">
       <div class="ef" style="margin:0">
@@ -2570,8 +2570,11 @@ window.addEventListener('popstate',e=>{
   const paramsOpen=document.getElementById('params-panel').classList.contains('open');
   const subOpen=Array.from(document.querySelectorAll('.sub-panel')).some(p=>p.style.display!=='none');
   if(paramsOpen){
-    if(subOpen)closeSubPanel();
-    else closeParams();
+    if(subOpen){
+      const openPanel=Array.from(document.querySelectorAll('.sub-panel')).find(p=>p.style.display!=='none');
+      const parent=openPanel&&openPanel.dataset.parent;
+      if(parent)openSubPanel(parent);else closeSubPanel();
+    }else closeParams();
     _hist.push({page:_cur},'#p'+_cur);
   }else if(e.state&&typeof e.state.page==='number'&&e.state.page!==_cur){
     goTo(e.state.page,false);
