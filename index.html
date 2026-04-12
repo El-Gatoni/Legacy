@@ -2636,6 +2636,7 @@ let _sx=0,_sy=0,_st=0,_sw=false,_dragging=false,_swipeDir=null;
 let _prevId=null,_nextId=null;
 
 swiper.addEventListener('touchstart',e=>{
+  if(_animating)return;
   _sx=e.touches[0].clientX;
   _sy=e.touches[0].clientY;
   _st=Date.now();
@@ -2706,7 +2707,8 @@ swiper.addEventListener('touchend',e=>{
     ps[_cur].style.transform='translateX(0%)';
     if(_prevId!==null){ps[_prevId].style.transition=`transform ${ease}`;ps[_prevId].style.transform='translateX(-100%)';}
     if(_nextId!==null){ps[_nextId].style.transition=`transform ${ease}`;ps[_nextId].style.transform='translateX(100%)';}
-    ps[_cur].addEventListener('transitionend',()=>_resetPages(_cur),{once:true});
+    _animating=true;
+    ps[_cur].addEventListener('transitionend',()=>{_animating=false;_resetPages(_cur);},{once:true});
     return;
   }
 
@@ -2718,13 +2720,15 @@ swiper.addEventListener('touchend',e=>{
 
   if(target===oldCur){
     // Snap retour
+    _animating=true;
     ps[oldCur].style.transition=`transform ${ease}`;
     ps[oldCur].style.transform='translateX(0%)';
     if(_prevId!==null){ps[_prevId].style.transition=`transform ${ease}`;ps[_prevId].style.transform='translateX(-100%)';}
     if(_nextId!==null){ps[_nextId].style.transition=`transform ${ease}`;ps[_nextId].style.transform='translateX(100%)';}
-    ps[oldCur].addEventListener('transitionend',()=>_resetPages(oldCur),{once:true});
+    ps[oldCur].addEventListener('transitionend',()=>{_animating=false;_resetPages(oldCur);},{once:true});
   }else{
     // Mettre à jour la nav IMMÉDIATEMENT (pas d'attente transitionend)
+    _animating=true;
     _cur=target;
     document.querySelectorAll('.ni').forEach(n=>n.classList.toggle('active',+n.dataset.tab===target));
     // Compléter l'animation sur les deux pages impliquées
@@ -2734,6 +2738,7 @@ swiper.addEventListener('touchend',e=>{
     ps[oldCur].style.transform=goRight?'translateX(100%)':'translateX(-100%)';
     ps[target].style.transform='translateX(0%)';
     ps[target].addEventListener('transitionend',()=>{
+      _animating=false;
       _resetPages(target);
       if(target===0&&oldCur!==0)history.go(-1);                    // swipe vers Accueil : dépile
       else if(oldCur===0)_hist.push({page:target},'#p'+target);    // quitte Accueil : push
