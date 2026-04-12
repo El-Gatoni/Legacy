@@ -449,69 +449,72 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
   <div id="sub-config" class="sub-panel" style="display:none">
     <div class="sub-back" onclick="closeSubPanel()">&#8249; Parametres</div>
     <div class="sub-title">Configuration</div>
-    <div class="card" style="margin-bottom:10px">
-      <div class="pmenu-item" style="padding:10px 0" onclick="">
+    <div class="card">
+      <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-hide-amounts')">
         <div class="pmenu-left" style="gap:10px">
-          <div><div class="pmenu-title" style="font-size:14px">Masquer les montants</div><div class="pmenu-sub">Affiche &#8226;&#8226;&#8226;&#8226; a la place</div></div>
-        </div>
-        <label class="toggle-wrap" onclick="event.stopPropagation()">
-          <input type="checkbox" id="toggle-hide-amounts" onchange="D.hideAmounts=this.checked;save();applyHideAmounts()">
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
-      <div class="pmenu-sep"></div>
-      <div class="pmenu-item" style="padding:10px 0">
-        <div class="pmenu-left" style="gap:10px">
-          <div>
-            <div class="pmenu-title" style="font-size:14px">Ajouter les frais au PRU</div>
-            <div class="pmenu-sub" style="line-height:1.45;color:rgba(255,255,255,0.7)">
-              Frais (commission, spread, premium...) inclus dans le co&#251;t d&apos;acquisition.<br>
-              <span style="color:var(--grn)">Recommand&#233; pour un PRU r&#233;aliste.</span>
-            </div>
-          </div>
-        </div>
-        <label class="toggle-wrap" onclick="event.stopPropagation()">
-          <input type="checkbox" id="toggle-add-fees-pru" checked onchange="D.addFeesToPRU=this.checked;save()">
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
-      <div class="pmenu-sep"></div>
-      <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-notes')">
-        <div class="pmenu-left" style="gap:10px">
-          <div><div class="pmenu-title" style="font-size:14px">Affichage des Notes</div><div class="pmenu-sub">Choisir les onglets</div></div>
+          <div><div class="pmenu-title" style="font-size:14px">Masquer les montants</div><div class="pmenu-sub">Affiche un effet de flou</div></div>
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
       <div class="pmenu-sep"></div>
       <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-tabs')">
         <div class="pmenu-left" style="gap:10px">
-          <div><div class="pmenu-title" style="font-size:14px">Barre d'onglets</div><div class="pmenu-sub">Ordre et visibilite</div></div>
+          <div><div class="pmenu-title" style="font-size:14px">Barre de navigation</div><div class="pmenu-sub">Ordre et visibilit&#233; des actifs</div></div>
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
       <div class="pmenu-sep"></div>
       <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-homecard')">
         <div class="pmenu-left" style="gap:10px">
-          <div><div class="pmenu-title" style="font-size:14px">Carte Accueil</div><div class="pmenu-sub" id="pmenu-homecard-sub">Actif affiche : Bitcoin</div></div>
+          <div><div class="pmenu-title" style="font-size:14px">Carte Accueil</div><div class="pmenu-sub">Choix de l'actif &#224; afficher</div></div>
+        </div>
+        <div class="pmenu-arrow">&#8250;</div>
+      </div>
+      <div class="pmenu-sep"></div>
+      <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-notes')">
+        <div class="pmenu-left" style="gap:10px">
+          <div><div class="pmenu-title" style="font-size:14px">Encart Notes</div><div class="pmenu-sub">Choisissez les onglets</div></div>
+        </div>
+        <div class="pmenu-arrow">&#8250;</div>
+      </div>
+      <div class="pmenu-sep"></div>
+      <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-fees')">
+        <div class="pmenu-left" style="gap:10px">
+          <div><div class="pmenu-title" style="font-size:14px">Gestion des frais</div><div class="pmenu-sub">Calcul des frais des transactions BTC pour le PRU</div></div>
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
       <div class="pmenu-sep"></div>
       <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-api')">
         <div class="pmenu-left" style="gap:10px">
-          <div><div class="pmenu-title" style="font-size:14px">API Cours boursiers</div><div class="pmenu-sub" id="pmenu-api-sub">Yahoo Finance (defaut)</div></div>
+          <div><div class="pmenu-title" style="font-size:14px">API Cours boursier</div><div class="pmenu-sub">Modifier la cl&#233; API</div></div>
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
     </div>
-    <button class="btn btn-dark" onclick="closeSubPanel()">Retour</button>
+  </div>
+
+  <div id="sub-hide-amounts" class="sub-panel" data-parent="sub-config" style="display:none">
+    <div class="sub-back" onclick="openSubPanel('sub-config')">&#8249; Configuration</div>
+    <div class="sub-title">Masquer les montants</div>
+    <div class="card">
+      <div class="pmenu-item" style="padding:10px 0">
+        <div class="pmenu-left" style="gap:10px">
+          <div><div class="pmenu-title" style="font-size:14px">Masquer les montants</div><div class="pmenu-sub">Cocher pour afficher un effet de flou sur les montants</div></div>
+        </div>
+        <label class="toggle-wrap" onclick="event.stopPropagation()">
+          <input type="checkbox" id="toggle-hide-amounts" onchange="D.hideAmounts=this.checked;save();applyHideAmounts()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
   </div>
 
   <div id="sub-tabs" class="sub-panel" data-parent="sub-config" style="display:none">
     <div class="sub-back" onclick="openSubPanel('sub-config')">&#8249; Configuration</div>
     <div class="sub-title">Barre d'onglets</div>
     <div class="card">
-      <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:10px;line-height:1.5">Choisissez l'ordre des actifs (1 = premier apres Accueil).</p>
+      <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:10px;line-height:1.5">Choisissez l'ordre des actifs (1 = premier apr&#232;s Accueil). Cocher pour afficher l'actif.</p>
       <div id="tabs-config"></div>
     </div>
     <button class="btn btn-dark" onclick="applyTabsConfig();openSubPanel('sub-config')">Valider</button>
@@ -580,8 +583,24 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     <div class="sub-back" onclick="openSubPanel('sub-config')">&#8249; Configuration</div>
     <div class="sub-title">Affichage des Notes</div>
     <div class="card">
-      <p style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:10px">Choisissez dans quel(s) onglet(s) afficher l'encart note.</p>
+      <p style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:10px">Choisissez dans quel(s) onglet(s) afficher l'encart note. Cochez pour afficher dans l'onglet choisi.</p>
       <div id="note-settings"></div>
+    </div>
+  </div>
+
+  <div id="sub-fees" class="sub-panel" data-parent="sub-config" style="display:none">
+    <div class="sub-back" onclick="openSubPanel('sub-config')">&#8249; Configuration</div>
+    <div class="sub-title">Gestion des frais</div>
+    <div class="card">
+      <div class="pmenu-item" style="padding:10px 0">
+        <div class="pmenu-left" style="gap:10px">
+          <div><div class="pmenu-title" style="font-size:14px">Exclure les frais du PRU</div><div class="pmenu-sub" style="line-height:1.45">Cocher pour ne pas ajouter les frais au co&#251;t d'acquisition. Non recommand&#233; pour un calcul du PRU r&#233;aliste.</div></div>
+        </div>
+        <label class="toggle-wrap" onclick="event.stopPropagation()">
+          <input type="checkbox" id="toggle-add-fees-pru" onchange="D.addFeesToPRU=!this.checked;save()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
     </div>
   </div>
 
@@ -598,10 +617,11 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     <div class="sub-title">API Cours boursiers</div>
     <div class="card">
       <div class="ef" style="margin:0">
-        <label>Cle API Finnhub (optionnel)</label>
+        <label>Collez votre cl&#233; API</label>
         <input type="text" id="e-apikey" placeholder="Laissez vide = Yahoo Finance" oninput="D.apiKey=this.value.trim();save();updateParamsMenu()">
         <span class="hint">Format symboles Euronext Paris : WPEA.PA, PAEEM.PA</span>
       </div>
+      <p style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:14px;line-height:1.6">L'API par d&#233;faut est celle de Yahoo Finance. Vous avez la possibilit&#233; d'ajouter une autre cl&#233; API pour obtenir les prix des titres boursiers. Vous pouvez obtenir une cl&#233; gratuitement en cr&#233;ant un compte sur finnhub.io.</p>
     </div>
   </div>
 
@@ -1929,10 +1949,8 @@ function openSubPanel(id){
   if(id==='sub-notes')renderNoteSettings();
   if(id==='sub-tabs')renderTabsConfig();
   if(id==='sub-homecard')updateHomecardSel();
-  if(id==='sub-config'){
-    const tog=document.getElementById('toggle-hide-amounts');if(tog)tog.checked=!!D.hideAmounts;
-    const togFees=document.getElementById('toggle-add-fees-pru');if(togFees)togFees.checked=D.addFeesToPRU!==false;
-  }
+  if(id==='sub-hide-amounts'){const tog=document.getElementById('toggle-hide-amounts');if(tog)tog.checked=!!D.hideAmounts;}
+  if(id==='sub-fees'){const tog=document.getElementById('toggle-add-fees-pru');if(tog)tog.checked=D.addFeesToPRU===false;}
   if(id==='sub-goal'){renderGoalSel();}
   if(id==='sub-api'){const ak=document.getElementById('e-apikey');if(ak)ak.value=D.apiKey||'';}
   if(id==='sub-notif'){initNotifPanel();}
@@ -1960,10 +1978,13 @@ function renderNoteSettings(){
     {k:'passif',l:'Passif'}
   ];
   setH('note-settings',pages.map(p=>`
-    <label style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr);font-size:13px;cursor:pointer;color:var(--tx2)">
-      <input type="checkbox" ${D.notePages[p.k]?'checked':''} onchange="D.notePages['${p.k}']=this.checked;save();calcAll()" style="width:auto;margin:0">
-      ${p.l}
-    </label>`).join(''));
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bdr)">
+      <span style="flex:1;font-size:17px;font-weight:600;color:var(--tx)">${p.l}</span>
+      <label class="toggle-wrap" onclick="event.stopPropagation()">
+        <input type="checkbox" ${D.notePages[p.k]?'checked':''} onchange="D.notePages['${p.k}']=this.checked;save();calcAll()">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>`).join(''));
 }
 
 function renderGoalSel(){
@@ -2113,12 +2134,6 @@ function renderTabsConfig(){
           <span class="toggle-slider"></span>
         </label>`:`<div style="width:48px"></div>`}
       </div>
-      ${assigned?`<div style="display:flex;justify-content:space-between;align-items:center;margin:5px 0 0 26px">
-        <p style="font-size:11px;color:rgba(255,255,255,0.35);line-height:1.4">Masquer cet onglet (accessible via swipe)</p>
-        <span style="font-size:12px;color:rgba(255,255,255,0.4)">${
-          +assigned===1?'Bitcoin':+assigned===2?'Bourse':'Immobilier'
-        }</span>
-      </div>`:''}
     </div>`;
   }).join('');
   setH('tabs-config',rows);
