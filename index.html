@@ -1688,6 +1688,16 @@ function renderBourseDisplay(){
   }).join('')}</div>`);
 }
 function addTitre(){D.titres.push({id:uid(),name:'Nouveau titre',symbol:'',qty:0,pru:0,cours:0,useApi:true});save();renderBourseEditors();renderBourseDisplay();updateHomecardSel();calcAll();}
+function setTitreSymbol(i,val){
+  let s=val.trim().toUpperCase();
+  // Ajoute .PA automatiquement si Yahoo Finance (pas de clé API) et pas de suffixe
+  if(!D.apiKey&&s&&!s.includes('.')&&!s.includes(':'))s+='.PA';
+  D.titres[i].symbol=s;
+  save();
+  // Met à jour visuellement le champ
+  const inp=document.querySelector('#bourse-form input[data-sym]');
+  if(inp)inp.value=s;
+}
 
 async function fetchBourse(){
   document.getElementById('b-dot').className='dot off';
@@ -2336,15 +2346,18 @@ function selectTitre(val){
         <button class="del-btn" onclick="D.titres.splice(${i},1);save();renderBourseEditors();renderBourseDisplay();updateHomecardSel();calcAll()">×</button>
       </div>
       <div class="g2">
-        <div class="ef"><label>Symbole (.PA)</label><input type="text" value="${esc(t.symbol)}" onchange="D.titres[${i}].symbol=this.value;save()"></div>
+        <div class="ef"><label>Symbole</label><input type="text" data-sym value="${esc(t.symbol)}" onchange="setTitreSymbol(${i},this.value)"></div>
         <div class="ef"><label>Quantite</label><input type="number" inputmode="numeric" value="${t.qty||0}" onchange="D.titres[${i}].qty=+this.value;save();calcAll()"></div>
         <div class="ef"><label>PRU (EUR)</label><input type="number" inputmode="decimal" step="0.001" value="${t.pru||0}" onchange="D.titres[${i}].pru=+this.value;save();calcAll()"></div>
-        <div class="ef"><label>Cours (EUR)</label><input type="number" inputmode="decimal" step="0.01" value="${t.cours||0}" onchange="D.titres[${i}].cours=+this.value;save();calcAll()"></div>
+        <div class="ef">
+          <label>Cours (EUR)</label>
+          <input type="number" inputmode="decimal" step="0.01" value="${t.cours||0}" ${t.useApi?'readonly':''} style="${t.useApi?'opacity:0.4;cursor:not-allowed;':''}" onchange="D.titres[${i}].cours=+this.value;save();calcAll()">
+          <label style="font-size:12px;color:rgba(255,255,255,0.5);display:flex;align-items:center;gap:6px;cursor:pointer;margin-top:5px">
+            <input type="checkbox" ${!t.useApi?'checked':''} onchange="D.titres[${i}].useApi=!this.checked;save();renderBourseEditors()" style="width:auto;margin:0">
+            Modifier manuellement
+          </label>
+        </div>
       </div>
-      <label style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:7px;cursor:pointer;padding:4px 0">
-        <input type="checkbox" ${t.useApi?'checked':''} onchange="D.titres[${i}].useApi=this.checked;save();renderBourseEditors()" style="width:auto;margin:0">
-        Actualisation auto (Yahoo Finance)
-      </label>
     </div>`;
 }
 
