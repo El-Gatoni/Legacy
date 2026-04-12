@@ -2151,11 +2151,6 @@ function toggleTabHide(id,hide){
 }
 
 function applyTabsConfig(){
-  // Forcer migration si tabOrder est encore un tableau ou l'ancien défaut
-  if(!D.tabOrder||Array.isArray(D.tabOrder)||
-    (typeof D.tabOrder==='object'&&D.tabOrder[1]===1&&D.tabOrder[2]===2&&D.tabOrder[3]===3)){
-    D.tabOrder={1:3,2:2,3:1};
-  }
   save();
   const order=getPageOrder();
   const niMap={};
