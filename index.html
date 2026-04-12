@@ -979,10 +979,9 @@ let D=(()=>{
       if(p.hideAmounts===undefined)p.hideAmounts=false;
       if(!p.homeCard)p.homeCard='btc';
       if(!p.hiddenTabs)p.hiddenTabs=[];
-      // Migration tabOrder : tableau → objet, et correction de l'ancien défaut {1:1,2:2,3:3}
-      if(!p.tabOrder||Array.isArray(p.tabOrder)||
-        (typeof p.tabOrder==='object'&&p.tabOrder[1]===1&&p.tabOrder[2]===2&&p.tabOrder[3]===3)){
-        p.tabOrder={1:3,2:2,3:1};// Défaut : Immo(id=3) rang 1, Bourse(id=2) rang 2, Bitcoin(id=1) rang 3
+      // Migration tabOrder : tableau → objet (ancien format)
+      if(!p.tabOrder||Array.isArray(p.tabOrder)){
+        p.tabOrder={1:3,2:2,3:1};
       }
       if(!p.notifBtcHigh)p.notifBtcHigh=0;
       if(!p.notifBtcLow)p.notifBtcLow=0;
