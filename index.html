@@ -340,7 +340,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .pmenu-item:active{background:rgba(255,255,255,0.05)}
 .pmenu-left{display:flex;align-items:center;gap:14px}
 .pmenu-icon{width:36px;height:36px;background:rgba(255,255,255,0.08);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.pmenu-title{font-size:15px;font-weight:600;color:#fff;margin-bottom:2px}
+.pmenu-title{font-size:17px;font-weight:600;color:#fff;margin-bottom:2px}
 .pmenu-sub{font-size:12px;color:rgba(255,255,255,0.4)}
 .pmenu-arrow{font-size:22px;color:rgba(255,255,255,0.3);font-weight:300;flex-shrink:0}
 .pmenu-sep{height:1px;background:rgba(255,255,255,0.07);margin:0 16px}
@@ -452,42 +452,42 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     <div class="card">
       <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-hide-amounts')">
         <div class="pmenu-left" style="gap:10px">
-          <div><div class="pmenu-title" style="font-size:14px">Masquer les montants</div><div class="pmenu-sub">Affiche un effet de flou</div></div>
+          <div><div class="pmenu-title">Masquer les montants</div><div class="pmenu-sub">Affiche un effet de flou</div></div>
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
       <div class="pmenu-sep"></div>
       <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-tabs')">
         <div class="pmenu-left" style="gap:10px">
-          <div><div class="pmenu-title" style="font-size:14px">Barre de navigation</div><div class="pmenu-sub">Ordre et visibilit&#233; des actifs</div></div>
+          <div><div class="pmenu-title">Barre de navigation</div><div class="pmenu-sub">Ordre et visibilit&#233; des actifs</div></div>
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
       <div class="pmenu-sep"></div>
       <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-homecard')">
         <div class="pmenu-left" style="gap:10px">
-          <div><div class="pmenu-title" style="font-size:14px">Carte Accueil</div><div class="pmenu-sub">Choix de l'actif &#224; afficher</div></div>
+          <div><div class="pmenu-title">Carte Accueil</div><div class="pmenu-sub">Choix de l'actif &#224; afficher</div></div>
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
       <div class="pmenu-sep"></div>
       <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-notes')">
         <div class="pmenu-left" style="gap:10px">
-          <div><div class="pmenu-title" style="font-size:14px">Encart Notes</div><div class="pmenu-sub">Choisissez les onglets</div></div>
+          <div><div class="pmenu-title">Encart Notes</div><div class="pmenu-sub">Choisissez les onglets</div></div>
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
       <div class="pmenu-sep"></div>
       <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-fees')">
         <div class="pmenu-left" style="gap:10px">
-          <div><div class="pmenu-title" style="font-size:14px">Gestion des frais</div><div class="pmenu-sub">Calcul des frais des transactions BTC pour le PRU</div></div>
+          <div><div class="pmenu-title">Gestion des frais</div><div class="pmenu-sub">Calcul des frais des transactions BTC pour le PRU</div></div>
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
       <div class="pmenu-sep"></div>
       <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-api')">
         <div class="pmenu-left" style="gap:10px">
-          <div><div class="pmenu-title" style="font-size:14px">API Cours boursier</div><div class="pmenu-sub">Modifier la cl&#233; API</div></div>
+          <div><div class="pmenu-title">API Cours boursier</div><div class="pmenu-sub">Modifier la cl&#233; API</div></div>
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
@@ -500,7 +500,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     <div class="card">
       <div class="pmenu-item" style="padding:10px 0">
         <div class="pmenu-left" style="gap:10px">
-          <div><div class="pmenu-title" style="font-size:14px">Masquer les montants</div><div class="pmenu-sub">Cocher pour afficher un effet de flou sur les montants</div></div>
+          <div><div class="pmenu-title">Masquer les montants</div><div class="pmenu-sub">Cocher pour afficher un effet de flou sur les montants</div></div>
         </div>
         <label class="toggle-wrap" onclick="event.stopPropagation()">
           <input type="checkbox" id="toggle-hide-amounts" onchange="D.hideAmounts=this.checked;save();applyHideAmounts()">
@@ -594,7 +594,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     <div class="card">
       <div class="pmenu-item" style="padding:10px 0">
         <div class="pmenu-left" style="gap:10px">
-          <div><div class="pmenu-title" style="font-size:14px">Exclure les frais du PRU</div><div class="pmenu-sub" style="line-height:1.45">Cocher pour ne pas ajouter les frais au co&#251;t d'acquisition. Non recommand&#233; pour un calcul du PRU r&#233;aliste.</div></div>
+          <div><div class="pmenu-title">Exclure les frais du PRU</div><div class="pmenu-sub" style="line-height:1.45">Cocher pour ne pas ajouter les frais au co&#251;t d'acquisition. Non recommand&#233; pour un calcul du PRU r&#233;aliste.</div></div>
         </div>
         <label class="toggle-wrap" onclick="event.stopPropagation()">
           <input type="checkbox" id="toggle-add-fees-pru" onchange="D.addFeesToPRU=!this.checked;save()">
