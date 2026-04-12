@@ -2528,6 +2528,7 @@ const _hist={
 // NAVIGATION — vue unique, transition translateX ±100vw
 // ============================================================
 let _cur=0;
+let _animating=false;
 const swiper=document.getElementById('swiper');
 
 // Padding bas dynamique
@@ -2541,7 +2542,8 @@ window.addEventListener('resize',fixNavPadding);
 fixNavPadding();
 
 function goTo(pageIdx,pushState=true){
-  if(pageIdx===_cur)return;
+  if(_animating||pageIdx===_cur)return;
+  _animating=true;
   const order=getPageOrder();
   const curPos=order.indexOf(_cur);
   const newPos=order.indexOf(pageIdx);
@@ -2564,7 +2566,8 @@ function goTo(pageIdx,pushState=true){
   newPage.style.transition='none';
   newPage.style.visibility='visible';
   newPage.style.transform=fromRight?'translateX(100%)':'translateX(-100%)';
-  newPage.getBoundingClientRect(); // reflow avant de réactiver transition
+  newPage.scrollTop=0;             // reset scroll hors écran : reflow silencieux
+  newPage.getBoundingClientRect(); // force flush des styles avant de réactiver transition
 
   // Déclencher les transitions
   const dur='.24s cubic-bezier(.25,0,.2,1)';
@@ -2579,6 +2582,7 @@ function goTo(pageIdx,pushState=true){
   newPage.style.transition=`transform ${dur}`;
   newPage.style.transform='translateX(0%)';
   newPage.addEventListener('transitionend',()=>{
+    _animating=false;
     // Stabiliser : passer aux classes CSS
     newPage.style.transform='';newPage.style.transition='';newPage.style.visibility='';
     newPage.classList.add('active-page');
@@ -2586,7 +2590,6 @@ function goTo(pageIdx,pushState=true){
 
   const prev=_cur;
   _cur=pageIdx;
-  newPage.scrollTop=0;
   document.querySelectorAll('.ni').forEach(n=>n.classList.toggle('active',+n.dataset.tab===pageIdx));
   if(pushState){
     if(pageIdx===0&&prev!==0)history.back();                       // clic Accueil : dépile
@@ -2687,6 +2690,7 @@ swiper.addEventListener('touchmove',e=>{
 },{passive:false});
 
 swiper.addEventListener('touchend',e=>{
+  if(_animating)return;
   const dx=e.changedTouches[0].clientX-_sx;
   const dt=Date.now()-_st;
   const velocity=dx!==0?Math.abs(dx)/Math.max(dt,1):0;
