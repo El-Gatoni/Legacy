@@ -466,7 +466,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
       <div class="pmenu-sep"></div>
       <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-homecard')">
         <div class="pmenu-left" style="gap:10px">
-          <div><div class="pmenu-title">Carte Accueil</div><div class="pmenu-sub">Choix de l'actif &#224; afficher</div></div>
+          <div><div class="pmenu-title">Carte Accueil</div><div class="pmenu-sub" id="pmenu-homecard-sub">Choix de l'actif &#224; afficher</div></div>
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
@@ -487,7 +487,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
       <div class="pmenu-sep"></div>
       <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-api')">
         <div class="pmenu-left" style="gap:10px">
-          <div><div class="pmenu-title">API Cours boursier</div><div class="pmenu-sub">Modifier la cl&#233; API</div></div>
+          <div><div class="pmenu-title">API Cours boursier</div><div class="pmenu-sub" id="pmenu-api-sub">Modifier la cl&#233; API</div></div>
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
@@ -531,7 +531,6 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
           <option value="btc">Bitcoin</option>
           <option value="bourse">Bourse</option>
           <option value="immo">Immobilier</option>
-          <div id="homecard-titre-options"></div>
         </select>
       </div>
     </div>
