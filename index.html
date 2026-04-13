@@ -1936,7 +1936,7 @@ function selectBien(val){
             <input class="name-inp" style="font-size:14px" value="${esc(c.name||'')}" placeholder="ex: Impots, travaux..." onchange="D.biens[${bi}].charges[${ci}].name=this.value;save()">
             <button class="del-btn" onclick="D.biens[${bi}].charges.splice(${ci},1);save();selectBien(${bi});calcAll()">×</button>
           </div>
-          <div class="ef" style="margin:0"><label>Montant (EUR)</label><input type="number" inputmode="decimal" value="${c.value||0}" onchange="D.biens[${bi}].charges[${ci}].value=+this.value;save();calcAll()"></div>
+          <div class="ef" style="margin:0"><label>Montant annuel (EUR)</label><input type="number" inputmode="decimal" value="${c.value||0}" onchange="D.biens[${bi}].charges[${ci}].value=+this.value;save();calcAll()"></div>
         </div>`).join('')}
       <button class="btn-add" style="padding:7px;margin-bottom:10px" onclick="(D.biens[${bi}].charges=D.biens[${bi}].charges||[]).push({name:'',value:0});save();selectBien(${bi});calcAll()">+ Charge</button>
       <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.05em;margin:10px 0 6px">Unites locatives</div>
