@@ -837,7 +837,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
       <div class="alloc-bar" id="alloc-bar"></div>
       <div id="alloc-list"></div>
     </div>
-    <div class="card" id="note-card-accueil" style="display:none">
+    <div class="card" id="note-card-accueil">
       <div class="ct">Note</div>
       <textarea class="note-area" id="note-area" placeholder="Observations, objectifs..."></textarea>
     </div>
@@ -869,7 +869,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
       </div>
       <div class="sdiv"></div>
       <div class="srow"><span style="color:#fff;font-size:14px;font-weight:600">Stack total Bitcoin <span style="color:var(--btc)">₿</span></span><span class="sv" id="c-stack-btc">--</span></div>
-      <div class="srow"><span style="color:#fff;font-size:14px">Valeur en euros</span><span style="font-weight:700;color:#fff;font-size:15px" id="c-stack-eur">--</span></div>
+
       <div class="prog-wrap">
         <div class="prog-top">
           <div class="prog-top-l">Objectif : <span id="prog-goal-lbl" style="color:var(--btc)">1 ₿</span> · <span id="prog-pct">--</span></div>
@@ -1031,7 +1031,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
       <div class="row" style="padding-top:0"><span class="rl">Total dettes</span><span style="font-size:28px;font-weight:800;color:var(--red)" id="p-total">--</span></div>
     </div>
     <div class="sec-hd">
-      <div class="sec-hd-t">Credits immobiliers</div>
+      <div class="sec-hd-t">Crédits immobiliers</div>
     </div>
     <div id="p-immo-list"></div>
     <div class="sec-hd">
@@ -1393,21 +1393,8 @@ function calcAll(){
   if(bourseCostEl)bourseCostEl.textContent=fE(bourseCost);
   setH('b-pv',pvBadge(bourseTotal,bourseCost));
 
-  // PASSIF
+  // PASSIF — total seulement (p-immo-list est géré par renderBiensPassif)
   setT('p-total',fE(totalPassif));
-  setH('p-immo-list',D.biens.filter(b=>+(b.credit||0)>0).map(b=>{
-    const remb=b.empruntinitial>0?Math.min(100,(1-(+(b.credit||0))/b.empruntinitial)*100):0;
-    return `
-    <div class="passif-item">
-      <div class="ct">${esc(b.name||'Bien')} 🏢</div>
-      <div class="row" style="padding-top:0"><span class="rl">Reste (votre part)</span><span class="rv" style="color:var(--red)">${fE((+(b.credit||0))*(+(b.part||100)/100))}</span></div>
-      <div class="row"><span class="rl">Taux</span><span class="rv">${b.tauxPret||0}%</span></div>
-      ${b.dateFinPret?`<div class="row"><span class="rl">Fin</span><span class="rv">${fmtDate(b.dateFinPret)}</span></div>`:''}
-      <div style="margin-top:8px">
-        <div class="prow" style="margin-bottom:3px;display:flex;justify-content:space-between"><span style="color:rgba(255,255,255,0.5);font-size:11px">Remboursement credit</span><span style="color:rgba(255,255,255,0.5);font-size:11px">${remb.toFixed(1)} %</span></div>
-        <div class="pbg"><div class="pfill" style="width:${remb.toFixed(1)}%"></div></div>
-      </div>
-    </div>`;}).join('')||'<p style="font-size:12px;color:var(--tx3);margin-bottom:8px">Aucun credit immobilier</p>');
   setH('p-colls-list',D.collPrets.map(c=>`
     <div class="passif-item">
       <div class="ct">${esc(c.name)} ₿</div>
@@ -2019,6 +2006,8 @@ function renderBiensDisplay(){
   }).join('')}</div>`;
   setH('biens-display', summaryHTML+biensHTML);
   if(_activeBienInline!==null)_reopenActiveInline();
+  // Sync Passif si un bien a changé de nom
+  renderBiensPassif();
 }
 
 function renderBiensEditors(preselectBi){
@@ -2306,74 +2295,163 @@ function buildBienForm(bi){
   const b=D.biens[bi];
   if(!b)return '';
   const fid='bien-form-inline-'+bi;
-  let h='<div class="ibox">';
-  h+='<div class="ibox-hd">';
-  h+='<input class="name-inp" value="'+esc(b.name||'')+'" placeholder="Nom du bien" onchange="D.biens['+bi+'].name=this.value;save();renderBiensDisplay()">';
-  h+='<span></span></div>';
+  let h='';
+
+  // ── Nom + infos de base ──
+  h+='<div class="ef"><label>Nom du bien</label>';
+  h+='<input value="'+esc(b.name||'')+'" placeholder="ex: Appartement Lyon 2e" onchange="D.biens['+bi+'].name=this.value;save();renderBiensDisplay()"></div>';
   h+='<div class="g2">';
-  h+='<div class="ef"><label>Surface (m2)</label><input type="number" inputmode="decimal" step="any" value="'+(b.surface||0)+'" onchange="D.biens['+bi+'].surface=+this.value;save();calcAll();renderBiensDisplay()"></div>';
-  h+='<div class="ef"><label>Prix au m2</label><input type="number" inputmode="decimal" step="any" value="'+(b.prixm2||0)+'" onchange="D.biens['+bi+'].prixm2=+this.value;save();calcAll();renderBiensDisplay()"></div>';
-  h+='<div class="ef"><label>Part (%)</label><input type="number" inputmode="decimal" step="any" max="100" value="'+(b.part||100)+'" onchange="D.biens['+bi+'].part=+this.value;save();calcAll();renderBiensDisplay()"></div>';
-  h+='<div class="ef"><label>Emprunt initial</label><input type="number" inputmode="decimal" step="any" value="'+(b.empruntinitial||0)+'" onchange="D.biens['+bi+'].empruntinitial=+this.value;save();calcAll()"></div>';
-  h+='<div class="ef"><label>Reste a rembourser</label><input type="number" inputmode="decimal" step="any" value="'+(b.credit||0)+'" onchange="D.biens['+bi+'].credit=+this.value;save();calcAll();renderBiensDisplay()"></div>';
-  h+='<div class="ef"><label>Taux (%)</label><input type="number" inputmode="decimal" step="0.01" value="'+(b.tauxPret||0)+'" onchange="D.biens['+bi+'].tauxPret=+this.value;save()"></div>';
-  h+='<div class="ef"><label>Date fin pret</label><input type="date" value="'+(b.dateFinPret||'')+'" onchange="D.biens['+bi+'].dateFinPret=this.value;save();calcAll()"></div>';
-  h+='<div class="ef"><label>Apport initial total (\u20ac)</label><input type="number" inputmode="decimal" step="any" value="'+(b.apport||0)+'" onchange="D.biens['+bi+'].apport=+this.value;save()"></div>';
-  h+='<div class="ef"><label>Dont votre part (\u20ac)</label><input type="number" inputmode="decimal" step="any" value="'+(b.apportMe||0)+'" placeholder="Votre mise personnelle" onchange="D.biens['+bi+'].apportMe=+this.value;save();calcAll()"></div>';
+  h+='<div class="ef"><label>Surface (m\u00b2)</label><input type="number" inputmode="decimal" step="any" value="'+(b.surface||0)+'" onchange="D.biens['+bi+'].surface=+this.value;save();calcAll();renderBiensDisplay()"></div>';
+  h+='<div class="ef"><label>Prix au m\u00b2 (\u20ac)</label><input type="number" inputmode="decimal" step="any" value="'+(b.prixm2||0)+'" onchange="D.biens['+bi+'].prixm2=+this.value;save();calcAll();renderBiensDisplay()"></div>';
   h+='</div>';
-  h+='<div class="ef"><label>Compte bancaire associ\u00e9 (EUR)</label><input type="number" inputmode="decimal" step="any" value="'+(b.bankAccount||0)+'" onchange="D.biens['+bi+'].bankAccount=+this.value;save();calcAll()"></div>';
-  // Appros
-  h+='<div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:10px 0 6px">Approvisionnements</div>';
+
+  // ── Compte bancaire ──
+  h+='<div class="ef"><label>Solde compte bancaire associ\u00e9 (\u20ac)</label>';
+  h+='<input type="number" inputmode="decimal" step="any" value="'+(b.bankAccount||0)+'" onchange="D.biens['+bi+'].bankAccount=+this.value;save();calcAll()"></div>';
+
+  // ── Approvisionnements ──
+  h+='<div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 8px">Approvisionnements</div>';
+  h+='<p style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:10px;line-height:1.5">Versements effectu\u00e9s sur le compte bancaire du bien.</p>';
   (b.appros||[]).forEach((a,ai)=>{
-    h+='<div class="ibox" style="background:rgba(255,255,255,0.03);margin-bottom:6px"><div class="ibox-hd">';
-    h+='<input class="name-inp" style="font-size:14px" value="'+esc(a.label||'')+'" placeholder="ex: Moi" onchange="D.biens['+bi+'].appros['+ai+'].label=this.value;save()">';
-    h+='<select onchange="D.biens['+bi+'].appros['+ai+'].who=this.value;save();calcAll()" style="width:auto;padding:4px 6px;font-size:11px;margin-left:4px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:7px;color:var(--tx)">';
-    h+='<option value="me"'+(a.who==='me'?' selected':'')+'>Mes appros</option>';
-    h+='<option value="other"'+(a.who==='other'?' selected':'')+'>Autre</option></select>';
-    h+='<button class="del-btn" onclick="D.biens['+bi+'].appros.splice('+ai+',1);save();selectBienInline('+bi+',\''+fid+'\')">&#215;</button>';
-    h+='</div><div class="ef" style="margin:0"><label>Montant (EUR)</label>';
-    h+='<input type="number" inputmode="decimal" step="any" value="'+(a.amount||0)+'" onchange="D.biens['+bi+'].appros['+ai+'].amount=+this.value;save();calcAll()"></div></div>';
+    h+='<div class="ibox" style="background:rgba(255,255,255,0.03);margin-bottom:8px">';
+    // Libellé + bouton supprimer sur une ligne
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:8px">';
+    h+='<input class="name-inp" style="flex:1;min-width:0" value="'+esc(a.label||'')+'" placeholder="ex: Virement mensuel" onchange="D.biens['+bi+'].appros['+ai+'].label=this.value;save()">';
+    h+='<button class="del-btn" style="flex-shrink:0" onclick="D.biens['+bi+'].appros.splice('+ai+',1);save();selectBienInline('+bi+',\''+fid+'\')">&#215;</button>';
+    h+='</div>';
+    // Type + Montant en grille 2 colonnes
+    h+='<div class="g2">';
+    h+='<div class="ef" style="margin:0"><label>Type</label>';
+    h+='<select onchange="D.biens['+bi+'].appros['+ai+'].who=this.value;save();calcAll()" style="width:100%">';
+    h+='<option value="me"'+(a.who==='me'?' selected':'')+'>Ma part</option>';
+    h+='<option value="other"'+(a.who==='other'?' selected':'')+'>Autre</option></select></div>';
+    h+='<div class="ef" style="margin:0"><label>Montant (\u20ac)</label>';
+    h+='<input type="number" inputmode="decimal" step="any" value="'+(a.amount||0)+'" onchange="D.biens['+bi+'].appros['+ai+'].amount=+this.value;save();calcAll()"></div>';
+    h+='</div></div>';
   });
-  h+='<button class="btn-add" style="margin-bottom:8px;padding:7px" onclick="(D.biens['+bi+'].appros=D.biens['+bi+'].appros||[]).push({label:\'\',who:\'me\',amount:0});save();selectBienInline('+bi+',\''+fid+'\');calcAll()">+ Approvisionnement</button>';
-  // Charges
-  h+='<div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.05em;margin:6px 0">Charges du bien</div>';
-  (b.charges||[]).forEach((ch,ci)=>{
-    h+='<div class="ibox" style="background:rgba(255,255,255,0.03);margin-bottom:6px"><div class="ibox-hd">';
-    h+='<input class="name-inp" style="font-size:14px" value="'+esc(ch.name||'')+'" placeholder="ex: Imp\u00f4ts, travaux..." onchange="D.biens['+bi+'].charges['+ci+'].name=this.value;save()">';
-    h+='<button class="del-btn" onclick="D.biens['+bi+'].charges.splice('+ci+',1);save();selectBienInline('+bi+',\''+fid+'\');calcAll()">&#215;</button>';
-    h+='</div><div class="ef" style="margin:0"><label>Montant (EUR)</label>';
-    h+='<input type="number" inputmode="decimal" step="any" value="'+(ch.value||0)+'" onchange="D.biens['+bi+'].charges['+ci+'].value=+this.value;save();calcAll()"></div></div>';
-  });
-  h+='<button class="btn-add" style="padding:7px;margin-bottom:10px" onclick="(D.biens['+bi+'].charges=D.biens['+bi+'].charges||[]).push({name:\'\',value:0});save();selectBienInline('+bi+',\''+fid+'\');calcAll()">+ Charge</button>';
-  // Unités locatives
-  h+='<div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.05em;margin:10px 0 6px">Unit\u00e9s locatives</div>';
-  h+='<p style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:8px;line-height:1.5">Ajoutez une unit\u00e9 par logement ou espace lou\u00e9 (appartement, d\u00e9pendance, local...).</p>';
+  h+='<button class="btn-add" style="width:100%;padding:10px;margin-bottom:4px" onclick="(D.biens['+bi+'].appros=D.biens['+bi+'].appros||[]).push({label:\'\',who:\'me\',amount:0});save();selectBienInline('+bi+',\''+fid+'\');calcAll()">+ Approvisionnement</button>';
+
+  // ── Unités locatives ──
+  h+='<div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:16px 0 8px">Unit\u00e9s locatives</div>';
+  h+='<p style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:10px;line-height:1.5">Un logement ou espace lou\u00e9 par unit\u00e9 (appartement, d\u00e9pendance, local...).</p>';
   (b.units||[]).forEach((u,ui)=>{
-    h+='<div class="ibox" style="background:rgba(255,255,255,0.03);margin-bottom:6px"><div class="ibox-hd">';
-    h+='<input class="name-inp" style="font-size:14px" value="'+esc(u.name||'')+'" placeholder="ex: Appartement T2, D\u00e9pendance..." onchange="D.biens['+bi+'].units['+ui+'].name=this.value;save();calcAll()">';
+    h+='<div class="ibox" style="background:rgba(255,255,255,0.03);margin-bottom:10px">';
+    h+='<div class="ibox-hd" style="margin-bottom:10px">';
+    h+='<input class="name-inp" value="'+esc(u.name||'')+'" placeholder="ex: Appartement T2, D\u00e9pendance..." onchange="D.biens['+bi+'].units['+ui+'].name=this.value;save();calcAll()">';
     h+='<button class="del-btn" onclick="D.biens['+bi+'].units.splice('+ui+',1);save();selectBienInline('+bi+',\''+fid+'\');calcAll()">&#215;</button>';
     h+='</div>';
-    h+='<div class="g2" style="margin-bottom:6px">';
-    h+='<div class="ef" style="margin:0"><label>Loyer mensuel (EUR)</label><input type="number" inputmode="decimal" step="any" value="'+(u.loyer||0)+'" onchange="D.biens['+bi+'].units['+ui+'].loyer=+this.value;save();calcAll();renderBiensDisplay()"></div>';
-    h+='</div>';
-    // Charges locatives pleine largeur
-    h+='<div style="font-size:10px;color:rgba(255,255,255,0.35);margin:4px 0 4px">Charges locatives</div>';
+    h+='<div class="ef" style="margin-bottom:12px"><label>Loyer mensuel (\u20ac)</label>';
+    h+='<input type="number" inputmode="decimal" step="any" value="'+(u.loyer||0)+'" onchange="D.biens['+bi+'].units['+ui+'].loyer=+this.value;save();calcAll();renderBiensDisplay()"></div>';
+    // Charges locatives — chaque ligne occupe toute la largeur
+    h+='<div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Charges locatives</div>';
     (u.rentalCharges||[]).forEach((rc,rci)=>{
-      h+='<div style="display:flex;gap:4px;align-items:center;margin-bottom:3px">';
-      h+='<input style="flex:1;font-size:12px;padding:3px 6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:#fff;font-family:inherit;min-width:0" value="'+esc(rc.name||'')+'" placeholder="Libellé..." onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].name=this.value;save()">';
-      h+='<input type="number" inputmode="decimal" step="any" style="width:70px;font-size:12px;padding:3px 6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:#fff;font-family:inherit;text-align:right;flex-shrink:0" value="'+(rc.value||0)+'" onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].value=+this.value;save();calcAll()">';
-      h+='<button style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:15px;line-height:1;cursor:pointer;padding:0 2px;flex-shrink:0" onclick="D.biens['+bi+'].units['+ui+'].rentalCharges.splice('+rci+',1);save();selectBienInline('+bi+',\''+fid+'\');calcAll()">&#215;</button>';
-      h+='</div>';
+      h+='<div class="ef" style="margin-bottom:8px">';
+      h+='<label>Libell\u00e9 de la charge</label>';
+      h+='<div style="display:flex;gap:6px;align-items:center">';
+      h+='<input style="flex:1;min-width:0" value="'+esc(rc.name||'')+'" placeholder="ex: Taxe ordures, copropri\u00e9t\u00e9..." onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].name=this.value;save()">';
+      h+='<input type="number" inputmode="decimal" step="any" style="width:90px;text-align:right;flex-shrink:0" value="'+(rc.value||0)+'" placeholder="\u20ac/an" onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].value=+this.value;save();calcAll()">';
+      h+='<button class="del-btn" style="flex-shrink:0" onclick="D.biens['+bi+'].units['+ui+'].rentalCharges.splice('+rci+',1);save();selectBienInline('+bi+',\''+fid+'\');calcAll()">&#215;</button>';
+      h+='</div></div>';
     });
-    h+='<button class="btn-add" style="padding:3px 8px;font-size:11px;margin-top:2px" onclick="(D.biens['+bi+'].units['+ui+'].rentalCharges=D.biens['+bi+'].units['+ui+'].rentalCharges||[]).push({name:\'\',value:0});save();selectBienInline('+bi+',\''+fid+'\');calcAll()">+ Charge</button>';
+    h+='<button class="btn-add" style="width:100%;padding:8px" onclick="(D.biens['+bi+'].units['+ui+'].rentalCharges=D.biens['+bi+'].units['+ui+'].rentalCharges||[]).push({name:\'\',value:0});save();selectBienInline('+bi+',\''+fid+'\');calcAll()">+ Charge locative</button>';
     h+='</div>';
   });
   if((b.units||[]).length===0&&(b.loyer||0)>0){
-    h+='<div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:9px 12px;margin-bottom:8px;font-size:12px;color:rgba(245,158,11,0.85)">Loyer global existant : <strong>'+fE(b.loyer||0)+'/mois</strong> \u2014 il sera utilis\u00e9 si aucune unit\u00e9 n\u2019est ajout\u00e9e.</div>';
+    h+='<div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:rgba(245,158,11,0.85)">Loyer global existant\u00a0: <strong>'+fE(b.loyer||0)+'/mois</strong> \u2014 sera utilis\u00e9 si aucune unit\u00e9 n\u2019est ajout\u00e9e.</div>';
   }
-  h+='<button class="btn-add" style="padding:7px;margin-bottom:4px" onclick="(D.biens['+bi+'].units=D.biens['+bi+'].units||[]).push({name:\'\',loyer:0,charges:0});save();selectBienInline('+bi+',\''+fid+'\');calcAll()">+ Ajouter une unit\u00e9 locative</button>';
-  h+='</div>';
+  h+='<button class="btn-add" style="width:100%;padding:10px" onclick="(D.biens['+bi+'].units=D.biens['+bi+'].units||[]).push({name:\'\',loyer:0,charges:0,rentalCharges:[]});save();selectBienInline('+bi+',\''+fid+'\');calcAll()">+ Ajouter une unit\u00e9 locative</button>';
+
   return h;
+}
+
+function buildImmoCredit(bi){
+  const b=D.biens[bi];
+  if(!b)return '';
+  let h='';
+  h+='<p style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:12px;line-height:1.5">';
+  h+='Ces informations sont liées au bien « <strong style="color:rgba(255,255,255,0.7)">'+esc(b.name||'Bien')+'</strong> » de l’onglet Immobilier.</p>';
+  // Part de détention pleine largeur
+  h+='<div class="ef"><label>Quote-part de détention (%)</label>';
+  h+='<input type="number" inputmode="decimal" step="any" max="100" value="'+(b.part||100)+'" onchange="D.biens['+bi+'].part=+this.value;save()"></div>';
+  // Crédit en grille 2 colonnes
+  h+='<div class="g2">';
+  h+='<div class="ef"><label>Emprunt initial (€)</label><input type="number" inputmode="decimal" step="any" value="'+(b.empruntinitial||0)+'" onchange="D.biens['+bi+'].empruntinitial=+this.value;save()"></div>';
+  h+='<div class="ef"><label>Reste à rembourser (€)</label><input type="number" inputmode="decimal" step="any" value="'+(b.credit||0)+'" onchange="D.biens['+bi+'].credit=+this.value;save()"></div>';
+  h+='<div class="ef"><label>Taux annuel (%)</label><input type="number" inputmode="decimal" step="0.01" value="'+(b.tauxPret||0)+'" onchange="D.biens['+bi+'].tauxPret=+this.value;save()"></div>';
+  h+='<div class="ef"><label>Date de fin</label><input type="date" value="'+(b.dateFinPret||'')+'" onchange="D.biens['+bi+'].dateFinPret=this.value;save()"></div>';
+  h+='<div class="ef"><label>Apport total (€)</label><input type="number" inputmode="decimal" step="any" value="'+(b.apport||0)+'" onchange="D.biens['+bi+'].apport=+this.value;save()"></div>';
+  h+='<div class="ef"><label>Dont votre part (€)</label><input type="number" inputmode="decimal" step="any" value="'+(b.apportMe||0)+'" placeholder="Votre mise" onchange="D.biens['+bi+'].apportMe=+this.value;save()"></div>';
+  h+='</div>';
+  // Charges initiales
+  h+='<div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px">Charges initiales</div>';
+  h+='<p style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:10px;line-height:1.5">Frais de notaire, travaux, ameublement...</p>';
+  (b.charges||[]).forEach((ch,ci)=>{
+    h+='<div class="ef" style="margin-bottom:6px"><label>Libellé</label>';
+    h+='<div style="display:flex;gap:6px;align-items:center">';
+    h+='<input style="flex:1;min-width:0" value="'+esc(ch.name||'')+'" placeholder="ex: Notaire, travaux..." onchange="D.biens['+bi+'].charges['+ci+'].name=this.value;save()">';
+    h+='<input type="number" inputmode="decimal" step="any" style="width:90px;text-align:right;flex-shrink:0" value="'+(ch.value||0)+'" placeholder="€" onchange="D.biens['+bi+'].charges['+ci+'].value=+this.value;save()">';
+    h+='<button class="del-btn" style="flex-shrink:0" onclick="D.biens['+bi+'].charges.splice('+ci+',1);save();_renderImmoCredit('+bi+')">&#215;</button>';
+    h+='</div></div>';
+  });
+  h+='<button class="btn-add" style="width:100%;padding:10px;margin-top:4px" onclick="(D.biens['+bi+'].charges=D.biens['+bi+'].charges||[]).push({name:\'\',value:0});save();_renderImmoCredit('+bi+')">+ Charge initiale</button>';
+  // Bouton recalculer
+  h+='<button class="btn btn-dark" style="width:100%;margin-top:10px" onclick="calcAll()">Recalculer le patrimoine</button>';
+  return h;
+}
+
+function renderBiensPassif(){
+  if(!D.biens.length){
+    setH('p-immo-list','<p style="font-size:12px;color:var(--tx3);margin-bottom:8px">Aucun bien — ajoutez-en un dans l\'onglet Immobilier.</p>');
+    return;
+  }
+  const html=D.biens.map((b,bi)=>{
+    const credit=+(b.credit||0),empInit=+(b.empruntinitial||0),part=+(b.part||100)/100;
+    const remb=empInit>0?Math.min(100,(1-credit/empInit)*100):0;
+    const chargesTotal=(b.charges||[]).reduce((s,ch)=>s+(+ch.value||0),0);
+    const hasCredit=credit>0||empInit>0;
+    let h='<div class="passif-item" id="immo-credit-card-'+bi+'">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+    h+='<div><div class="ct" style="margin-bottom:2px">'+esc(b.name||'Bien sans nom')+' 🏢</div>';
+    h+='<div style="font-size:11px;color:rgba(255,255,255,0.35)">'+(b.surface||0)+' m² · '+(b.part||100)+'%</div></div>';
+    h+='<button id="immo-credit-btn-'+bi+'" class="ct-add" onclick="toggleImmoCredit('+bi+')">Modifier</button>';
+    h+='</div>';
+    if(hasCredit){
+      h+='<div class="row" style="padding-top:0"><span class="rl">Reste</span><span class="rv" style="color:var(--red)">'+fE(credit*part)+'</span></div>';
+      if(b.tauxPret)h+='<div class="row"><span class="rl">Taux</span><span class="rv">'+b.tauxPret+'%</span></div>';
+      if(b.dateFinPret)h+='<div class="row"><span class="rl">Fin</span><span class="rv">'+fmtDate(b.dateFinPret)+'</span></div>';
+      if(chargesTotal>0)h+='<div class="row"><span class="rl">Charges initiales</span><span class="rv">'+fE(chargesTotal)+'</span></div>';
+      h+='<div style="margin-top:8px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;color:rgba(255,255,255,0.45)">Remboursement</span><span style="font-size:11px;color:rgba(255,255,255,0.45)">'+remb.toFixed(1)+'%</span></div>';
+      h+='<div class="pbg"><div class="pfill" style="width:'+remb.toFixed(1)+'%"></div></div></div>';
+    }else{
+      h+='<div style="font-size:12px;color:rgba(255,255,255,0.3);padding:4px 0 6px;font-style:italic">Aucun crédit — cliquez Modifier pour en ajouter un</div>';
+    }
+    h+='<div id="immo-credit-row-'+bi+'" style="display:none;margin-top:12px;border-top:1px solid rgba(255,255,255,0.08);padding-top:12px">';
+    h+='<div id="immo-credit-form-'+bi+'"></div></div></div>';
+    return h;
+  }).join('');
+  setH('p-immo-list',html);
+}
+
+let _activeImmoCreditBi=null;
+
+function _renderImmoCredit(bi){
+  const container=document.getElementById('immo-credit-form-'+bi);
+  if(container)container.innerHTML=buildImmoCredit(bi);
+}
+
+function toggleImmoCredit(bi){
+  const row=document.getElementById('immo-credit-row-'+bi);
+  const btn=document.getElementById('immo-credit-btn-'+bi);
+  if(!row)return;
+  const isOpen=row.style.display==='block';
+  // Fermer tous
+  document.querySelectorAll('[id^="immo-credit-row-"]').forEach(el=>{el.style.display='none';});
+  document.querySelectorAll('[id^="immo-credit-btn-"]').forEach(el=>{el.textContent='Modifier';el.classList.remove('active');});
+  if(!isOpen){
+    row.style.display='block';
+    if(btn){btn.textContent='Fermer';btn.classList.add('active');}
+    _renderImmoCredit(bi);
+  }
 }
 
 let _cashEditing=false;
@@ -3185,6 +3263,7 @@ function setupNotes(){
 }
 
 function initAll(){
+  renderBiensPassif();
   renderCashEditors();
   renderLivretEditors();
   renderBourseEditors();
