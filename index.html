@@ -1028,7 +1028,13 @@ let D=(()=>{
       p.wallets=p.wallets.map((w,i)=>({id:w.id||'w'+i,name:w.name,btcAlloc:+(w.btcAlloc||0)}));
       if(!p.collPrets)p.collPrets=[];
       if(!p.biens)p.biens=[];
-      p.biens=p.biens.map(b=>({...b,apportMe:b.apportMe!==undefined?b.apportMe:(b.apport||0)}));
+      p.biens=p.biens.map(b=>{
+        const base={...b,apportMe:b.apportMe!==undefined?b.apportMe:(b.apport||0)};
+        // Migration : rentalCharges (ancien champ) → charges (champ editeur actuel)
+        if((!base.charges||base.charges.length===0)&&base.rentalCharges&&base.rentalCharges.length>0)
+          base.charges=base.rentalCharges.map(rc=>({name:'',value:+(rc.value||0)}));
+        return base;
+      });
       if(!p.prets)p.prets=[];
       if(!p.titres)p.titres=[];
       if(!p.btcPrice)p.btcPrice=0;
@@ -1115,7 +1121,7 @@ function bienLoyer(b){
 function bienChargesLocatives(b){
   if(b.units&&b.units.length>0)
     return b.units.reduce((s,u)=>s+(+u.charges||0),0);
-  return (b.rentalCharges||[]).reduce((s,rc)=>s+(+rc.value||0),0);
+  return (b.charges||[]).reduce((s,c)=>s+(+c.value||0),0);
 }
 
 // ============================================================
