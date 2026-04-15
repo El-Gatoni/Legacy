@@ -416,6 +416,42 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
 .rent-lbl{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:2px}
 .rent-val{font-size:16px;font-weight:700}
 
+/* Alertes echeances */
+#deadline-alerts{margin-bottom:8px}
+.deadline-alert{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14);border-radius:14px;padding:10px 12px;margin-bottom:6px}
+.deadline-alert-ic{font-size:16px;flex-shrink:0}
+.deadline-alert-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:2px}
+.deadline-alert-sub{font-size:11px;color:rgba(255,255,255,0.5)}
+.deadline-alert-close{font-size:16px;color:rgba(255,255,255,0.35);flex-shrink:0;cursor:pointer;padding:0 2px}
+/* ---- Code PIN ---- */
+#pin-screen{
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:#12101f;z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;
+}
+#pin-screen.hidden{display:none}
+.pin-logo{font-size:48px;margin-bottom:16px}
+.pin-title{font-size:20px;font-weight:800;color:#fff;margin-bottom:6px;letter-spacing:-.5px}
+.pin-sub{font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:32px;text-align:center;line-height:1.5}
+.pin-dots{display:flex;gap:14px;margin-bottom:32px}
+.pin-dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,0.15);transition:background .15s}
+.pin-dot.filled{background:#fff}
+.pin-dot.error{background:var(--red)}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:280px}
+.pin-key{
+  height:64px;border-radius:16px;
+  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);
+  color:#fff;font-size:22px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  user-select:none;-webkit-tap-highlight-color:transparent;
+  transition:background .1s;font-family:inherit;
+}
+.pin-key:active{background:rgba(255,255,255,0.18)}
+.pin-key.del{font-size:18px;color:rgba(255,255,255,0.6)}
+.pin-key.empty{background:none;border-color:transparent;pointer-events:none}
+.pin-error-msg{font-size:13px;color:var(--red);margin-top:16px;min-height:20px;text-align:center}
+.pin-reset{font-size:12px;color:rgba(255,255,255,0.3);margin-top:20px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 /* Toast notification */
 #toast{
   position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);
@@ -466,14 +502,6 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
-      <div class="pmenu-sep"></div>
-      <div class="pmenu-item" onclick="openSubPanel('sub-notif')">
-        <div class="pmenu-left">
-          <div class="pmenu-icon">&#128276;</div>
-          <div><div class="pmenu-title">Notifications Push</div><div class="pmenu-sub">Alertes Bitcoin et patrimoine</div></div>
-        </div>
-        <div class="pmenu-arrow">&#8250;</div>
-      </div>
 
       <div class="pmenu-sep"></div>
       <div class="pmenu-item" onclick="openSubPanel('sub-goal')">
@@ -488,9 +516,15 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
       <div class="pmenu-item" onclick="openSubPanel('sub-about')">
         <div class="pmenu-left">
           <div class="pmenu-icon">&#8505;</div>
-          <div><div class="pmenu-title">A propos</div><div class="pmenu-sub">Legacy v2.4.1</div></div>
+          <div><div class="pmenu-title">A propos</div><div class="pmenu-sub">Informations</div></div>
         </div>
         <div class="pmenu-arrow">&#8250;</div>
+      </div>
+    </div>
+    <div style="padding:16px 4px 8px;text-align:center">
+      <div style="font-size:12px;color:rgba(255,255,255,0.25);line-height:1.8">
+        Legacy v2.5.0<br>
+        <span style="font-size:11px">Stockage local — aucun serveur</span>
       </div>
     </div>
   </div>
@@ -500,6 +534,13 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     <div class="sub-back" onclick="closeSubPanel()">&#8249; Parametres</div>
     <div class="sub-title">Configuration</div>
     <div class="card">
+      <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-pin')">
+        <div class="pmenu-left" style="gap:10px">
+          <div><div class="pmenu-title">Code PIN</div><div class="pmenu-sub" id="pin-config-sub">Protéger l&#8217;accès</div></div>
+        </div>
+        <div class="pmenu-arrow">&#8250;</div>
+      </div>
+      <div class="pmenu-sep"></div>
       <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-hide-amounts')">
         <div class="pmenu-left" style="gap:10px">
           <div><div class="pmenu-title">Masquer les montants</div><div class="pmenu-sub">Affiche un effet de flou</div></div>
@@ -541,6 +582,17 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
+    </div>
+  </div>
+
+  <div id="sub-pin" class="sub-panel" data-parent="sub-config" style="display:none">
+    <div class="sub-back" onclick="openSubPanel('sub-config')">&#8249; Configuration</div>
+    <div class="sub-title">Code PIN</div>
+    <div class="card">
+      <p style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:14px;line-height:1.6">
+        Le code PIN s&#8217;affiche &agrave; l&#8217;ouverture de l&#8217;application pour prot&#233;ger son contenu des regards involontaires. Il ne chiffre pas les donn&#233;es.
+      </p>
+      <div id="pin-config-content"></div>
     </div>
   </div>
 
@@ -597,37 +649,6 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     </div>
   </div>
 
-  <div id="sub-notif" class="sub-panel" style="display:none">
-    <div class="sub-back" onclick="closeSubPanel()">&#8249; Parametres</div>
-    <div class="sub-title">Notifications Push</div>
-    <div class="card">
-      <div class="pmenu-item" style="padding:0 0 12px" onclick="requestNotifPermission()">
-        <div class="pmenu-left">
-          <div><div class="pmenu-title">Activer les notifications</div><div class="pmenu-sub" id="notif-status">Statut : --</div></div>
-        </div>
-        <label class="toggle-wrap" onclick="event.stopPropagation()">
-          <input type="checkbox" id="notif-toggle" onchange="toggleNotifs(this.checked)">
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
-      <div class="pmenu-sep"></div>
-      <div style="margin-top:14px">
-        <div class="ef">
-          <label>Alerte Bitcoin <span style="color:var(--btc)">&#x20BF;</span> si prix &gt; (EUR, 0 = desactive)</label>
-          <input type="number" inputmode="decimal" step="any" id="notif-btc-high" placeholder="ex: 100000" value="" oninput="D.notifBtcHigh=+this.value;save()">
-        </div>
-        <div class="ef">
-          <label>Alerte Bitcoin <span style="color:var(--btc)">&#x20BF;</span> si prix &lt; (EUR, 0 = desactive)</label>
-          <input type="number" inputmode="decimal" step="any" id="notif-btc-low" placeholder="ex: 50000" value="" oninput="D.notifBtcLow=+this.value;save()">
-        </div>
-        <div class="ef" style="margin:0">
-          <label>Alerte patrimoine net &gt; (EUR, 0 = desactive)</label>
-          <input type="number" inputmode="decimal" step="any" id="notif-net-high" placeholder="ex: 200000" value="" oninput="D.notifNetHigh=+this.value;save()">
-        </div>
-      </div>
-    </div>
-    <p style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:8px;line-height:1.5;padding:0 4px">Les notifications fonctionnent quand l'app est ouverte. Pour des alertes en arriere-plan, l'app doit etre installee en PWA sur votre ecran d'accueil.</p>
-  </div>
 
   <div id="sub-notes" class="sub-panel" data-parent="sub-config" style="display:none">
     <div class="sub-back" onclick="openSubPanel('sub-config')">&#8249; Configuration</div>
@@ -678,14 +699,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
   <div id="sub-about" class="sub-panel" style="display:none">
     <div class="sub-back" onclick="closeSubPanel()">&#8249; Parametres</div>
     <div class="sub-title">A propos</div>
-    <div class="card">
-      <div class="row" style="padding-top:0"><span class="rl">Application</span><span class="rv">Legacy</span></div>
-      <div class="row"><span class="rl">Version</span><span class="rv">2.4.1</span></div>
-      <div class="row"><span class="rl">Stockage</span><span class="rv">Local (navigateur)</span></div>
-      <div class="row"><span class="rl">Prix Bitcoin</span><span class="rv">CoinGecko API</span></div>
-      <div class="row"><span class="rl">Cours boursiers</span><span class="rv">Yahoo Finance / Finnhub</span></div>
-    </div>
-    <div class="card" style="margin-top:10px">
+    <div class="card" style="margin-top:0">
       <div class="ct" style="margin-bottom:0">Informations</div>
 
       <!-- Installer l'application -->
@@ -703,6 +717,27 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
       <div>
         <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">&bull; Suivi de patrimoine priv&eacute;</div>
         <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7">Legacy est une application de suivi de patrimoine personnel. Toutes vos donn&eacute;es sont stock&eacute;es <strong style="color:#fff">uniquement dans le cache de votre navigateur</strong>, sur votre appareil. Aucun compte, aucun serveur, aucune publicit&eacute;.</div>
+      </div>
+
+      <div style="height:1px;background:var(--bdr);margin:14px 0"></div>
+
+      <div>
+        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">&bull; Alertes d&#8217;échéance</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7">Legacy affiche un bandeau discret sur l&#8217;écran d&#8217;accueil lorsqu&#8217;un prêt ou un crédit immobilier arrive &agrave; échéance dans <strong style="color:#fff">moins d&#8217;un mois</strong> ou <strong style="color:#fff">moins de six mois</strong>. Cliquez sur le bandeau pour accéder directement &agrave; l&#8217;onglet Passif.</div>
+      </div>
+
+      <div style="height:1px;background:var(--bdr);margin:14px 0"></div>
+
+      <div>
+        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">&bull; Notifications push</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7">Les notifications push sont absentes de l&#8217;application. Legacy protège vos données en les conservant <strong style="color:#fff">exclusivement sur votre appareil</strong> — aucun compte, aucun serveur, aucune transmission externe. Les notifications push en arrière-plan nécessitent un serveur externe qui connaît vos données pour savoir quand vous alerter. Ce fonctionnement est <strong style="color:#fff">incompatible avec la philosophie de Legacy</strong>.</div>
+      </div>
+
+      <div style="height:1px;background:var(--bdr);margin:14px 0"></div>
+
+      <div>
+        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">&bull; Code PIN</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7">Le code PIN s&#8217;affiche &agrave; chaque ouverture de l&#8217;application. Il est conçu pour <strong style="color:#fff">protéger le contenu de Legacy des regards involontaires</strong> — par exemple si quelqu’un clique sur l&#8217;icône par mégarde. Disponible en 4 ou 6 chiffres. Il ne chiffre pas vos données et ne remplace pas une protection système.<br><br><strong style="color:#fff">⚠️ En cas d&#8217;oubli</strong>, la seule option est de réinitialiser complètement l&#8217;application depuis l&#8217;écran PIN. <strong style="color:#fff">Toutes vos données seront effacées.</strong> Exportez régulièrement votre sauvegarde JSON depuis Paramètres pour pouvoir les restaurer. Activez-le dans <strong style="color:#fff">Paramètres → Configuration → Code PIN</strong>.</div>
       </div>
 
       <div style="height:1px;background:var(--bdr);margin:14px 0"></div>
@@ -781,6 +816,37 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
   </div>
 </div>
 
+<!-- PIN SCREEN -->
+<div id="pin-screen" class="hidden">
+  <div class="pin-logo">🏆</div>
+  <div class="pin-title">Legacy</div>
+  <div class="pin-sub" id="pin-sub">Saisissez votre code</div>
+  <div class="pin-dots" id="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+    <div class="pin-dot" id="pd4" style="display:none"></div>
+    <div class="pin-dot" id="pd5" style="display:none"></div>
+  </div>
+  <div class="pin-pad">
+    <button class="pin-key" onclick="pinKey('1')">1</button>
+    <button class="pin-key" onclick="pinKey('2')">2</button>
+    <button class="pin-key" onclick="pinKey('3')">3</button>
+    <button class="pin-key" onclick="pinKey('4')">4</button>
+    <button class="pin-key" onclick="pinKey('5')">5</button>
+    <button class="pin-key" onclick="pinKey('6')">6</button>
+    <button class="pin-key" onclick="pinKey('7')">7</button>
+    <button class="pin-key" onclick="pinKey('8')">8</button>
+    <button class="pin-key" onclick="pinKey('9')">9</button>
+    <button class="pin-key empty"></button>
+    <button class="pin-key" onclick="pinKey('0')">0</button>
+    <button class="pin-key del" onclick="pinDel()">⌫</button>
+  </div>
+  <div class="pin-error-msg" id="pin-error"></div>
+  <div class="pin-reset" id="pin-reset-btn" onclick="pinReset()" style="display:none">Code oublié ? Réinitialiser</div>
+</div>
+
 <!-- SWIPER -->
 <div id="swiper">
 
@@ -832,6 +898,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
         <div class="chart-evo-legend-item"><div class="chart-evo-dot" style="background:var(--grn)"></div>Patrimoine net</div>
       </div>
     </div>
+    <div id="deadline-alerts"></div>
     <div class="sq-row" id="homecard-row"></div>
     <div class="card">
       <div class="ct">Allocation — investis</div>
@@ -1298,7 +1365,6 @@ function calcAll(){
   const financier=totalCash+totalLivrets+bourseTotal+btcEur;
   const brut=financier+immoVal;
   const net=financier+immoGainVente-pretsDette-collDette;
-  checkNotifThresholds(D.btcPrice||0,net);
   savePatrimonySnapshot(net,brut);
   renderEvoChart();
 
@@ -1973,11 +2039,12 @@ function renderBiensDisplay(){
   </div>`;
   const biensHTML=`<div class="bien-card-row">${D.biens.map((b,bi)=>{
     const est=(+b.surface||0)*(+b.prixm2||0),part=(+b.part||100)/100;
-    const credit=+(b.credit||0),apportMe=+(b.apportMe||0),bank=+(b.bankAccount||0);
+    const credit=+(b.credit||0),bank=+(b.bankAccount||0);
+    const chargesAcq=(b.charges||[]).reduce((s,ch)=>s+(+ch.value||0),0);
     const approsMe=(b.appros||[]).filter(a=>a.who==='me').reduce((s,a)=>s+(+a.amount||0),0);
     const loyer=bienLoyer(b);
     const rentalChargesTotal=bienChargesLocatives(b);
-    const gainVente=(est*part)-(credit*part)+bank-apportMe-approsMe;
+    const gainVente=(est*part)-(credit*part)+bank-(chargesAcq*part)-approsMe;
     const remb=b.empruntinitial>0?Math.min(100,(1-(credit/b.empruntinitial))*100):0;
     const rentNette=est*part>0&&loyer>0?((loyer*12-rentalChargesTotal))/(est*part)*100:null;
     return `<div class="bien-sq" id="bien-card-${bi}">
@@ -2169,7 +2236,6 @@ function openSubPanel(id){
   if(id==='sub-fees'){const tog=document.getElementById('toggle-add-fees-pru');if(tog)tog.checked=D.addFeesToPRU===false;}
   if(id==='sub-goal'){renderGoalSel();}
   if(id==='sub-api'){const ak=document.getElementById('e-apikey');if(ak)ak.value=D.apiKey||'';}
-  if(id==='sub-notif'){initNotifPanel();}
 }
 function closeSubPanel(){
   document.querySelectorAll('.sub-panel').forEach(p=>p.style.display='none');
@@ -2655,77 +2721,62 @@ function fmtDate(iso){
 
 // ---- DEADLINE NOTIFICATIONS ----
 function checkDeadlines(){
-  if(!D.notifEnabled||Notification.permission!=='granted')return;
   const now=new Date();
   const alerts=[];
   [...(D.prets||[]),...(D.collPrets||[])].forEach(p=>{
-    if(!p.dateFin&&!p.dueDate)return;
     const dStr=p.dateFin||p.dueDate;
-    const d=new Date(dStr);
-    const diffDays=Math.round((d-now)/(1000*60*60*24));
-    const name=p.name||'Pret';
-    if(diffDays>=179&&diffDays<=181)alerts.push({name,days:180,label:'6 mois'});
-    if(diffDays>=29&&diffDays<=31)alerts.push({name,days:30,label:'1 mois'});
+    if(!dStr)return;
+    const diffDays=Math.round((new Date(dStr)-now)/(1000*60*60*24));
+    const name=p.name||'Prêt';
+    if(diffDays>=0&&diffDays<=182)alerts.push({name,diffDays});
   });
-  alerts.forEach(a=>{
-    const key='deadline_'+a.name+'_'+a.days;
-    const last=_lastNotif[key]||0;
-    if(Date.now()-last>23*3600000){
-      new Notification('Legacy — Echeance dans '+a.label,{body:a.name+' arrive a echeance dans '+a.label,tag:key});
-      _lastNotif[key]=Date.now();
+  (D.biens||[]).forEach(b=>{
+    if(!b.dateFinPret)return;
+    const diffDays=Math.round((new Date(b.dateFinPret)-now)/(1000*60*60*24));
+    const name=(b.name||'Bien')+' — crédit';
+    if(diffDays>=0&&diffDays<=182)alerts.push({name,diffDays});
+  });
+  // Alerte export JSON
+  const lastExport=parseInt(localStorage.getItem('legacy_last_export')||'0');
+  const daysSinceExport=lastExport>0
+    ?Math.floor((Date.now()-lastExport)/(1000*60*60*24))
+    :null;
+  if(daysSinceExport===null||daysSinceExport>=90){
+    alerts.push({
+      name:'Sauvegarde JSON',
+      diffDays:-1,
+      exportAlert:true,
+      daysSince:daysSinceExport
+    });
+  }
+  renderDeadlineAlerts(alerts);
+}
+
+function renderDeadlineAlerts(alerts){
+  const container=document.getElementById('deadline-alerts');
+  if(!container)return;
+  if(!alerts.length){container.innerHTML='';return;}
+  container.innerHTML=alerts.map(a=>{
+    if(a.exportAlert){
+      const sub=a.daysSince===null
+        ?'Aucune sauvegarde effectuée — exportez dès maintenant'
+        :'Dernière sauvegarde il y a '+a.daysSince+' jours';
+      return '<div class="deadline-alert" onclick="exportJSON()" style="cursor:pointer">'
+        +'<span class="deadline-alert-ic">💾</span>'
+        +'<div style="flex:1"><div class="deadline-alert-title">'+esc(a.name)+'</div>'
+        +'<div class="deadline-alert-sub">'+sub+'</div></div>'
+        +'<span class="deadline-alert-close" onclick="event.stopPropagation();this.closest(\'.deadline-alert\').remove()">×</span>'
+        +'</div>';
     }
-  });
-}
-
-function initNotifPanel(){
-  const st=document.getElementById('notif-status');
-  const tog=document.getElementById('notif-toggle');
-  if(!('Notification' in window)){
-    if(st)st.textContent='Non supporte par ce navigateur';
-    if(tog)tog.disabled=true;
-    return;
-  }
-  const perm=Notification.permission;
-  if(st)st.textContent=perm==='granted'?'Autorisees':perm==='denied'?'Bloquees - verifiez les parametres du navigateur':'En attente d autorisation';
-  if(tog)tog.checked=perm==='granted'&&(D.notifEnabled||false);
-  // Fill alert values
-  const bh=document.getElementById('notif-btc-high');if(bh)bh.value=D.notifBtcHigh||'';
-  const bl=document.getElementById('notif-btc-low');if(bl)bl.value=D.notifBtcLow||'';
-  const nh=document.getElementById('notif-net-high');if(nh)nh.value=D.notifNetHigh||'';
-}
-
-async function requestNotifPermission(){
-  if(!('Notification' in window))return;
-  if(Notification.permission==='default'){
-    const r=await Notification.requestPermission();
-    if(r==='granted'){D.notifEnabled=true;save();}
-    initNotifPanel();
-  }
-}
-
-function toggleNotifs(checked){
-  D.notifEnabled=checked;save();
-  if(checked&&Notification.permission==='default')requestNotifPermission();
-}
-
-function checkNotifThresholds(btcPrice,netVal){
-  if(!D.notifEnabled||Notification.permission!=='granted')return;
-  const now=Date.now();
-  // BTC high
-  if(D.notifBtcHigh&&btcPrice>D.notifBtcHigh&&(!_lastNotif.btcHigh||now-_lastNotif.btcHigh>3600000)){
-    new Notification('Legacy — Bitcoin ₿',{body:'Prix Bitcoin ₿ a depasse '+fE(D.notifBtcHigh),icon:'',tag:'btc-high'});
-    _lastNotif.btcHigh=now;
-  }
-  // BTC low
-  if(D.notifBtcLow&&btcPrice>0&&btcPrice<D.notifBtcLow&&(!_lastNotif.btcLow||now-_lastNotif.btcLow>3600000)){
-    new Notification('Legacy — Bitcoin ₿',{body:'Prix Bitcoin ₿ est passe sous '+fE(D.notifBtcLow),icon:'',tag:'btc-low'});
-    _lastNotif.btcLow=now;
-  }
-  // Net high
-  if(D.notifNetHigh&&netVal>D.notifNetHigh&&(!_lastNotif.netHigh||now-_lastNotif.netHigh>3600000)){
-    new Notification('Legacy — Patrimoine',{body:'Patrimoine net a depasse '+fE(D.notifNetHigh),icon:'',tag:'net-high'});
-    _lastNotif.netHigh=now;
-  }
+    const d=a.diffDays;
+    const label=d<=31?'moins d\'un mois':'moins de 6 mois';
+    return '<div class="deadline-alert" onclick="goTo(5)" style="cursor:pointer">'
+      +'<span class="deadline-alert-ic">⏳</span>'
+      +'<div style="flex:1"><div class="deadline-alert-title">'+esc(a.name)+'</div>'
+      +'<div class="deadline-alert-sub">Échéance dans '+d+' jour'+(d>1?'s':'')+' — '+label+'</div></div>'
+      +'<span class="deadline-alert-close" onclick="event.stopPropagation();this.closest(\'.deadline-alert\').remove()">×</span>'
+      +'</div>';
+  }).join('');
 }
 
 // ============================================================
@@ -3211,6 +3262,8 @@ function exportJSON(){
   const url=URL.createObjectURL(new Blob([JSON.stringify(D,null,2)],{type:'application/json'}));
   a.href=url;a.download='legacy_'+new Date().toISOString().slice(0,10)+'.json';
   a.click();URL.revokeObjectURL(url);
+  localStorage.setItem('legacy_last_export',Date.now());
+  checkDeadlines();
 }
 function importJSON(){
   const inp=document.createElement('input');inp.type='file';inp.accept='.json';
@@ -3266,6 +3319,7 @@ function setupNotes(){
 
 function initAll(){
   renderBiensPassif();
+  checkDeadlines();
   renderCashEditors();
   renderLivretEditors();
   renderBourseEditors();
@@ -3278,6 +3332,7 @@ function initAll(){
 
 installPWA();
 setDate();
+pinInit();
 initAll();
 applyHideAmounts();
 applyTabsConfig();
@@ -3410,6 +3465,173 @@ function evoSetView(view,btn){
     else legend.innerHTML='<div class="chart-evo-legend-item"><div class="chart-evo-dot" style="background:var(--grn)"></div>Patrimoine net</div><div class="chart-evo-legend-item"><div class="chart-evo-dot" style="background:rgba(255,255,255,0.5)"></div>Patrimoine brut</div>';
   }
 }
+
+// ============================================================
+// CODE PIN
+// ============================================================
+let _pinBuffer='';
+let _pinMode='unlock'; // 'unlock' | 'set' | 'confirm'
+let _pinTemp='';
+
+async function sha256(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function pinStoredHash(){return localStorage.getItem('legacy_pin_hash');}
+
+async function pinInit(){
+  const hash=pinStoredHash();
+  if(hash){
+    // PIN actif -> afficher ecran de verrouillage
+    _pinMode='unlock';
+    _pinBuffer='';
+    _pinTemp='';
+    document.getElementById('pin-screen').classList.remove('hidden');
+    document.getElementById('pin-sub').textContent='Saisissez votre code';
+    document.getElementById('pin-reset-btn').style.display='block';
+    pinUpdateDots();
+  }
+  pinUpdateConfigPanel();
+}
+
+function pinKey(k){
+  const _maxLen=parseInt(localStorage.getItem('legacy_pin_len')||'4');
+  if(_pinBuffer.length>=_maxLen)return;
+  _pinBuffer+=k;
+  pinUpdateDots();
+  if(_pinBuffer.length===4){
+    setTimeout(()=>pinSubmit(),120);
+  }
+}
+
+function pinDel(){
+  _pinBuffer=_pinBuffer.slice(0,-1);
+  pinUpdateDots();
+  document.getElementById('pin-error').textContent='';
+  document.querySelectorAll('.pin-dot').forEach(d=>{d.classList.remove('error');});
+}
+
+function pinUpdateDots(){
+  const _maxLen=parseInt(localStorage.getItem('legacy_pin_len')||'4');
+  for(let i=0;i<6;i++){
+    const d=document.getElementById('pd'+i);
+    if(d){
+      d.style.display=i<_maxLen?'block':'none';
+      d.classList.toggle('filled',i<_pinBuffer.length);
+    }
+  }
+}
+
+function pinShowError(msg){
+  document.getElementById('pin-error').textContent=msg;
+  document.querySelectorAll('.pin-dot').forEach(d=>d.classList.add('error'));
+  setTimeout(()=>{
+    _pinBuffer='';
+    pinUpdateDots();
+    document.querySelectorAll('.pin-dot').forEach(d=>d.classList.remove('error'));
+    document.getElementById('pin-error').textContent='';
+  },800);
+}
+
+async function pinSubmit(){
+  const pinLen=parseInt(localStorage.getItem('legacy_pin_len')||'4');
+  if(_pinBuffer.length<pinLen)return;
+  if(_pinMode==='unlock'){
+    const hash=await sha256(_pinBuffer);
+    if(hash===pinStoredHash()){
+      document.getElementById('pin-screen').classList.add('hidden');
+    }else{
+      pinShowError('Code incorrect');
+    }
+  }else if(_pinMode==='set'){
+    _pinTemp=_pinBuffer;
+    _pinBuffer='';
+    _pinMode='confirm';
+    document.getElementById('pin-sub').textContent='Confirmez votre code';
+    pinUpdateDots();
+  }else if(_pinMode==='confirm'){
+    if(_pinBuffer===_pinTemp){
+      const hash=await sha256(_pinBuffer);
+      localStorage.setItem('legacy_pin_hash',hash);
+      localStorage.setItem('legacy_pin_len',String(_pinBuffer.length));
+      _pinMode='unlock';
+      _pinBuffer='';
+      _pinTemp='';
+      document.getElementById('pin-screen').classList.add('hidden');
+      pinUpdateConfigPanel();
+      showToast('Code PIN activé');
+    }else{
+      pinShowError('Codes différents — recommencez');
+      _pinTemp='';
+      _pinMode='set';
+      setTimeout(()=>{
+        document.getElementById('pin-sub').textContent='Choisissez un nouveau code';
+        pinUpdateDots();
+      },900);
+    }
+  }
+}
+
+function pinReset(){
+  if(confirm(`Code PIN oublié ?
+
+La seule option est de réinitialiser l'application. Toutes vos données seront supprimées.
+
+Si vous avez une sauvegarde JSON, vous pourrez la réimporter ensuite.
+
+Confirmer la réinitialisation ?`)){
+    localStorage.clear();
+    showToast('Application réinitialisée');
+    setTimeout(()=>location.reload(),800);
+  }
+}
+
+function pinSetNew(len){
+  len=len||4;
+  localStorage.setItem('legacy_pin_len',String(len));
+  _pinMode='set';
+  _pinBuffer='';
+  _pinTemp='';
+  const screen=document.getElementById('pin-screen');
+  screen.classList.remove('hidden');
+  document.getElementById('pin-sub').textContent='Choisissez un code à '+len+' chiffres';
+  document.getElementById('pin-reset-btn').style.display='none';
+  document.getElementById('pin-error').textContent='';
+  pinUpdateDots();
+}
+
+function pinDisable(){
+  if(confirm(`Désactiver le code PIN ?`)){
+    localStorage.removeItem('legacy_pin_hash');
+    pinUpdateConfigPanel();
+    showToast('Code PIN désactivé');
+  }
+}
+
+function pinUpdateConfigPanel(){
+  const sub=document.getElementById('pin-config-sub');
+  if(sub)sub.textContent=pinStoredHash()?'Actif — accès protégé':'Désactivé';
+  const content=document.getElementById('pin-config-content');
+  if(!content)return;
+  if(pinStoredHash()){
+    const curLen=localStorage.getItem('legacy_pin_len')||'4';
+    content.innerHTML='<div style="display:flex;flex-direction:column;gap:10px">'
+      +'<div style="font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:2px">Code actuel : '+curLen+' chiffres</div>'
+      +'<div style="display:flex;gap:8px">'
+      +'<button class="btn btn-dark" style="flex:1" onclick="pinSetNew(4)">Changer (4 chiffres)</button>'
+      +'<button class="btn btn-dark" style="flex:1" onclick="pinSetNew(6)">Changer (6 chiffres)</button>'
+      +'</div>'
+      +'<button class="btn" style="background:rgba(248,113,113,0.12);border-color:rgba(248,113,113,0.3);color:var(--red)" onclick="pinDisable()">Désactiver le code PIN</button>'
+      +'</div>';
+  }else{
+    content.innerHTML='<div style="display:flex;gap:8px">'
+      +'<button class="btn btn-dark" style="flex:1" onclick="pinSetNew(4)">4 chiffres</button>'
+      +'<button class="btn btn-dark" style="flex:1" onclick="pinSetNew(6)">6 chiffres</button>'
+      +'</div>';
+  }
+}
+
 
 </script>
 </body>
