@@ -524,7 +524,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     </div>
     <div style="padding:16px 4px 8px;text-align:center">
       <div style="font-size:12px;color:rgba(255,255,255,0.25);line-height:1.8">
-        Legacy v2.5.0<br>
+        Legacy v2.5.3<br>
         <span style="font-size:11px">Stockage local — aucun serveur</span>
       </div>
     </div>
@@ -700,69 +700,85 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
   <div id="sub-about" class="sub-panel" style="display:none">
     <div class="sub-back" onclick="closeSubPanel()">&#8249; Parametres</div>
     <div class="sub-title">A propos</div>
-    <div class="card" style="margin-top:0">
-      <div class="ct" style="margin-bottom:0">Informations</div>
 
-      <!-- Installer l'application -->
-      <div style="margin-top:14px">
-        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">&bull; Installer l&#8217;application</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7">
+    <style>
+      .about-accordion { margin-bottom: 10px; border-radius: 14px; overflow: hidden; border: 1px solid var(--bdr); background: var(--card); }
+      .about-acc-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; gap: 10px; }
+      .about-acc-header:active { background: rgba(255,255,255,0.04); }
+      .about-acc-left { display: flex; align-items: center; gap: 12px; }
+      .about-acc-icon { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+      .about-acc-icon svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      .about-acc-icon-em { font-size: 18px; line-height: 1; }
+      .about-acc-icon-btc { font-size: 17px; font-weight: 800; line-height: 1; }
+      .about-acc-title { font-size: 14px; font-weight: 700; color: #fff; }
+      .about-acc-sub { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 2px; }
+      .about-acc-arrow { font-size: 18px; color: rgba(255,255,255,0.35); transition: transform 0.22s ease; flex-shrink: 0; line-height: 1; }
+      .about-acc-arrow.open { transform: rotate(90deg); }
+      .about-acc-body { display: none; padding: 0 16px 16px; }
+      .about-acc-body.open { display: block; }
+      .about-acc-divider { height: 1px; background: var(--bdr); margin: 12px 0; }
+      .about-entry-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 5px; }
+      .about-entry-body { font-size: 13px; color: rgba(255,255,255,0.82); line-height: 1.7; }
+    </style>
+
+    <!-- Application -->
+    <div class="about-accordion">
+      <div class="about-acc-header" onclick="toggleAbout('acc-app')">
+        <div class="about-acc-left">
+          <div class="about-acc-icon" style="background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.25);color:#818cf8">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div>
+            <div class="about-acc-title">Application</div>
+            <div class="about-acc-sub">Installation, confidentialit&#233;, PIN</div>
+          </div>
+        </div>
+        <div class="about-acc-arrow" id="arrow-acc-app">&#8250;</div>
+      </div>
+      <div class="about-acc-body" id="acc-app">
+        <div class="about-entry-title">&bull; Installer l&#8217;application</div>
+        <div class="about-entry-body">
           <span style="color:#fff;font-weight:600">Android :</span> ouvrez Chrome, appuyez sur le menu &#8942; puis <em>Ajouter &agrave; l&#8217;&eacute;cran d&#8217;accueil</em>.<br>
           <span style="color:#fff;font-weight:600">iPhone / iPad :</span> ouvrez Safari, appuyez sur le bouton Partager puis <em>Sur l&#8217;&eacute;cran d&#8217;accueil</em>.
         </div>
+        <div class="about-acc-divider"></div>
+        <div class="about-entry-title">&bull; Suivi de patrimoine priv&eacute;</div>
+        <div class="about-entry-body">Legacy est une application de suivi de patrimoine personnel. Toutes vos donn&eacute;es sont stock&eacute;es <strong style="color:#fff">uniquement dans le cache de votre navigateur</strong>, sur votre appareil. Aucun compte, aucun serveur, aucune publicit&eacute;.</div>
+        <div class="about-acc-divider"></div>
+        <div class="about-entry-title">&bull; Notifications push</div>
+        <div class="about-entry-body">Les notifications push sont absentes de l&#8217;application. Legacy prot&#232;ge vos donn&#233;es en les conservant <strong style="color:#fff">exclusivement sur votre appareil</strong> &#8212; aucun compte, aucun serveur, aucune transmission externe. Les notifications push en arri&#232;re-plan n&#233;cessitent un serveur externe qui conna&#238;t vos donn&#233;es pour savoir quand vous alerter. Ce fonctionnement est <strong style="color:#fff">incompatible avec la philosophie de Legacy</strong>.</div>
+        <div class="about-acc-divider"></div>
+        <div class="about-entry-title">&bull; Code PIN</div>
+        <div class="about-entry-body">Le code PIN s&#8217;affiche &agrave; chaque ouverture de l&#8217;application. Il est con&#231;u pour <strong style="color:#fff">prot&#233;ger le contenu de Legacy des regards involontaires</strong> &#8212; par exemple si quelqu'un clique sur l&#8217;ic&#244;ne par m&#233;garde. Disponible en 4 ou 6 chiffres. Il ne chiffre pas vos donn&#233;es et ne remplace pas une protection syst&#232;me.<br><br><strong style="color:#fff">&#9888;&#65039; En cas d&#8217;oubli</strong>, la seule option est de r&#233;initialiser compl&#232;tement l&#8217;application depuis l&#8217;&#233;cran PIN. <strong style="color:#fff">Toutes vos donn&#233;es seront effac&#233;es.</strong> Exportez r&#233;guli&#232;rement votre sauvegarde JSON depuis Param&#232;tres pour pouvoir les restaurer. Activez-le dans <strong style="color:#fff">Param&#232;tres &#8594; Configuration &#8594; Code PIN</strong>.</div>
+        <div class="about-acc-divider"></div>
+        <div class="about-entry-title">&bull; Sauvegarde JSON</div>
+        <div class="about-entry-body">Le cache navigateur peut &ecirc;tre effac&eacute; lors d&#8217;une mise &agrave; jour ou d&#8217;une r&eacute;initialisation de l&#8217;appareil. <strong style="color:#fff">Exportez r&eacute;guli&egrave;rement</strong> vos donn&eacute;es en JSON depuis Param&egrave;tres pour ne rien perdre. Ce fichier permet de restaurer l&#8217;application &agrave; l&#8217;identique sur n&#8217;importe quel appareil.</div>
       </div>
+    </div>
 
-      <div style="height:1px;background:var(--bdr);margin:14px 0"></div>
-
-      <!-- Confidentialité -->
-      <div>
-        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">&bull; Suivi de patrimoine priv&eacute;</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7">Legacy est une application de suivi de patrimoine personnel. Toutes vos donn&eacute;es sont stock&eacute;es <strong style="color:#fff">uniquement dans le cache de votre navigateur</strong>, sur votre appareil. Aucun compte, aucun serveur, aucune publicit&eacute;.</div>
+    <!-- Accueil -->
+    <div class="about-accordion">
+      <div class="about-acc-header" onclick="toggleAbout('acc-accueil')">
+        <div class="about-acc-left">
+          <div class="about-acc-icon" style="background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.22);color:#34d399">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div>
+            <div class="about-acc-title">Accueil</div>
+            <div class="about-acc-sub">Graphique, alertes, calculs</div>
+          </div>
+        </div>
+        <div class="about-acc-arrow" id="arrow-acc-accueil">&#8250;</div>
       </div>
-
-      <div style="height:1px;background:var(--bdr);margin:14px 0"></div>
-
-      <div>
-        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">&bull; Alertes d&#8217;échéance</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7">Legacy affiche un bandeau discret sur l&#8217;écran d&#8217;accueil lorsqu&#8217;un prêt ou un crédit immobilier arrive &agrave; échéance dans <strong style="color:#fff">moins d&#8217;un mois</strong> ou <strong style="color:#fff">moins de six mois</strong>. Cliquez sur le bandeau pour accéder directement &agrave; l&#8217;onglet Passif.</div>
-      </div>
-
-      <div style="height:1px;background:var(--bdr);margin:14px 0"></div>
-
-      <div>
-        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">&bull; Notifications push</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7">Les notifications push sont absentes de l&#8217;application. Legacy protège vos données en les conservant <strong style="color:#fff">exclusivement sur votre appareil</strong> — aucun compte, aucun serveur, aucune transmission externe. Les notifications push en arrière-plan nécessitent un serveur externe qui connaît vos données pour savoir quand vous alerter. Ce fonctionnement est <strong style="color:#fff">incompatible avec la philosophie de Legacy</strong>.</div>
-      </div>
-
-      <div style="height:1px;background:var(--bdr);margin:14px 0"></div>
-
-      <div>
-        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">&bull; Code PIN</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7">Le code PIN s&#8217;affiche &agrave; chaque ouverture de l&#8217;application. Il est conçu pour <strong style="color:#fff">protéger le contenu de Legacy des regards involontaires</strong> — par exemple si quelqu’un clique sur l&#8217;icône par mégarde. Disponible en 4 ou 6 chiffres. Il ne chiffre pas vos données et ne remplace pas une protection système.<br><br><strong style="color:#fff">⚠️ En cas d&#8217;oubli</strong>, la seule option est de réinitialiser complètement l&#8217;application depuis l&#8217;écran PIN. <strong style="color:#fff">Toutes vos données seront effacées.</strong> Exportez régulièrement votre sauvegarde JSON depuis Paramètres pour pouvoir les restaurer. Activez-le dans <strong style="color:#fff">Paramètres → Configuration → Code PIN</strong>.</div>
-      </div>
-
-      <div style="height:1px;background:var(--bdr);margin:14px 0"></div>
-
-      <!-- Graphique évolution -->
-      <div>
-        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">&bull; Graphique d&#8217;&eacute;volution</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7">Un instantan&eacute; de votre patrimoine net et brut est enregistr&eacute; <strong style="color:#fff">une fois par mois</strong>, automatiquement, &agrave; chaque ouverture de l&#8217;application. L&#8217;historique est conserv&eacute; sur <strong style="color:#fff">24 mois</strong>. La courbe se construit progressivement &mdash; les donn&eacute;es apparaissent d&egrave;s le deuxi&egrave;me mois d&#8217;utilisation.</div>
-      </div>
-
-      <div style="height:1px;background:var(--bdr);margin:14px 0"></div>
-
-      <!-- Sauvegarde JSON -->
-      <div>
-        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">&bull; Sauvegarde JSON</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7">Le cache navigateur peut &ecirc;tre effac&eacute; lors d&#8217;une mise &agrave; jour ou d&#8217;une r&eacute;initialisation de l&#8217;appareil. <strong style="color:#fff">Exportez r&eacute;guli&egrave;rement</strong> vos donn&eacute;es en JSON depuis Param&egrave;tres pour ne rien perdre. Ce fichier permet de restaurer l&#8217;application &agrave; l&#8217;identique sur n&#8217;importe quel appareil.</div>
-      </div>
-
-      <div style="height:1px;background:var(--bdr);margin:14px 0"></div>
-
-      <!-- Modes de calcul -->
-      <div>
-        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">&bull; Modes de calcul</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7">
+      <div class="about-acc-body" id="acc-accueil">
+        <div class="about-entry-title">&bull; Graphique d&#8217;&eacute;volution</div>
+        <div class="about-entry-body">Un instantan&eacute; de votre patrimoine net et brut est enregistr&eacute; <strong style="color:#fff">une fois par mois</strong>, automatiquement, &agrave; chaque ouverture de l&#8217;application. L&#8217;historique est conserv&eacute; sur <strong style="color:#fff">24 mois</strong>. La courbe se construit progressivement &mdash; les donn&eacute;es apparaissent d&egrave;s le deuxi&egrave;me mois d&#8217;utilisation.</div>
+        <div class="about-acc-divider"></div>
+        <div class="about-entry-title">&bull; Alertes d&#8217;&#233;ch&#233;ance</div>
+        <div class="about-entry-body">Legacy affiche un bandeau discret sur l&#8217;&#233;cran d&#8217;accueil lorsqu&#8217;un pr&#234;t ou un cr&#233;dit immobilier arrive &agrave; &#233;ch&#233;ance dans <strong style="color:#fff">moins d&#8217;un mois</strong> ou <strong style="color:#fff">moins de six mois</strong>. Cliquez sur le bandeau pour acc&#233;der directement &agrave; l&#8217;onglet Passif.</div>
+        <div class="about-acc-divider"></div>
+        <div class="about-entry-title">&bull; Modes de calcul</div>
+        <div class="about-entry-body">
           <span style="color:#fff;font-weight:600">Patrimoine net</span> = actifs bruts &minus; dettes en cours.<br>
           <span style="color:#fff;font-weight:600">PRU</span> (Prix de Revient Unitaire) = total investi &divide; nombre de parts. Peut inclure ou exclure les frais selon le r&eacute;glage dans Configuration.<br>
           <span style="color:#fff;font-weight:600">Plus-value latente</span> = (cours actuel &minus; PRU) &times; nombre de parts.<br>
@@ -770,51 +786,113 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
           <span style="color:#fff;font-weight:600">Allocation</span> = r&eacute;partition en pourcentage des actifs investis par classe d&#8217;actif.
         </div>
       </div>
+    </div>
 
-      <div style="height:1px;background:var(--bdr);margin:14px 0"></div>
-
-      <!-- Onglet Immobilier -->
-      <div>
-        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">&bull; Onglet Immobilier</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7">
+    <!-- Immobilier -->
+    <div class="about-accordion">
+      <div class="about-acc-header" onclick="toggleAbout('acc-immo')">
+        <div class="about-acc-left">
+          <div class="about-acc-icon" style="background:rgba(79,195,247,0.12);border:1px solid rgba(79,195,247,0.22);color:#4fc3f7">
+            <div class="about-acc-icon-em">&#127962;</div>
+          </div>
+          <div>
+            <div class="about-acc-title">Immobilier</div>
+            <div class="about-acc-sub">Biens, loyers, cr&#233;dit</div>
+          </div>
+        </div>
+        <div class="about-acc-arrow" id="arrow-acc-immo">&#8250;</div>
+      </div>
+      <div class="about-acc-body" id="acc-immo">
+        <div class="about-entry-title">&bull; Onglet Immobilier</div>
+        <div class="about-entry-body">
           Chaque bien est d&eacute;fini par sa surface, son prix au m&sup2; et sa <strong style="color:#fff">quote-part</strong> (votre pourcentage de d&eacute;tention). Tous les calculs &mdash; estimation, cr&eacute;dit restant, gain &agrave; la vente &mdash; sont automatiquement pond&eacute;r&eacute;s par ce pourcentage.<br><br>
           Les <strong style="color:#fff">unit&eacute;s locatives</strong> permettent de d&eacute;tailler chaque espace lou&eacute; (appartement, d&eacute;pendance, local&#8230;) avec son loyer et ses charges propres. Le rendement locatif net est calcul&eacute; automatiquement.<br><br>
           Le <strong style="color:#fff">cr&eacute;dit immobilier</strong> et les <strong style="color:#fff">frais d&#8217;acquisition</strong> se saisissent dans l&#8217;onglet <strong style="color:#fff">Passif</strong>, sur la fiche du bien. Les frais d&#8217;acquisition (apport, notaire, travaux...) sont pris en compte dans le calcul du gain net &agrave; la vente.
         </div>
       </div>
+    </div>
 
-      <div style="height:1px;background:var(--bdr);margin:14px 0"></div>
-
-      <!-- Onglet Bourse -->
-      <div>
-        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">&bull; Onglet Bourse</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7">
+    <!-- Bourse -->
+    <div class="about-accordion">
+      <div class="about-acc-header" onclick="toggleAbout('acc-bourse')">
+        <div class="about-acc-left">
+          <div class="about-acc-icon" style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.22);color:#22c55e">
+            <div class="about-acc-icon-em">&#128200;</div>
+          </div>
+          <div>
+            <div class="about-acc-title">Bourse</div>
+            <div class="about-acc-sub">Cours, symboles, portefeuille</div>
+          </div>
+        </div>
+        <div class="about-acc-arrow" id="arrow-acc-bourse">&#8250;</div>
+      </div>
+      <div class="about-acc-body" id="acc-bourse">
+        <div class="about-entry-title">&bull; Onglet Bourse</div>
+        <div class="about-entry-body">
           Les cours sont r&eacute;cup&eacute;r&eacute;s automatiquement via <strong style="color:#fff">Yahoo Finance</strong> en appuyant sur &laquo;&nbsp;Actualiser les cours&nbsp;&raquo;. Pour les titres cot&eacute;s sur Euronext Paris, saisissez uniquement le nom du symbole sans suffixe &mdash; l&#8217;application ajoute <strong style="color:#fff">.PA</strong> automatiquement (ex&nbsp;: LVMH, BNP, AIR).<br><br>
           Le <strong style="color:#fff">pourcentage</strong> affich&eacute; sur chaque carte titre repr&eacute;sente le <strong style="color:#fff">poids</strong> de ce titre dans votre portefeuille total &mdash; c&#8217;est-&agrave;-dire sa valeur actuelle divis&eacute;e par la valeur totale de tous vos titres.
         </div>
       </div>
+    </div>
 
-      <div style="height:1px;background:var(--bdr);margin:14px 0"></div>
-
-      <!-- Onglet Bitcoin -->
-      <div>
-        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">&bull; Onglet Bitcoin</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7">Enregistrez chaque achat de bitcoin comme une <strong style="color:#fff">transaction</strong> : le montant investi et la quantit&eacute; de BTC acquise s&#8217;accumulent dans une <strong style="color:#fff">pool</strong> totale. Vous pouvez ensuite <strong style="color:#fff">allouer</strong> ce bitcoin &agrave; diff&eacute;rents wallets (hardware, exchange, self-custody&#8230;) pour suivre la distribution de vos BTC.</div>
+    <!-- Bitcoin -->
+    <div class="about-accordion">
+      <div class="about-acc-header" onclick="toggleAbout('acc-btc')">
+        <div class="about-acc-left">
+          <div class="about-acc-icon" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.22);color:var(--btc)">
+            <div class="about-acc-icon-btc">&#8383;</div>
+          </div>
+          <div>
+            <div class="about-acc-title">Bitcoin</div>
+            <div class="about-acc-sub">Transactions, wallets, ressources</div>
+          </div>
+        </div>
+        <div class="about-acc-arrow" id="arrow-acc-btc">&#8250;</div>
       </div>
-
-      <div style="height:1px;background:var(--bdr);margin:14px 0"></div>
-
-      <!-- En savoir plus -->
-      <div>
-        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">&bull; En savoir plus sur Bitcoin</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7">Pour comprendre Bitcoin en profondeur, des formations gratuites sont disponibles sur :</div>
-        <a href="https://planb.academy/fr/learn-anytime" target="_blank" rel="noopener"
-           style="display:inline-block;margin-top:8px;font-size:13px;font-weight:600;color:#f59e0b;text-decoration:none;border-bottom:1px solid rgba(245,158,11,0.35);padding-bottom:1px">
-          planb.academy
-        </a>
+      <div class="about-acc-body" id="acc-btc">
+        <div class="about-entry-title">&bull; Onglet Bitcoin</div>
+        <div class="about-entry-body">Enregistrez chaque achat de bitcoin comme une <strong style="color:#fff">transaction</strong> : le montant investi et la quantit&eacute; de BTC acquise s&#8217;accumulent dans une <strong style="color:#fff">pool</strong> totale. Vous pouvez ensuite <strong style="color:#fff">allouer</strong> ce bitcoin &agrave; diff&eacute;rents wallets (hardware, exchange, self-custody&#8230;) pour suivre la distribution de vos BTC.</div>
+        <div class="about-acc-divider"></div>
+        <div class="about-entry-title">&bull; En savoir plus sur Bitcoin</div>
+        <div class="about-entry-body">Pour comprendre Bitcoin en profondeur, des formations gratuites sont disponibles sur :<br>
+          <a href="https://planb.academy/fr/learn-anytime" target="_blank" rel="noopener"
+             style="display:inline-block;margin-top:8px;font-size:13px;font-weight:600;color:#f59e0b;text-decoration:none;border-bottom:1px solid rgba(245,158,11,0.35);padding-bottom:1px">
+            planb.academy
+          </a>
+        </div>
       </div>
     </div>
+
+    <!-- Or -->
+    <div class="about-accordion">
+      <div class="about-acc-header" onclick="toggleAbout('acc-or')">
+        <div class="about-acc-left">
+          <div class="about-acc-icon" style="background:rgba(234,179,8,0.12);border:1px solid rgba(234,179,8,0.25);color:#eab308">
+            <svg viewBox="0 0 24 24" style="width:20px;height:20px" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <!-- lingot principal -->
+              <path d="M4 14 L7 9 L17 9 L20 14 Z" fill="rgba(234,179,8,0.25)" stroke="currentColor"/>
+              <rect x="3" y="14" width="18" height="5" rx="1.5" fill="rgba(234,179,8,0.25)" stroke="currentColor"/>
+              <!-- reflet -->
+              <line x1="6" y1="16" x2="6" y2="18" stroke-width="1.2" opacity="0.5"/>
+              <line x1="9" y1="15.5" x2="9" y2="18.5" stroke-width="1.2" opacity="0.5"/>
+            </svg>
+          </div>
+          <div>
+            <div class="about-acc-title">Or</div>
+            <div class="about-acc-sub">&#192; venir</div>
+          </div>
+        </div>
+        <div class="about-acc-arrow" id="arrow-acc-or">&#8250;</div>
+      </div>
+      <div class="about-acc-body" id="acc-or">
+        <div class="about-entry-body" style="color:rgba(255,255,255,0.4);font-style:italic;text-align:center;padding:8px 0">
+          Contenu &#224; venir.
+        </div>
+      </div>
+    </div>
+
   </div>
+
 </div>
 
 <!-- PIN SCREEN -->
@@ -2239,6 +2317,13 @@ function closeSubPanel(){
   document.querySelectorAll('.sub-panel').forEach(p=>p.style.display='none');
   document.getElementById('params-menu').style.display='block';
   updateParamsMenu();
+}
+function toggleAbout(id){
+  const body=document.getElementById(id);
+  const arrow=document.getElementById('arrow-'+id);
+  const isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  if(arrow)arrow.classList.toggle('open',!isOpen);
 }
 function updateParamsMenu(){
   const goalEl=document.getElementById('pmenu-goal-sub');
