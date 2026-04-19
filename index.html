@@ -356,12 +356,18 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   box-shadow:0 8px 40px rgba(0,0,0,0.6);
   backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
 }
-.ni{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;border-radius:14px;cursor:pointer;min-width:54px;user-select:none}
-.ni-ic{width:24px;height:24px;display:flex;align-items:center;justify-content:center}
-.ni-ic svg{width:22px;height:22px;stroke:var(--tx3);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke .15s}
+.ni{display:flex;flex-direction:column;align-items:center;gap:2px;padding:3px 6px;border-radius:12px;cursor:pointer;min-width:46px;user-select:none}
+.ni-ic{width:20px;height:20px;display:flex;align-items:center;justify-content:center}
+.ni-ic svg{width:19px;height:19px;stroke:var(--tx3);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke .15s}
 .ni-ic.btc-ic{font-size:18px;font-weight:800;color:var(--tx3);line-height:24px;transition:color .15s}
 .ni-ic.eur-ic{font-size:20px;font-weight:800;color:var(--tx3);line-height:24px;transition:color .15s}
 .ni-ic.em-ic{font-size:18px;line-height:24px;filter:grayscale(1);transition:filter .15s;opacity:.5}
+/* Or : SVG lingots dans la nav, greyscale par défaut comme les emojis */
+.ni-ic.or-ic{filter:grayscale(1);transition:filter .15s,opacity .15s;opacity:.5}
+.ni-ic.or-ic svg{width:22px;height:22px;stroke:none;fill:none}
+.ni.active .ni-ic.or-ic{filter:grayscale(0);opacity:1}
+/* Or inline dans les labels (TAB_NAMES, allocations, PV rows, sections) */
+.tab-ic-or{width:14px;height:14px;vertical-align:-2px;display:inline-block;margin-left:2px}
 .ni-lbl{font-size:11px;color:var(--tx3);font-weight:500;transition:color .15s;white-space:nowrap}
 .ni-ind{width:18px;height:2px;border-radius:1px;background:transparent;margin-top:2px;transition:background .15s}
 .ni.active .ni-ic svg{stroke:#fff}
@@ -470,12 +476,250 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
 .edit-sel-wrap select option{background:#1e1c2e;color:var(--tx)}
 .edit-sel-form{display:none}
 .edit-sel-form.open{display:block}
+
+/* ═══════════════ OR : STYLES DE LA PAGE OR ═══════════════ */
+:root{
+  --gold:#c9a961;      /* or antique doux — valeurs monétaires uniquement */
+  --gold-soft:#d4b87a;
+}
+
+/* Valeur totale Or — grande valeur centrée */
+.or-total-lbl{
+  font-size:11px;color:#fff;font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;
+  text-align:center;margin-bottom:6px;
+}
+.or-total-val{
+  font-size:36px;font-weight:800;letter-spacing:-1.5px;
+  color:var(--gold);line-height:1;text-align:center;
+  overflow:hidden;word-break:break-word;
+}
+
+/* Prix spot or (carte compacte) */
+.or-spot-card{
+  background:var(--g);border:1px solid var(--gb);
+  border-radius:16px;padding:10px 13px;margin-bottom:10px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.or-spot-l{display:flex;align-items:center;gap:9px;min-width:0;flex:1}
+.or-spot-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.45);flex-shrink:0}
+.or-spot-dot.live{background:var(--gold);box-shadow:0 0 0 3px rgba(201,169,97,0.18)}
+.or-spot-txt{min-width:0;flex:1}
+.or-spot-lbl{font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.05em}
+.or-spot-val{font-size:15px;font-weight:700;color:var(--gold);margin-top:1px;line-height:1.2}
+.or-spot-val input{
+  font-size:15px;font-weight:700;color:var(--gold);
+  background:transparent;border:none;width:80px;padding:0;
+  font-family:inherit;border-bottom:1px dashed rgba(201,169,97,0.5);
+}
+.or-spot-val input:focus{outline:none;border-bottom-color:var(--gold)}
+.or-spot-meta{font-size:10px;color:rgba(255,255,255,0.45);margin-top:1px}
+.or-spot-edit-btn{
+  font-size:11px;font-weight:600;color:var(--tx2);
+  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);
+  border-radius:8px;padding:5px 10px;cursor:pointer;white-space:nowrap;font-family:inherit;
+}
+
+/* Toggle Physique / Papier */
+.or-tabs{
+  display:grid;grid-template-columns:1fr 1fr;gap:4px;
+  background:var(--inner);border:1px solid var(--bdr);
+  border-radius:12px;padding:4px;margin-bottom:10px;
+}
+.or-tab{
+  background:transparent;border:none;color:var(--tx2);
+  padding:9px;border-radius:8px;font-size:13px;font-weight:600;
+  cursor:pointer;font-family:inherit;transition:all .15s;
+}
+.or-tab.active{background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.14)}
+.or-view{display:none}
+.or-view.active{display:block}
+
+/* KPIs row Or (mêmes styles que .ns Legacy, répétés pour robustesse) */
+.or-kpis{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;min-width:0}
+.or-kpi{background:var(--inner);border:1px solid var(--bdr);border-radius:12px;padding:8px 10px;min-width:0;overflow:hidden}
+.or-kpi-l{font-size:11px;color:rgba(255,255,255,0.55);margin-bottom:3px;display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.or-kpi-v{font-size:15px;font-weight:700;color:#fff;overflow:hidden;word-break:break-word;min-width:0}
+.or-kpi-v.pos{color:var(--grn)}
+
+/* Positions physiques "Mon coffre" */
+.coffre-item{background:var(--inner);border:1px solid var(--bdr);border-radius:14px;padding:12px;margin-bottom:8px}
+.coffre-hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px;min-width:0}
+.coffre-t{min-width:0;flex:1}
+.coffre-name{font-size:15px;font-weight:700;color:#fff;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.coffre-sub{font-size:12px;color:rgba(255,255,255,0.45)}
+.coffre-r{text-align:right;flex-shrink:0}
+.coffre-val{font-size:17px;font-weight:700;color:#fff;letter-spacing:-.3px}
+.coffre-qty{font-size:11px;color:rgba(255,255,255,0.45);margin-top:1px}
+.coffre-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding-top:10px;border-top:1px solid var(--bdr);min-width:0}
+.coffre-meta>div{min-width:0;overflow:hidden}
+.coffre-meta .pm-l{font-size:10px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.coffre-meta .pm-v{font-size:13px;color:#fff;font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.coffre-toggle{margin-top:10px;padding-top:9px;border-top:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;font-size:11px;color:rgba(255,255,255,0.70);cursor:pointer;user-select:none;font-weight:600}
+.coffre-toggle .caret{transition:transform .2s;color:rgba(255,255,255,0.45)}
+.coffre-item.open .coffre-toggle .caret{transform:rotate(90deg)}
+.coffre-tx-list{display:none;margin-top:8px}
+.coffre-item.open .coffre-tx-list{display:block}
+.coffre-tx-row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;padding:8px 10px;background:rgba(255,255,255,0.025);border-radius:8px;margin-bottom:4px;font-size:12px;align-items:center}
+.coffre-tx-date{color:rgba(255,255,255,0.45);font-size:11px;font-variant-numeric:tabular-nums}
+.coffre-tx-body .tx-q{color:#fff;font-weight:600}
+.coffre-tx-body .tx-spot{color:var(--tx3);font-size:11px;margin-top:1px}
+.coffre-tx-right{text-align:right}
+.coffre-tx-price{color:#fff;font-weight:600}
+.coffre-tx-prime{font-size:10px;color:rgba(255,255,255,0.45);margin-top:1px}
+
+/* Menu ⋯ sur chaque position */
+.coffre-menu-wrap{position:relative;flex-shrink:0}
+.coffre-menu-btn{width:28px;height:28px;border-radius:8px;background:transparent;border:none;color:rgba(255,255,255,0.70);cursor:pointer;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit}
+.coffre-menu-btn:hover,.coffre-menu-btn.active{background:rgba(255,255,255,0.08);color:#fff}
+.coffre-menu{display:none;position:absolute;top:32px;right:0;z-index:20;background:#1e1a36;border:1px solid var(--gb);border-radius:10px;padding:4px;min-width:210px;box-shadow:0 6px 20px rgba(0,0,0,0.5)}
+.coffre-menu.open{display:block}
+.coffre-menu button{display:flex;align-items:center;gap:8px;width:100%;padding:9px 10px;background:transparent;border:none;cursor:pointer;color:var(--tx);font-size:13px;font-family:inherit;border-radius:7px;text-align:left}
+.coffre-menu button:hover{background:rgba(255,255,255,0.06)}
+.coffre-menu button.danger{color:var(--red)}
+.coffre-menu button.danger:hover{background:rgba(248,113,113,0.1)}
+.coffre-menu-ic{width:18px;flex-shrink:0;color:rgba(255,255,255,0.45);display:flex;align-items:center;justify-content:center;font-size:13px}
+
+/* ETC Or papier */
+.etc-card{background:var(--inner);border:1px solid var(--bdr);border-radius:14px;padding:12px;margin-bottom:8px}
+.etc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;min-width:0}
+.etc-name{font-size:14px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.etc-tkr{font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px;font-family:ui-monospace,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.etc-val{font-size:15px;font-weight:700;color:#fff;text-align:right}
+.etc-qty{font-size:11px;color:rgba(255,255,255,0.45);margin-top:1px;text-align:right}
+.etc-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--bdr);min-width:0}
+.etc-grid>div{min-width:0;overflow:hidden}
+.etc-grid .l{font-size:10px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.etc-grid .v{font-size:12px;color:#fff;font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.etc-grid .v.pv-pos{color:var(--grn)}
+.etc-grid .v.pv-neg{color:var(--red)}
+
+/* Total discret en bas des listes */
+.or-list-total{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;margin-top:4px;margin-bottom:8px;border-top:1px solid var(--bdr)}
+.or-list-total-l{font-size:11px;color:rgba(255,255,255,0.70);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.or-list-total-v{font-size:17px;font-weight:700;color:#fff;letter-spacing:-.3px}
+
+/* Message état vide */
+.or-empty{font-size:13px;color:rgba(255,255,255,0.45);text-align:center;padding:20px 12px;font-style:italic;line-height:1.5}
+
+/* Formulaire Or (réutilise .ef Legacy, juste ajouts spécifiques) */
+.or-form-presets{margin-bottom:10px}
+.or-form-presets-lbl{font-size:13px;color:rgba(255,255,255,0.75);font-weight:500;margin-bottom:6px;display:block}
+.or-preset-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--inner);border:1px solid var(--bdr);border-radius:10px;padding:3px;margin-bottom:8px}
+.or-preset-tabs button{background:transparent;border:none;color:rgba(255,255,255,0.70);padding:7px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.or-preset-tabs button.active{background:rgba(255,255,255,0.08);color:#fff}
+.or-preset-list{max-height:195px;overflow-y:auto;background:rgba(0,0,0,0.15);border:1px solid var(--bdr);border-radius:10px;padding:3px}
+.or-preset-row{padding:9px 11px;border-radius:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.or-preset-row:hover,.or-preset-row.selected{background:rgba(255,255,255,0.06)}
+.or-preset-row-t{font-size:13px;font-weight:600;color:#fff}
+.or-preset-row-sub{font-size:10px;color:rgba(255,255,255,0.45);margin-top:1px}
+.or-preset-row-r{font-size:11px;color:rgba(255,255,255,0.70);font-weight:600;white-space:nowrap}
+.or-manual-divider{display:flex;align-items:center;gap:10px;margin:14px 0 6px}
+.or-manual-divider-line{flex:1;height:1px;background:var(--bdr)}
+.or-manual-divider-txt{font-size:11px;color:rgba(255,255,255,0.70);font-weight:600;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.or-manual-hint{text-align:center;margin-bottom:10px;font-size:12px;color:rgba(255,255,255,0.45);font-style:italic}
+.or-pure-box{background:var(--inner);border:1px solid var(--bdr);border-radius:10px;padding:9px 12px;text-align:center;margin:4px 0 9px}
+.or-pure-box .pl{font-size:11px;color:rgba(255,255,255,0.70);text-transform:uppercase;letter-spacing:.04em}
+.or-pure-box .pv{font-size:17px;font-weight:700;color:#fff;margin-top:2px;letter-spacing:-.3px}
+.or-ibox{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:10px 12px;margin-bottom:9px}
+.or-ibox-hd{display:flex;justify-content:space-between;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.or-ibox-hd-t{font-size:13px;font-weight:600;color:#fff}
+.or-ibox-hd-sub{font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px;font-weight:400}
+.or-ibox-hd .caret{color:rgba(255,255,255,0.45);transition:transform .2s;font-size:14px}
+.or-ibox.open .or-ibox-hd{margin-bottom:8px}
+.or-ibox.open .or-ibox-hd .caret{transform:rotate(90deg)}
+.or-ibox-body{display:none}
+.or-ibox.open .or-ibox-body{display:block}
+.or-dyn-row{display:grid;grid-template-columns:1fr 90px 28px;gap:6px;align-items:center;margin-bottom:6px;min-width:0}
+.or-dyn-row input{padding:9px 11px;border:1px solid rgba(255,255,255,0.14);border-radius:10px;background:rgba(255,255,255,0.06);color:var(--tx);font-size:14px;font-family:inherit;width:100%;-webkit-appearance:none;appearance:none;min-width:0}
+.or-dyn-rem{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2);color:var(--red);cursor:pointer;font-size:16px;width:28px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;font-family:inherit}
+.or-dyn-add{font-size:12px;color:rgba(255,255,255,0.70);cursor:pointer;font-weight:600;padding:5px 0;background:none;border:none;font-family:inherit}
+.or-sub-total{margin-top:8px;padding:7px 10px;background:var(--inner);border:1px solid var(--bdr);border-radius:8px;display:flex;justify-content:space-between;align-items:center;font-size:12px}
+.or-sub-total .l{color:rgba(255,255,255,0.70)}
+.or-sub-total .v{font-weight:700;color:#fff}
+/* ═══════════════ /OR STYLES ═══════════════ */
+/* ══════════════════════════ Or v7 STYLES ══════════════════════════ */
+
+/* PRESETS - style v7 exact */
+.preset-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--inner);border:1px solid var(--bdr);border-radius:10px;padding:3px;margin-bottom:8px}
+.preset-tabs button{background:transparent;border:none;color:rgba(255,255,255,0.70);padding:7px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.preset-tabs button.active{background:rgba(255,255,255,0.08);color:#fff}
+.preset-list{max-height:195px;overflow-y:auto;background:rgba(0,0,0,0.15);border:1px solid var(--bdr);border-radius:10px;padding:3px;-webkit-overflow-scrolling:touch}
+.preset-row{padding:9px 11px;border-radius:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;transition:background .15s}
+.preset-row:hover,.preset-row.selected{background:rgba(255,255,255,0.06)}
+.preset-row-t{font-size:13px;font-weight:600;color:#fff}
+.preset-row-sub{font-size:10px;color:rgba(255,255,255,0.45);margin-top:1px}
+.preset-row-r{font-size:11px;color:rgba(255,255,255,0.70);font-weight:600;white-space:nowrap;flex-shrink:0}
+
+/* SÉPARATEUR "Ou saisir manuellement" */
+.manual-divider{display:flex;align-items:center;gap:10px;margin:14px 0 6px}
+.manual-divider-line{flex:1;height:1px;background:var(--bdr)}
+.manual-divider-txt{font-size:11px;color:rgba(255,255,255,0.70);font-weight:600;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+
+/* OR PUR DISPLAY */
+.pure-box{background:var(--inner);border:1px solid var(--bdr);border-radius:10px;padding:9px 12px;text-align:center;margin:4px 0 9px}
+.pure-box .pl{font-size:11px;color:rgba(255,255,255,0.70);text-transform:uppercase;letter-spacing:.04em}
+.pure-box .pv{font-size:17px;font-weight:700;color:#fff;margin-top:2px;letter-spacing:-.3px}
+
+/* FRAIS DYNAMIQUES */
+.dyn-row{display:grid;grid-template-columns:1fr 90px 28px;gap:6px;align-items:center;margin-bottom:6px;min-width:0}
+.dyn-row input{padding:9px 11px;border:1px solid rgba(255,255,255,0.14);border-radius:10px;background:rgba(255,255,255,0.06);color:var(--tx);font-size:14px;font-family:inherit;width:100%;-webkit-appearance:none;appearance:none;min-width:0}
+.dyn-row input:focus{outline:none;border-color:rgba(255,255,255,0.3)}
+.dyn-rem{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2);color:var(--red);cursor:pointer;font-size:16px;width:28px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0;line-height:1}
+.dyn-add{font-size:12px;color:rgba(255,255,255,0.70);cursor:pointer;font-weight:600;padding:5px 0;background:none;border:none;font-family:inherit}
+.sub-total{margin-top:8px;padding:7px 10px;background:var(--inner);border:1px solid var(--bdr);border-radius:8px;display:flex;justify-content:space-between;align-items:center;font-size:12px}
+.sub-total .l{color:rgba(255,255,255,0.70)}
+.sub-total .v{font-weight:700;color:#fff}
+
+/* G3 grid */
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;min-width:0}
+
+/* IBOX header components v7 */
+.ibox-hd-t{font-size:13px;font-weight:600;color:#fff}
+.ibox-hd-sub{font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px;font-weight:400;line-height:1.3}
+.ibox .caret{color:rgba(255,255,255,0.45);transition:transform .2s;font-size:14px;flex-shrink:0}
+.ibox.open .ibox-hd{margin-bottom:8px}
+.ibox.open .ibox-hd .caret{transform:rotate(90deg)}
+.ibox-body{display:none}
+.ibox.open .ibox-body{display:block}
+
+/* HINT */
+.hint{font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px}
+
+/* ════════════════════════ /Or v7 STYLES ════════════════════════ */
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 </head>
 <body>
 <div id="orb1"></div>
 <div id="orb2"></div>
+
+<!-- ═══ SVG SYMBOLS (réutilisables via <use href="#..."/>) ═══ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Icône lingots d'or : trois lingots isométriques -->
+    <symbol id="lingots-icon" viewBox="0 0 32 32">
+      <!-- Lingot bas-gauche (couché) -->
+      <path d="M3 18 L6 15 L15 15 L12 18 Z" fill="#facc15" stroke="#8a6d08" stroke-width="0.7" stroke-linejoin="round"/>
+      <path d="M3 18 L12 18 L12 24 L3 24 Z" fill="#f5c518" stroke="#8a6d08" stroke-width="0.7" stroke-linejoin="round"/>
+      <path d="M12 18 L15 15 L15 21 L12 24 Z" fill="#d4a70c" stroke="#8a6d08" stroke-width="0.7" stroke-linejoin="round"/>
+      <ellipse cx="7.5" cy="16.4" rx="1.2" ry="0.4" fill="#fef3c7" opacity="0.75"/>
+      <!-- Lingot bas-droite (couché) -->
+      <path d="M17 18 L20 15 L29 15 L26 18 Z" fill="#facc15" stroke="#8a6d08" stroke-width="0.7" stroke-linejoin="round"/>
+      <path d="M17 18 L26 18 L26 24 L17 24 Z" fill="#f5c518" stroke="#8a6d08" stroke-width="0.7" stroke-linejoin="round"/>
+      <path d="M26 18 L29 15 L29 21 L26 24 Z" fill="#d4a70c" stroke="#8a6d08" stroke-width="0.7" stroke-linejoin="round"/>
+      <ellipse cx="21.5" cy="16.4" rx="1.2" ry="0.4" fill="#fef3c7" opacity="0.75"/>
+      <!-- Lingot du haut (posé sur les deux) -->
+      <path d="M9 8 L12 5 L23 5 L20 8 Z" fill="#facc15" stroke="#8a6d08" stroke-width="0.7" stroke-linejoin="round"/>
+      <path d="M9 8 L20 8 L20 14 L9 14 Z" fill="#f5c518" stroke="#8a6d08" stroke-width="0.7" stroke-linejoin="round"/>
+      <path d="M20 8 L23 5 L23 11 L20 14 Z" fill="#d4a70c" stroke="#8a6d08" stroke-width="0.7" stroke-linejoin="round"/>
+      <ellipse cx="14.5" cy="6.4" rx="1.5" ry="0.45" fill="#fef3c7" opacity="0.85"/>
+      <ellipse cx="12" cy="10.5" rx="0.7" ry="0.35" fill="#fef3c7" opacity="0.5"/>
+    </symbol>
+  </defs>
+</svg>
 
 <div id="toast"></div>
 
@@ -524,7 +768,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     </div>
     <div style="padding:16px 4px 8px;text-align:center">
       <div style="font-size:12px;color:rgba(255,255,255,0.25);line-height:1.8">
-        Legacy v2.5.3<br>
+        Legacy v2.6.0<br>
         <span style="font-size:11px">Stockage local — aucun serveur</span>
       </div>
     </div>
@@ -577,9 +821,9 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
         <div class="pmenu-arrow">&#8250;</div>
       </div>
       <div class="pmenu-sep"></div>
-      <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-api')">
+            <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-api')">
         <div class="pmenu-left" style="gap:10px">
-          <div><div class="pmenu-title">API Cours boursier</div><div class="pmenu-sub">Modifier la cl&#233; API</div></div>
+          <div><div class="pmenu-title">API Bourse et Or</div><div class="pmenu-sub">Finnhub et GoldApi.io</div></div>
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
@@ -634,6 +878,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
           <option value="btc">Bitcoin</option>
           <option value="bourse">Bourse</option>
           <option value="immo">Immobilier</option>
+          <option value="or">Or</option>
           <div id="homecard-titre-options"></div>
         </select>
       </div>
@@ -686,14 +931,29 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
 
   <div id="sub-api" class="sub-panel" data-parent="sub-config" style="display:none">
     <div class="sub-back" onclick="openSubPanel('sub-config')">&#8249; Configuration</div>
-    <div class="sub-title">API Cours boursiers</div>
+    <div class="sub-title">API Bourse et Or</div>
+    
+    <!-- FINNHUB API -->
     <div class="card">
-      <div class="ef" style="margin:0">
-        <label>Collez votre cl&#233; API Finnhub</label>
+      <div class="ct" style="margin-bottom:10px">Finnhub (cours boursiers)</div>
+      <div class="ef" style="margin-bottom:6px">
+        <label>Cl&#233; API Finnhub</label>
         <input type="text" id="e-apikey" placeholder="Laissez vide = Yahoo Finance" oninput="D.apiKey=this.value.trim();save();updateParamsMenu()">
         <span class="hint">Format symboles Euronext Paris : WPEA.PA, PAEEM.PA</span>
       </div>
-      <p style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:14px;line-height:1.6">L'API par d&#233;faut est celle de Yahoo Finance. Vous avez la possibilit&#233; d'ajouter une autre cl&#233; API pour obtenir les prix des titres boursiers. Vous pouvez obtenir une cl&#233; gratuitement en cr&#233;ant un compte sur finnhub.io.</p>
+      <p style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:10px;line-height:1.6">L'API par d&#233;faut est celle de Yahoo Finance. Vous avez la possibilit&#233; d'ajouter une cl&#233; API Finnhub pour obtenir les prix des titres boursiers. Cr&#233;ez un compte gratuit sur <a href="https://finnhub.io" target="_blank" style="color:var(--gold);text-decoration:underline">finnhub.io</a>.</p>
+    </div>
+    
+    <!-- GOLDAPI.IO -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">GoldApi.io (prix spot de l'or)</div>
+      <div class="ef" style="margin-bottom:6px">
+        <label>Cl&#233; API GoldApi.io</label>
+        <input type="text" id="e-goldapikey" placeholder="Laissez vide = saisie manuelle" oninput="D.goldApiKey=this.value.trim();save();updateParamsMenu();renderOrSpot()">
+        <span class="hint">Prix r&#233;cup&#233;r&#233; en euros par gramme (XAU/EUR)</span>
+      </div>
+      <button class="btn btn-dark" style="width:100%;margin-top:8px" onclick="testGoldApiKey()">Tester la connexion</button>
+      <p style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:10px;line-height:1.6">Sans cl&#233; API, saisissez manuellement le prix spot dans l'onglet Or. Cr&#233;ez un compte gratuit (100 requ&#234;tes/mois) sur <a href="https://goldapi.io" target="_blank" style="color:var(--gold);text-decoration:underline">goldapi.io</a>.</p>
     </div>
   </div>
 
@@ -717,6 +977,8 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
       .about-acc-body { display: none; padding: 0 16px 16px; }
       .about-acc-body.open { display: block; }
       .about-acc-divider { height: 1px; background: var(--bdr); margin: 12px 0; }
+      .about-entry-item { margin-bottom: 18px; }
+      .about-entry-item:last-child { margin-bottom: 0; }
       .about-entry-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 5px; }
       .about-entry-body { font-size: 13px; color: rgba(255,255,255,0.82); line-height: 1.7; }
     </style>
@@ -793,7 +1055,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
       <div class="about-acc-header" onclick="toggleAbout('acc-immo')">
         <div class="about-acc-left">
           <div class="about-acc-icon" style="background:rgba(79,195,247,0.12);border:1px solid rgba(79,195,247,0.22);color:#4fc3f7">
-            <div class="about-acc-icon-em">&#127962;</div>
+            <div class="about-acc-icon-em">&#127970;</div>
           </div>
           <div>
             <div class="about-acc-title">Immobilier</div>
@@ -868,25 +1130,39 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
       <div class="about-acc-header" onclick="toggleAbout('acc-or')">
         <div class="about-acc-left">
           <div class="about-acc-icon" style="background:rgba(234,179,8,0.12);border:1px solid rgba(234,179,8,0.25);color:#eab308">
-            <svg viewBox="0 0 24 24" style="width:20px;height:20px" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-              <!-- lingot principal -->
-              <path d="M4 14 L7 9 L17 9 L20 14 Z" fill="rgba(234,179,8,0.25)" stroke="currentColor"/>
-              <rect x="3" y="14" width="18" height="5" rx="1.5" fill="rgba(234,179,8,0.25)" stroke="currentColor"/>
-              <!-- reflet -->
-              <line x1="6" y1="16" x2="6" y2="18" stroke-width="1.2" opacity="0.5"/>
-              <line x1="9" y1="15.5" x2="9" y2="18.5" stroke-width="1.2" opacity="0.5"/>
-            </svg>
+            <svg viewBox="0 0 32 32" style="width:22px;height:22px"><use href="#lingots-icon"/></svg>
           </div>
           <div>
             <div class="about-acc-title">Or</div>
-            <div class="about-acc-sub">&#192; venir</div>
+            <div class="about-acc-sub">Or physique &amp; papier</div>
           </div>
         </div>
         <div class="about-acc-arrow" id="arrow-acc-or">&#8250;</div>
       </div>
       <div class="about-acc-body" id="acc-or">
-        <div class="about-entry-body" style="color:rgba(255,255,255,0.4);font-style:italic;text-align:center;padding:8px 0">
-          Contenu &#224; venir.
+        <div class="about-entry-item">
+          <div class="about-entry-title">Or physique vs Or papier — Impact patrimoine</div>
+          <div class="about-entry-body">Legacy distingue deux types d'or avec un traitement différent dans le calcul du patrimoine :<br/><br/><strong>Or papier (ETC) :</strong> considéré comme un <strong>actif financier</strong>, il entre dans le calcul du <strong>patrimoine financier</strong> (au même titre que la Bourse, le Bitcoin, les livrets et le cash).<br/><br/><strong>Or physique (pièces, lingots) :</strong> considéré comme un <strong>actif tangible</strong>, il n'entre <strong>PAS</strong> dans le patrimoine financier. Il est compté uniquement dans le <strong>patrimoine brut et net</strong> (au même titre que l'immobilier).</div>
+        </div>
+        <div class="about-entry-item">
+          <div class="about-entry-title">Prix spot de l'or</div>
+          <div class="about-entry-body">Le prix spot est la valeur de marché actuelle de l'or, exprimée en euros par gramme. Vous pouvez le saisir <strong>manuellement</strong> via le bouton « Modifier » sur la carte Prix spot, ou le récupérer <strong>automatiquement</strong> via l'API GoldApi.io en ajoutant votre clé dans <strong>Paramètres → Configuration → API Bourse et Or</strong>.<br/><br/>Créez un compte gratuit sur <a href="https://goldapi.io" target="_blank" style="color:var(--gold);text-decoration:underline">goldapi.io</a> (100 requêtes/mois offertes).</div>
+        </div>
+        <div class="about-entry-item">
+          <div class="about-entry-title">Cours des ETC Or</div>
+          <div class="about-entry-body">Les cours des ETC Or (Or papier) sont récupérés via la <strong>même API que la Bourse</strong> (Yahoo Finance par défaut, ou Finnhub si une clé est configurée). Les tickers des ETC (ex : SGLN, GLDA, XGDU) sont utilisés comme symboles.<br/><br/>Cliquez sur <strong>« Actualiser les cours »</strong> dans l'onglet Bourse ou Or pour mettre à jour simultanément tous vos titres et ETC.</div>
+        </div>
+        <div class="about-entry-item">
+          <div class="about-entry-title">Prime moyenne pondérée</div>
+          <div class="about-entry-body">La prime est l'écart entre le prix d'achat réel et la valeur spot de l'or au moment de l'achat. Elle est pondérée par le poids d'or pur de chaque transaction.<br/><br/><strong>Prime positive</strong> : vous avez acheté au-dessus du spot (frais numismatique, de fabrication, marge de négoce).<br/><strong>Prime négative</strong> : vous avez acheté sous le spot (négociation, achat en masse).<br/><br/>Formule : ((prix_effectif / poids_pur) - spot) / spot × 100</div>
+        </div>
+        <div class="about-entry-item">
+          <div class="about-entry-title">Historique du spot à l'achat</div>
+          <div class="about-entry-body">Pour un calcul de prime précis, indiquez le spot de l'or au moment de chaque achat. Vous pouvez consulter l'historique gratuit sur <a href="https://goldprice.org/fr/gold-price-history.html" target="_blank" style="color:var(--gold);text-decoration:underline">goldprice.org/fr/gold-price-history.html</a>.<br/><br/>Sans spot saisi, la prime ne sera pas calculée pour cette transaction.</div>
+        </div>
+        <div class="about-entry-item">
+          <div class="about-entry-title">Valeur intrinsèque (melt value)</div>
+          <div class="about-entry-body">La valeur de fusion est la valeur calculée de votre or si vous le fondiez au cours du jour : <strong>poids_pur_total × spot_actuel</strong>. C'est la valeur minimale marchande. La valeur réelle de revente peut être supérieure (prime numismatique) ou inférieure (décote, frais).<br/><br/>Legacy calcule automatiquement cette valeur dans la carte <strong>Mon Or</strong> en haut de l'onglet.</div>
         </div>
       </div>
     </div>
@@ -1207,6 +1483,132 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     </div>
   </div>
 
+  <!-- PAGE 6: OR -->
+  <div class="page" id="pg-or">
+    <div class="hdr">
+      <div><h1>Or <svg viewBox="0 0 32 32" style="width:22px;height:22px;vertical-align:-4px;display:inline-block"><use href="#lingots-icon"/></svg></h1></div>
+      <div class="gear-btn" onclick="openParams()">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </div>
+    </div>
+
+    <!-- 1. Mon Or (centré) -->
+    <div class="card">
+      <div class="or-total-lbl">Mon Or</div>
+      <div class="or-total-val" id="or-total-val">0 €</div>
+    </div>
+
+    <!-- 2. Prix spot or (éditable manuellement) -->
+    <div class="or-spot-card">
+      <div class="or-spot-l">
+        <div class="or-spot-dot" id="or-spot-dot"></div>
+        <div class="or-spot-txt">
+          <div class="or-spot-lbl">Prix spot or</div>
+          <div class="or-spot-val">
+            <span id="or-spot-display">-- €/g</span>
+            <input type="number" step="0.01" min="0" id="or-spot-input" style="display:none">
+          </div>
+          <div class="or-spot-meta" id="or-spot-meta">Non défini</div>
+        </div>
+      </div>
+      <button class="or-spot-edit-btn" id="or-spot-btn" onclick="toggleOrSpotEdit()">Modifier</button>
+      <button class="or-spot-edit-btn" id="or-spot-refresh" onclick="fetchGoldSpot()" style="display:none;margin-left:4px" title="Actualiser depuis GoldApi.io">\u21bb</button>
+    </div>
+
+    <!-- 3. Toggle Physique | Papier -->
+    <div class="or-tabs">
+      <button class="or-tab active" onclick="switchOrView('physique',this)">Physique</button>
+      <button class="or-tab" onclick="switchOrView('papier',this)">Papier</button>
+    </div>
+
+    <!-- ═══ VUE PHYSIQUE ═══ -->
+    <div class="or-view active" id="or-view-physique">
+
+      <!-- KPIs -->
+      <div class="card">
+        <div class="ct">Or physique</div>
+        <div class="or-kpis">
+          <div class="or-kpi">
+            <div class="or-kpi-l">Or pur total</div>
+            <div class="or-kpi-v" id="or-phys-pur">0 g</div>
+          </div>
+          <div class="or-kpi">
+            <div class="or-kpi-l">Prime moy.</div>
+            <div class="or-kpi-v" id="or-phys-prime">--</div>
+          </div>
+          <div class="or-kpi">
+            <div class="or-kpi-l">Coût / an</div>
+            <div class="or-kpi-v" id="or-phys-cost">0 €</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mon coffre -->
+      <div class="card" style="padding-bottom:8px">
+        <div class="ct">
+          <span>Mon coffre</span>
+          <span id="or-coffre-count" style="font-size:11px;color:var(--tx3);font-weight:500;text-transform:none;letter-spacing:0">0 position</span>
+        </div>
+        <div id="or-coffre-list"></div>
+        <div class="or-list-total" id="or-coffre-total" style="display:none">
+          <span class="or-list-total-l">Total Or physique</span>
+          <span class="or-list-total-v" id="or-coffre-total-val">0 €</span>
+        </div>
+        <button class="btn-add" onclick="openOrPhysForm()">+ Nouvelle position d'or physique</button>
+      </div>
+
+      <!-- Formulaire inline (étape 3) -->
+      <div id="or-phys-form" class="card" style="display:none"></div>
+    </div>
+
+    <!-- ═══ VUE PAPIER ═══ -->
+    <div class="or-view" id="or-view-papier">
+
+      <!-- KPIs -->
+      <div class="card">
+        <div class="ct">Or papier</div>
+        <div class="or-kpis">
+          <div class="or-kpi">
+            <div class="or-kpi-l">PV latente</div>
+            <div class="or-kpi-v" id="or-pap-pv">0 €</div>
+          </div>
+          <div class="or-kpi">
+            <div class="or-kpi-l">TER moyen</div>
+            <div class="or-kpi-v" id="or-pap-ter">--</div>
+          </div>
+          <div class="or-kpi">
+            <div class="or-kpi-l">Coût TER / an</div>
+            <div class="or-kpi-v" id="or-pap-cost">0 €</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Liste ETC -->
+      <div class="card" style="padding-bottom:8px">
+        <div class="ct">
+          <span>ETC Or</span>
+          <span id="or-papier-count" style="font-size:11px;color:var(--tx3);font-weight:500;text-transform:none;letter-spacing:0">0 position</span>
+        </div>
+        <div id="or-papier-list"></div>
+        <div class="or-list-total" id="or-papier-total" style="display:none">
+          <span class="or-list-total-l">Total Or papier</span>
+          <span class="or-list-total-v" id="or-papier-total-val">0 €</span>
+        </div>
+        <button class="btn-add" onclick="fetchBourse()" style="margin-bottom:8px">Actualiser les cours</button>
+        <button class="btn-add" onclick="openOrPapForm()">+ Nouvel ETC Or</button>
+      </div>
+
+      <!-- Formulaire inline (étape 4) -->
+      <div id="or-pap-form" class="card" style="display:none"></div>
+    </div>
+
+    <!-- Note Or (visible si activée dans Paramètres → Configuration → Notes) -->
+    <div class="card" id="note-card-or" style="display:none">
+      <div class="ct">Note</div>
+      <textarea class="note-area" id="note-area-or" placeholder="Notes Or..."></textarea>
+    </div>
+  </div>
+
 </div>
 
 <!-- NAV -->
@@ -1219,6 +1621,10 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     <div class="ni" data-tab="1" onclick="goTo(1)">
       <div class="ni-ic btc-ic">₿</div>
       <div class="ni-lbl">Bitcoin</div><div class="ni-ind"></div>
+    </div>
+    <div class="ni" data-tab="6" onclick="goTo(6)">
+      <div class="ni-ic or-ic"><svg viewBox="0 0 32 32"><use href="#lingots-icon"/></svg></div>
+      <div class="ni-lbl">Or</div><div class="ni-ind"></div>
     </div>
     <div class="ni" data-tab="2" onclick="goTo(2)">
       <div class="ni-ic em-ic">📈</div>
@@ -1252,15 +1658,23 @@ const EMPTY={
   biens:[],
   prets:[],
   titres:[],
+  // ── OR ──
+  orPhysique:[],       // positions physiques : [{id,nom,poidsBrut,pureteMille,lieu,note,coutStockage,coutAssurance,coutAutres}]
+  orTransactions:[],   // achats : [{id,positionId,date,quantite,prixTotal,spotAuMomentGramme,fraisSup:[{lbl,val}]}]
+  orPapier:[],         // ETC papier : [{id,name,ticker,isin,qty,pru,cours,ter,date,useApi}]
+  goldSpot:0,          // prix spot or €/g (saisi manuellement ou via API)
+  goldSpotDate:'',     // date du dernier spot (ISO ou '')
+  goldApiKey:'',       // clé GoldAPI.io (optionnelle)
+  // ── /OR ──
   btcPrice:0,
   apiKey:'',
   note:'Bienvenue sur Legacy — votre suivi de patrimoine privé.\nRendez-vous dans Paramètres → A propos pour découvrir toutes les fonctionnalités de l’application.',
-  notePages:{accueil:true,bitcoin:false,bourse:false,immo:false,cash:false,passif:false},
+  notePages:{accueil:true,bitcoin:false,bourse:false,immo:false,cash:false,passif:false,or:false},
   btcGoal:1,
   hideAmounts:false,
   homeCard:'btc',
   hiddenTabs:[],
-  tabOrder:{1:3,2:2,3:1},
+  tabOrder:{1:3,2:2,3:1,6:4},
   patrimonyHistory:[],
   notifEnabled:false,
   notifBtcHigh:0,
@@ -1284,19 +1698,32 @@ let D=(()=>{
       p.biens=p.biens.map(b=>({...b,apportMe:b.apportMe!==undefined?b.apportMe:(b.apport||0)}));
       if(!p.prets)p.prets=[];
       if(!p.titres)p.titres=[];
+      // ── Migrations OR ──
+      if(!p.orPhysique)p.orPhysique=[];
+      if(!p.orTransactions)p.orTransactions=[];
+      if(!p.orPapier)p.orPapier=[];
+      if(p.goldSpot===undefined||p.goldSpot===null)p.goldSpot=0;
+      if(!p.goldSpotDate)p.goldSpotDate='';
+      if(!p.goldApiKey)p.goldApiKey='';
+      // ── /Migrations OR ──
       if(!p.btcPrice)p.btcPrice=0;
       if(!p.apiKey)p.apiKey='';
       if(!p.note)p.note='Bienvenue sur Legacy — votre suivi de patrimoine privé.\nRendez-vous dans Paramètres → A propos pour découvrir toutes les fonctionnalités de l’application.';
-      if(!p.notePages)p.notePages={accueil:true,bitcoin:false,bourse:false,immo:false,cash:false,passif:false}; if(!p.notePages.cash)p.notePages.cash=false;
+      if(!p.notePages)p.notePages={accueil:true,bitcoin:false,bourse:false,immo:false,cash:false,passif:false,or:false}; if(!p.notePages.cash)p.notePages.cash=false; if(p.notePages.or===undefined)p.notePages.or=false;
       if(!p.btcGoal)p.btcGoal=1;
       if(!p.notifEnabled)p.notifEnabled=false;
       if(p.hideAmounts===undefined)p.hideAmounts=false;
       if(!p.homeCard)p.homeCard='btc';
       if(!p.hiddenTabs)p.hiddenTabs=[];
-      // Migration tabOrder : tableau → objet, et ancien défaut {1:1,2:2,3:3}
+      // Migration tabOrder : tableau → objet, ancien défaut {1:1,2:2,3:3}, et ajout clé 6 (Or)
       if(!p.tabOrder||Array.isArray(p.tabOrder)||
         (typeof p.tabOrder==='object'&&p.tabOrder[1]===1&&p.tabOrder[2]===2&&p.tabOrder[3]===3)){
-        p.tabOrder={1:3,2:2,3:1};
+        p.tabOrder={1:3,2:2,3:1,6:4};
+      }
+      // Migration ajout Or : si la clé 6 manque, l'attribuer au rang max+1 (= après les actifs existants)
+      if(p.tabOrder && typeof p.tabOrder==='object' && !Array.isArray(p.tabOrder) && p.tabOrder[6]===undefined){
+        const maxRank=Math.max(0,...Object.values(p.tabOrder).map(r=>+r||0));
+        p.tabOrder[6]=maxRank+1;
       }
       if(!p.patrimonyHistory)p.patrimonyHistory=[];
       if(!p.notifBtcHigh)p.notifBtcHigh=0;
@@ -1309,6 +1736,49 @@ let D=(()=>{
   }catch(e){}
   return JSON.parse(JSON.stringify(EMPTY));
 })();
+
+// ═══════════════════════════════════════════════════════════════
+// ═══  OR PRESETS — Pièces & Lingots  ═══════════════════════════
+// ═══════════════════════════════════════════════════════════════
+const OR_PRESETS_PIECES=[
+  {nom:'20 Francs Napoléon',poids:6.4516,purete:900,typePreset:'piece'},
+  {nom:'Demi-Napoléon (10 Francs)',poids:3.2258,purete:900,typePreset:'piece'},
+  {nom:'20 Francs Suisse (Vreneli)',poids:6.4516,purete:900,typePreset:'piece'},
+  {nom:'Souverain Britannique',poids:7.9881,purete:917,typePreset:'piece'},
+  {nom:'Krugerrand 1 once',poids:33.930,purete:916.7,typePreset:'piece'},
+  {nom:'Krugerrand 1/2 once',poids:16.965,purete:916.7,typePreset:'piece'},
+  {nom:'Krugerrand 1/4 once',poids:8.4825,purete:916.7,typePreset:'piece'},
+  {nom:'Maple Leaf 1 once',poids:31.1035,purete:999.9,typePreset:'piece'},
+  {nom:'Maple Leaf 1/2 once',poids:15.55175,purete:999.9,typePreset:'piece'},
+  {nom:'American Gold Eagle 1 once',poids:33.930,purete:916.7,typePreset:'piece'},
+  {nom:'Philharmonique 1 once',poids:31.1035,purete:999.9,typePreset:'piece'},
+  {nom:'Philharmonique 1/2 once',poids:15.55175,purete:999.9,typePreset:'piece'}
+];
+const OR_PRESETS_LINGOTS=[
+  {nom:'Lingot 1 kg',poids:1000,purete:999.9,typePreset:'lingot'},
+  {nom:'Lingot 500 g',poids:500,purete:999.9,typePreset:'lingot'},
+  {nom:'Lingot 250 g',poids:250,purete:999.9,typePreset:'lingot'},
+  {nom:'Lingot 100 g',poids:100,purete:999.9,typePreset:'lingot'},
+  {nom:'Lingot 50 g',poids:50,purete:999.9,typePreset:'lingot'},
+  {nom:'Lingot 20 g',poids:20,purete:999.9,typePreset:'lingot'},
+  {nom:'Lingot 1 once (31.1035 g)',poids:31.1035,purete:999.9,typePreset:'lingot'},
+  {nom:'Lingot 10 g',poids:10,purete:999.9,typePreset:'lingot'}
+];
+
+// ETC Or papier
+const OR_PRESETS_ETC=[
+  {name:'iShares Physical Gold ETC',ticker:'SGLN',isin:'IE00B4ND3602',ter:0.12},
+  {name:'Amundi Physical Gold ETC',ticker:'GLDA',isin:'FR0013416716',ter:0.12},
+  {name:'Xtrackers IE Physical Gold ETC',ticker:'XGDU',isin:'DE000A2T0VU5',ter:0.11},
+  {name:'Invesco Physical Gold A',ticker:'SGLD',isin:'IE00B579F325',ter:0.12},
+  {name:'WisdomTree Core Physical Gold',ticker:'WGLD',isin:'JE00BN2CJ301',ter:0.12},
+  {name:'iShares Diversified Commodity Swap',ticker:'EXXY',isin:'DE000A0H0728',ter:0.46},
+  {name:'WisdomTree Physical Swiss Gold',ticker:'SGBS',isin:'JE00B588CD74',ter:0.15},
+  {name:'Xetra-Gold',ticker:'4GLD',isin:'DE000A0S9GB0',ter:0.00},
+  {name:'EUWAX Gold II',ticker:'EWG2',isin:'DE000EWG2LD7',ter:0.00}
+];
+
+// ═══════════════════════════════════════════════════════════════
 
 function uid(){
   if(typeof crypto!=='undefined'&&crypto.randomUUID)return crypto.randomUUID();
@@ -1441,9 +1911,15 @@ function calcAll(){
   const pretsDette=D.prets.reduce((a,p)=>a+(+p.restant||0)*((+p.part||100)/100),0);
   const collDette=D.collPrets.reduce((a,c)=>a+(+c.eurBorrowed||0),0);
   const totalPassif=immoCredit+pretsDette+collDette;
-  const financier=totalCash+totalLivrets+bourseTotal+btcEur;
-  const brut=financier+immoVal;
-  const net=financier+immoGainVente-pretsDette-collDette;
+  // Or : physique = actif tangible (brut uniquement), papier = actif financier
+  const orPhysTotal=orPhysiqueTotal();
+  const orPapTotal=orPapierTotal();
+  // Financier inclut l'Or papier (ETC) mais PAS l'Or physique (actif tangible)
+  const financier=totalCash+totalLivrets+bourseTotal+btcEur+orPapTotal;
+  // Brut inclut tout (financier + immo + or physique)
+  const brut=financier+immoVal+orPhysTotal;
+  // Net suit la même logique (financier inclut papier, on ajoute immoGainVente et orPhysTotal)
+  const net=financier+immoGainVente+orPhysTotal-pretsDette-collDette;
   savePatrimonySnapshot(net,brut);
   renderEvoChart();
 
@@ -1462,7 +1938,8 @@ function calcAll(){
     {l:'Autres Placements',v:totalLivrets,c:'#2e7d32'},
     {l:'Bourse 📈',v:bourseCost,c:'#2563eb'},
     {l:'Bitcoin <span style="color:var(--btc)">&#x20BF;</span>',v:btcInvested,c:'#f59e0b'},
-    {l:'Immobilier 🏢',v:immoInvested,c:'#dc2626'}
+    {l:'Immobilier 🏢',v:immoInvested,c:'#dc2626'},
+    {l:'Or <svg style="width:11px;height:11px;vertical-align:-1px"><use href="#lingots-icon"/></svg>',v:orTotal(),c:'#c9a961'}
   ].filter(a=>a.v>0).sort((a,b)=>b.v-a.v);
   const aBase=allocItems.reduce((s,a)=>s+a.v,0)||1;
   setH('alloc-bar',allocItems.map(a=>`<div class="alloc-seg" style="width:${(a.v/aBase*100).toFixed(1)}%;background:${a.c}"></div>`).join(''));
@@ -1491,7 +1968,7 @@ function calcAll(){
     <div class="row"><span class="rl">${esc(c.name)}</span><span class="rv">${fE(c.value)}</span></div>`).join('')||'<p style="font-size:12px;color:var(--tx3)">Aucun compte</p>');
 
   // Note visibility
-  ['accueil','bitcoin','bourse','immo','passif'].forEach(k=>{
+  ['accueil','bitcoin','bourse','immo','passif','or'].forEach(k=>{
     const el=document.getElementById(`note-card-${k}`);
     if(el)el.style.display=D.notePages[k]?'block':'none';
   });
@@ -1572,6 +2049,7 @@ function calcAll(){
   renderBiensDisplay();
   renderBiensPassif();
   renderTxHistory();
+  renderOrAll();
 }
 
 // ============================================================
@@ -2066,7 +2544,18 @@ async function fetchBourse(){
     }catch(e){fail++;failed.push(t.symbol);}
   }));
 
-  save();calcAll();renderBourseEditors();
+  // Also fetch ETC Or prices (same API, uses ticker as symbol)
+  await Promise.all((D.orPapier||[]).map(async(e,i)=>{
+    if(!e.name||!e.ticker||e.useApi===false)return;
+    try{
+      // Use ticker as symbol for API (Finnhub or Yahoo)
+      const price=await fetchPrice({symbol:e.ticker,useApi:true});
+      if(price&&price>0){D.orPapier[i].cours=price;ok++;}
+      else{fail++;failed.push(e.ticker);}
+    }catch(err){fail++;failed.push(e.ticker);}
+  }));
+
+  save();calcAll();renderBourseEditors();if(typeof renderOrAll==='function')renderOrAll();
   document.getElementById('b-dot').className=ok>0?'dot live':'dot off';
   document.getElementById('b-txt').textContent=ok>0
     ?(ok+' cours mis a jour'+(fail?' — '+fail+' echec'+(failed.length?' ('+failed.join(', ')+')':''):''))
@@ -2311,7 +2800,7 @@ function openSubPanel(id){
   if(id==='sub-hide-amounts'){const tog=document.getElementById('toggle-hide-amounts');if(tog)tog.checked=!!D.hideAmounts;}
   if(id==='sub-fees'){const tog=document.getElementById('toggle-add-fees-pru');if(tog)tog.checked=D.addFeesToPRU===false;}
   if(id==='sub-goal'){renderGoalSel();}
-  if(id==='sub-api'){const ak=document.getElementById('e-apikey');if(ak)ak.value=D.apiKey||'';}
+  if(id==='sub-api'){const ak=document.getElementById('e-apikey');if(ak)ak.value=D.apiKey||'';const gak=document.getElementById('e-goldapikey');if(gak)gak.value=D.goldApiKey||'';}
 }
 function closeSubPanel(){
   document.querySelectorAll('.sub-panel').forEach(p=>p.style.display='none');
@@ -2336,11 +2825,12 @@ function updateParamsMenu(){
 function renderNoteSettings(){
   const pages=[
     {k:'accueil',l:'Accueil'},
-    {k:'bitcoin',l:'Bitcoin'},
-    {k:'bourse',l:'Bourse'},
-    {k:'immo',l:'Immobilier'},
-    {k:'cash',l:'Cash'},
-    {k:'passif',l:'Passif'}
+    {k:'bitcoin',l:'Bitcoin ₿'},
+    {k:'bourse',l:'Bourse 📈'},
+    {k:'immo',l:'Immobilier 🏢'},
+    {k:'or',l:'Or <svg class="tab-ic-or" style="width:13px;height:13px"><use href="#lingots-icon"/></svg>'},
+    {k:'cash',l:'Cash €'},
+    {k:'passif',l:'Passif ⚖️'}
   ];
   setH('note-settings',pages.map(p=>`
     <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bdr)">
@@ -2647,17 +3137,24 @@ function applyHideAmounts(){
 }
 
 // ---- TABS CONFIG ----
-// Actifs configurables : 1=Bitcoin 2=Bourse 3=Immo
-// Structure fixe : [Accueil][Actif A][Actif B][Actif C][Cash][Passif]
-// tabOrder stocke l'ordre des 3 actifs, ex: [2,3,1] = Bourse,Immo,Bitcoin
-const TAB_NAMES={1:'Bitcoin ₿',2:'Bourse 📈',3:'Immo 🏢',4:'Cash <span style="color:#4fc3f7">€</span>',5:'Passif ⚖️'};
-const ASSET_IDS=[1,2,3];// ids des actifs configurables
+// Actifs configurables : 1=Bitcoin 2=Bourse 3=Immo 6=Or
+// Structure fixe : [Accueil][actif A][actif B][actif C][actif D][Cash][Passif]
+// tabOrder stocke le rang des 4 actifs, ex: {1:3,2:2,3:1,6:4} = Immo, Bourse, Bitcoin, Or
+const TAB_NAMES={
+  1:'Bitcoin ₿',
+  2:'Bourse 📈',
+  3:'Immo 🏢',
+  4:'Cash <span style="color:#4fc3f7">€</span>',
+  5:'Passif ⚖️',
+  6:'Or <svg class="tab-ic-or"><use href="#lingots-icon"/></svg>'
+};
+const ASSET_IDS=[1,2,3,6];// ids des actifs configurables
 
 function getAssetOrder(){
-  // Retourne les 3 actifs triés selon D.tabOrder (rangs saisis par l'user)
-  // D.tabOrder = {1: rang, 2: rang, 3: rang}
+  // Retourne les 4 actifs triés selon D.tabOrder (rangs saisis par l'user)
+  // D.tabOrder = {1: rang, 2: rang, 3: rang, 6: rang}
   const ranks=D.tabOrder&&typeof D.tabOrder==='object'&&!Array.isArray(D.tabOrder)
-    ?D.tabOrder:{1:3,2:2,3:1};
+    ?D.tabOrder:{1:3,2:2,3:1,6:4};
   return [...ASSET_IDS].sort((a,b)=>{
     const ra=+(ranks[a]||a),rb=+(ranks[b]||b);
     return ra!==rb?ra-rb:a-b;// départage par id si même rang
@@ -2665,7 +3162,7 @@ function getAssetOrder(){
 }
 
 function getPageOrder(){
-  // Ordre complet des pages : [0, actifA, actifB, actifC, 4, 5]
+  // Ordre complet des pages : [0, actifs triés, 4 (Cash), 5 (Passif)]
   const hidden=D.hiddenTabs||[];
   const assets=getAssetOrder().filter(id=>!hidden.includes(id));
   return [0,...assets,4,5];
@@ -2674,19 +3171,18 @@ function getPageOrder(){
 function renderTabsConfig(){
   const hidden=D.hiddenTabs||[];
   const ranks=D.tabOrder&&typeof D.tabOrder==='object'&&!Array.isArray(D.tabOrder)
-    ?{...D.tabOrder}:{1:3,2:2,3:1};
+    ?{...D.tabOrder}:{1:3,2:2,3:1,6:4};
 
-  // Pour chaque position (1,2,3), construire un select
-  // Les options disponibles pour une position = actifs non choisis aux autres positions
+  // Label humain pour chaque actif (affiché dans le sélecteur)
+  const labelOf=aid=>aid===1?'Bitcoin':aid===2?'Bourse':aid===3?'Immobilier':aid===6?'Or':'—';
+
+  // Pour chaque position (1..4), construire un select
   const rows=ASSET_IDS.map((id,idx)=>{
-    const pos=idx+1;// position fixe affichée (1,2,3)
+    const pos=idx+1;// position fixe affichée (1,2,3,4)
     // Actif actuellement assigné à cette position
     const assigned=Object.keys(ranks).find(k=>+(ranks[k])===pos&&+k!==0)||null;
     const isHidden=assigned?hidden.includes(+assigned):false;
-    // Options : tous les actifs, on indique lequel est sélectionné
-    const opts=ASSET_IDS.map(aid=>`<option value="${aid}" ${+assigned===aid?'selected':''}>${
-      aid===1?'Bitcoin':aid===2?'Bourse':'Immobilier'
-    }</option>`).join('');
+    const opts=ASSET_IDS.map(aid=>`<option value="${aid}" ${+assigned===aid?'selected':''}>${labelOf(aid)}</option>`).join('');
     return `<div style="padding:10px 0;border-bottom:1px solid var(--bdr)">
       <div style="display:flex;align-items:center;gap:10px">
         <span style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.5);min-width:16px">${pos}</span>
@@ -2708,7 +3204,7 @@ function renderTabsConfig(){
 }
 
 function updateTabRankByPos(pos,assetId){
-  if(!D.tabOrder||Array.isArray(D.tabOrder))D.tabOrder={1:3,2:2,3:1};
+  if(!D.tabOrder||Array.isArray(D.tabOrder))D.tabOrder={1:3,2:2,3:1,6:4};
   // Trouver si un autre actif occupait cette position et l'échanger
   const prev=Object.keys(D.tabOrder).find(k=>+(D.tabOrder[k])===pos);
   if(prev&&+prev!==assetId){
@@ -2736,7 +3232,12 @@ function applyTabsConfig(){
   // Migration défensive : corriger tout format invalide
   if(!D.tabOrder||Array.isArray(D.tabOrder)||
     (typeof D.tabOrder==='object'&&D.tabOrder[1]===1&&D.tabOrder[2]===2&&D.tabOrder[3]===3)){
-    D.tabOrder={1:3,2:2,3:1};
+    D.tabOrder={1:3,2:2,3:1,6:4};
+  }
+  // Migration ajout Or : si la clé 6 manque (upgrade d'un Legacy v2.5.x en mémoire), l'ajouter
+  if(D.tabOrder[6]===undefined){
+    const maxRank=Math.max(0,...Object.values(D.tabOrder).map(r=>+r||0));
+    D.tabOrder[6]=maxRank+1;
   }
   save();
   const order=getPageOrder();
@@ -2767,13 +3268,1180 @@ function applyTabsConfig(){
   }
 }
 
+// ═══════════════════════════════════════════════════════════════
+// ═══  OR : FONCTIONS DE RENDU & INTERACTIONS (Étapes 2 → 5)  ═══
+// ═══════════════════════════════════════════════════════════════
+
+// ── State local ──
+let _orCurrentView='physique';  // 'physique' | 'papier'
+let _orSpotEditing=false;
+
+// ── Helpers ──
+const fG=v=>(+v||0).toLocaleString('fr-FR',{maximumFractionDigits:3})+' g';
+const fG4=v=>(+v||0).toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:4})+' g';
+const fEg=v=>(+v||0).toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' €/g';
+const fPct=v=>((+v||0)>=0?'+':'')+(+v||0).toFixed(1)+' %';
+// Poids d'or pur d'une position (g par unité × quantité totale de toutes les tx de cette position)
+function orPureWeight(pos){
+  if(!pos)return 0;
+  const pb=+pos.poidsBrut||0;
+  const pur=(+pos.pureteMille||0)/1000;
+  const qty=(D.orTransactions||[]).filter(t=>t.positionId===pos.id).reduce((a,t)=>a+(+t.quantite||0),0);
+  return pb*pur*qty;
+}
+// Quantité totale d'une position
+function orPosQty(pos){
+  if(!pos)return 0;
+  return (D.orTransactions||[]).filter(t=>t.positionId===pos.id).reduce((a,t)=>a+(+t.quantite||0),0);
+}
+// Prix total payé (toutes tx) d'une position
+function orPosCost(pos){
+  if(!pos)return 0;
+  return (D.orTransactions||[]).filter(t=>t.positionId===pos.id).reduce((a,t)=>{
+    const fraisSup=(t.fraisSup||[]).reduce((s,f)=>s+(+f.val||0),0);
+    return a+(+t.prixTotal||0)+fraisSup;
+  },0);
+}
+// Valeur de fusion (melt value) d'une position = or pur × spot
+function orPosMeltValue(pos){
+  return orPureWeight(pos)*(+D.goldSpot||0);
+}
+// PRU par unité d'une position
+function orPosPRU(pos){
+  const qty=orPosQty(pos);
+  return qty>0?orPosCost(pos)/qty:0;
+}
+// Prime moyenne pondérée par le poids d'or pur d'une position
+function orPosPrimeAvg(pos){
+  const txs=(D.orTransactions||[]).filter(t=>t.positionId===pos.id);
+  let sumWeighted=0, sumWeight=0;
+  txs.forEach(tx=>{
+    const spot=+tx.spotAuMomentGramme||0;
+    if(spot<=0)return;// pas de spot saisi → pas comptabilisé
+    const qty=+tx.quantite||0;
+    const pureUnit=(+pos.poidsBrut||0)*((+pos.pureteMille||0)/1000);
+    const pureTx=pureUnit*qty;
+    const fraisSup=(tx.fraisSup||[]).reduce((s,f)=>s+(+f.val||0),0);
+    const prixEffectif=(+tx.prixTotal||0)+fraisSup;
+    if(pureTx<=0)return;
+    const prixGrammeEffectif=prixEffectif/pureTx;
+    const prime=(prixGrammeEffectif-spot)/spot;
+    sumWeighted+=prime*pureTx;
+    sumWeight+=pureTx;
+  });
+  return sumWeight>0?(sumWeighted/sumWeight)*100:null;// null = pas assez de données
+}
+// Coût annuel de détention d'une position
+function orPosAnnualCost(pos){
+  if(!pos)return 0;
+  const stock=+pos.coutStockage||0;
+  const assur=+pos.coutAssurance||0;
+  const autres=+pos.coutAutres||0;
+  return stock+assur+autres;
+}
+// Total Or physique (melt value de toutes les positions)
+function orPhysiqueTotal(){
+  return (D.orPhysique||[]).filter(p=>p.nom).reduce((a,p)=>a+orPosMeltValue(p),0);
+}
+// Total investi (coût) pour toutes les positions Or physiques
+function orPhysiqueCost(){
+  return (D.orPhysique||[]).filter(p=>p.nom).reduce((a,p)=>a+orPosCost(p),0);
+}
+// PnL physique = valeur actuelle - coût total
+function orPhysiquePnL(){
+  return orPhysiqueTotal()-orPhysiqueCost();
+}
+// Total poids pur (toutes positions)
+function orPhysiquePurTotal(){
+  return (D.orPhysique||[]).reduce((a,p)=>a+orPureWeight(p),0);
+}
+// Prime moyenne pondérée globale (toutes positions)
+function orPhysiquePrimeAvg(){
+  let sumWeighted=0, sumWeight=0;
+  (D.orPhysique||[]).forEach(pos=>{
+    (D.orTransactions||[]).filter(t=>t.positionId===pos.id).forEach(tx=>{
+      const spot=+tx.spotAuMomentGramme||0;
+      if(spot<=0)return;
+      const qty=+tx.quantite||0;
+      const pureUnit=(+pos.poidsBrut||0)*((+pos.pureteMille||0)/1000);
+      const pureTx=pureUnit*qty;
+      const fraisSup=(tx.fraisSup||[]).reduce((s,f)=>s+(+f.val||0),0);
+      const prixEffectif=(+tx.prixTotal||0)+fraisSup;
+      if(pureTx<=0)return;
+      const prixGrammeEffectif=prixEffectif/pureTx;
+      const prime=(prixGrammeEffectif-spot)/spot;
+      sumWeighted+=prime*pureTx;
+      sumWeight+=pureTx;
+    });
+  });
+  return sumWeight>0?(sumWeighted/sumWeight)*100:null;
+}
+// Coût annuel total Or physique
+function orPhysiqueAnnualCost(){
+  return (D.orPhysique||[]).reduce((a,p)=>a+orPosAnnualCost(p),0);
+}
+// Total Or papier
+function orPapierTotal(){
+  return (D.orPapier||[]).filter(e=>e.name).reduce((a,e)=>a+(+e.qty||0)*(+e.cours||0),0);
+}
+function orPapierCost(){
+  return (D.orPapier||[]).filter(e=>e.name).reduce((a,e)=>a+(+e.qty||0)*(+e.pru||0),0);
+}
+function orPapierPnL(){
+  return orPapierTotal()-orPapierCost();
+}
+// TER moyen pondéré par la valeur
+function orPapierTerAvg(){
+  const total=orPapierTotal();
+  if(total<=0)return null;
+  const weighted=(D.orPapier||[]).reduce((a,e)=>a+(+e.qty||0)*(+e.cours||0)*(+e.ter||0),0);
+  return weighted/total;
+}
+function orPapierAnnualCost(){
+  const terAvg=orPapierTerAvg();
+  if(terAvg===null)return 0;
+  return orPapierTotal()*terAvg/100;
+}
+// Total global Or (physique + papier)
+function orTotal(){
+  return orPhysiqueTotal()+orPapierTotal();
+}
+
+// ── Toggle view Physique / Papier ──
+function switchOrView(view,btn){
+  _orCurrentView=view;
+  document.querySelectorAll('#pg-or .or-tab').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  else document.querySelectorAll('#pg-or .or-tab').forEach(b=>{if(b.textContent.toLowerCase().trim()===view)b.classList.add('active');});
+  document.querySelectorAll('#pg-or .or-view').forEach(v=>v.classList.remove('active'));
+  const el=document.getElementById('or-view-'+view);
+  if(el)el.classList.add('active');
+}
+
+// ── Édition manuelle du spot ──
+function toggleOrSpotEdit(){
+  const disp=document.getElementById('or-spot-display');
+  const inp=document.getElementById('or-spot-input');
+  const meta=document.getElementById('or-spot-meta');
+  const btn=document.getElementById('or-spot-btn');
+  if(!disp||!inp)return;
+  if(!_orSpotEditing){
+    // Ouvrir édition
+    inp.value=+D.goldSpot||'';
+    disp.style.display='none';
+    inp.style.display='inline-block';
+    inp.focus();inp.select();
+    btn.textContent='Valider';
+    _orSpotEditing=true;
+  }else{
+    // Valider
+    const v=+inp.value||0;
+    D.goldSpot=v;
+    D.goldSpotDate=v>0?new Date().toISOString():'';
+    save();
+    disp.style.display='inline';
+    inp.style.display='none';
+    btn.textContent='Modifier';
+    _orSpotEditing=false;
+    renderOrSpot();
+    renderOrAll();
+    if(typeof calcAll==='function')calcAll();
+  }
+}
+
+// Rendu du spot (valeur + date + dot)
+function renderOrSpot(){
+  const disp=document.getElementById('or-spot-display');
+  const meta=document.getElementById('or-spot-meta');
+  const dot=document.getElementById('or-spot-dot');
+  if(!disp||!meta)return;
+  const v=+D.goldSpot||0;
+  disp.textContent=v>0?fEg(v):'-- €/g';
+  if(dot)dot.classList.toggle('live',v>0);
+  if(v>0&&D.goldSpotDate){
+    try{
+      const d=new Date(D.goldSpotDate);
+      const dd=d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'});
+      meta.textContent=(D.goldApiKey?'API GoldAPI.io · ':'Saisi manuellement · ')+dd;
+    }catch(e){meta.textContent='Saisi manuellement';}
+  }else{
+    meta.textContent='Non défini — cliquez Modifier pour saisir';
+  }
+
+  // Show refresh button if API key configured
+  const refreshBtn=document.getElementById('or-spot-refresh');
+  if(refreshBtn)refreshBtn.style.display=(D.goldApiKey&&D.goldApiKey.trim())?'inline-flex':'none';
+}
+
+// Rendu de la liste "Mon coffre" (positions physiques)
+function renderOrCoffre(){
+  const list=document.getElementById('or-coffre-list');
+  const totalBox=document.getElementById('or-coffre-total');
+  const totalVal=document.getElementById('or-coffre-total-val');
+  const count=document.getElementById('or-coffre-count');
+  if(!list)return;
+  // Filtrer les positions vides (en cours de création)
+  const positions=(D.orPhysique||[]).filter(p=>p.nom);
+  const nbTx=(D.orTransactions||[]).filter(t=>positions.some(p=>p.id===t.positionId)).length;
+  if(count)count.textContent=positions.length===0?'0 position':(positions.length+' position'+(positions.length>1?'s':'')+' · '+nbTx+' achat'+(nbTx>1?'s':''));
+  if(positions.length===0){
+    list.innerHTML='<div class="or-empty">Aucun or physique dans votre coffre.<br>Cliquez sur « + Nouvelle position » pour commencer.</div>';
+    if(totalBox)totalBox.style.display='none';
+    return;
+  }
+  list.innerHTML=positions.map(pos=>{
+    const qty=orPosQty(pos);
+    const pur=orPureWeight(pos);
+    const melt=orPosMeltValue(pos);
+    const pru=orPosPRU(pos);
+    const primeAvg=orPosPrimeAvg(pos);
+    const txs=(D.orTransactions||[]).filter(t=>t.positionId===pos.id).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+    const pureUnit=(+pos.poidsBrut||0)*((+pos.pureteMille||0)/1000);
+    const unitLbl=pos.typePreset==='piece'?'pièce':pos.typePreset==='lingot'?'lingot':'unité';
+    return `<div class="coffre-item" data-pos-id="${esc(pos.id)}">
+      <div class="coffre-hdr">
+        <div class="coffre-t">
+          <div class="coffre-name">${esc(pos.nom||'Position')}</div>
+          <div class="coffre-sub">${unitLbl.charAt(0).toUpperCase()+unitLbl.slice(1)} · ${(+pos.poidsBrut||0).toLocaleString('fr-FR',{maximumFractionDigits:4})} g brut · ${(+pos.pureteMille||0).toLocaleString('fr-FR',{maximumFractionDigits:1})}‰</div>
+        </div>
+        <div class="coffre-r">
+          <div class="coffre-val">${fE(melt)}</div>
+          <div class="coffre-qty">${qty.toLocaleString('fr-FR')} ${unitLbl}${qty>1?'s':''}</div>
+        </div>
+        <div class="coffre-menu-wrap">
+          <button class="coffre-menu-btn" onclick="toggleOrCoffreMenu(this,event)">⋯</button>
+          <div class="coffre-menu">
+            <button onclick="openOrPhysForm('${esc(pos.id)}')"><span class="coffre-menu-ic">+</span>Ajouter un achat</button>
+            <button onclick="openOrPhysForm('${esc(pos.id)}',true)"><span class="coffre-menu-ic">✎</span>Modifier les infos</button>
+            <button class="danger" onclick="deleteOrPos('${esc(pos.id)}')"><span class="coffre-menu-ic">✕</span>Supprimer la position</button>
+          </div>
+        </div>
+      </div>
+      <div class="coffre-meta">
+        <div><div class="pm-l">Or pur</div><div class="pm-v">${pur.toLocaleString('fr-FR',{maximumFractionDigits:3})} g</div></div>
+        <div><div class="pm-l">PRU moy${qty>1?'./'+unitLbl.slice(0,3):''}</div><div class="pm-v">${fE2(pru)}</div></div>
+        <div><div class="pm-l">Prime moy.</div><div class="pm-v">${primeAvg===null?'—':fPct(primeAvg)}</div></div>
+      </div>
+      ${txs.length>0?`
+      <div class="coffre-toggle" onclick="toggleCoffreItem(this.parentNode)">
+        <span>Historique des achats (${txs.length})</span>
+        <span class="caret">›</span>
+      </div>
+      <div class="coffre-tx-list">
+        ${txs.map(tx=>{
+          const pureTx=pureUnit*(+tx.quantite||0);
+          const spot=+tx.spotAuMomentGramme||0;
+          const fraisSup=(tx.fraisSup||[]).reduce((s,f)=>s+(+f.val||0),0);
+          const prixEff=(+tx.prixTotal||0)+fraisSup;
+          const prixParUnit=(+tx.quantite||0)>0?(+tx.prixTotal||0)/(+tx.quantite):0;
+          let primeTx=null;
+          if(spot>0&&pureTx>0){primeTx=((prixEff/pureTx)-spot)/spot*100;}
+          const dateStr=tx.date?new Date(tx.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'}):'—';
+          return `<div class="coffre-tx-row">
+            <div class="coffre-tx-date">${dateStr}</div>
+            <div class="coffre-tx-body">
+              <div class="tx-q">${(+tx.quantite||0).toLocaleString('fr-FR')} ${unitLbl}${(+tx.quantite||0)>1?'s':''} · ${fE(+tx.prixTotal||0)}</div>
+              ${spot>0?`<div class="tx-spot">Spot à l'achat : ${fEg(spot)}</div>`:`<div class="tx-spot" style="font-style:italic">Spot non renseigné</div>`}
+            </div>
+            <div class="coffre-tx-right">
+              <div class="coffre-tx-price">${fE2(prixParUnit)}/${unitLbl.slice(0,3)}</div>
+              ${primeTx!==null?`<div class="coffre-tx-prime">${fPct(primeTx)}</div>`:''}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+      `:''}
+    </div>`;
+  }).join('');
+  if(totalBox&&totalVal){
+    totalBox.style.display='flex';
+    totalVal.textContent=fE(orPhysiqueTotal());
+  }
+}
+
+// Rendu de la liste ETC Or papier
+function renderOrPapier(){
+  const list=document.getElementById('or-papier-list');
+  const totalBox=document.getElementById('or-papier-total');
+  const totalVal=document.getElementById('or-papier-total-val');
+  const count=document.getElementById('or-papier-count');
+  if(!list)return;
+  const etcs=(D.orPapier||[]).filter(e=>e.name);
+  if(count)count.textContent=etcs.length===0?'0 position':(etcs.length+' position'+(etcs.length>1?'s':''));
+  if(etcs.length===0){
+    list.innerHTML='<div class="or-empty">Aucun ETC Or dans votre portefeuille.<br>Cliquez sur « + Nouvel ETC Or » pour commencer.</div>';
+    if(totalBox)totalBox.style.display='none';
+    return;
+  }
+  const totalValAll=orPapierTotal();
+  list.innerHTML=etcs.map((e,i)=>{
+    const val=(+e.qty||0)*(+e.cours||0);
+    const cost=(+e.qty||0)*(+e.pru||0);
+    const pv=val-cost;
+    const weight=totalValAll>0?val/totalValAll*100:0;
+    return `<div class="etc-card" data-etc-id="${esc(e.id)}">
+      <div class="etc-top">
+        <div style="min-width:0;flex:1">
+          <div class="etc-name">${esc(e.name||'ETC')}</div>
+          <div class="etc-tkr">${esc(e.ticker||'—')} · ${esc(e.isin||'—')} · TER ${(+e.ter||0).toFixed(2)}%</div>
+        </div>
+        <div>
+          <div class="etc-val">${fE(val)}</div>
+          <div class="etc-qty">${(+e.qty||0).toLocaleString('fr-FR')} part${(+e.qty||0)>1?'s':''}</div>
+        </div>
+        <div class="coffre-menu-wrap">
+          <button class="coffre-menu-btn" onclick="toggleOrCoffreMenu(this,event)">⋯</button>
+          <div class="coffre-menu">
+            <button onclick="openOrPapForm('${esc(e.id)}')"><span class="coffre-menu-ic">✎</span>Modifier</button>
+            <button class="danger" onclick="deleteOrEtc('${esc(e.id)}')"><span class="coffre-menu-ic">✕</span>Supprimer</button>
+          </div>
+        </div>
+      </div>
+      <div class="etc-grid">
+        <div><div class="l">PRU</div><div class="v">${fE2(+e.pru||0)}</div></div>
+        <div><div class="l">Cours</div><div class="v">${fE2(+e.cours||0)}</div></div>
+        <div><div class="l">PV lat.</div><div class="v ${pv>=0?'pv-pos':'pv-neg'}">${(pv>=0?'+':'')}${fE(pv)}</div></div>
+        <div><div class="l">Poids</div><div class="v">${weight.toFixed(1)}%</div></div>
+      </div>
+    </div>`;
+  }).join('');
+  if(totalBox&&totalVal){
+    totalBox.style.display='flex';
+    totalVal.textContent=fE(totalValAll);
+  }
+}
+
+// Rendu des KPIs Physique et Papier
+function renderOrKPIs(){
+  // Physique
+  setT('or-phys-pur',fG(orPhysiquePurTotal()));
+  const primeG=orPhysiquePrimeAvg();
+  setT('or-phys-prime',primeG===null?'—':fPct(primeG));
+  setT('or-phys-cost',fE(orPhysiqueAnnualCost()));
+  // Papier
+  const papPnl=orPapierPnL();
+  const papPvEl=document.getElementById('or-pap-pv');
+  if(papPvEl){
+    papPvEl.textContent=(papPnl>=0?'+':'')+fE(papPnl);
+    papPvEl.classList.toggle('pos',papPnl>0);
+  }
+  const ter=orPapierTerAvg();
+  setT('or-pap-ter',ter===null?'—':(ter.toFixed(2)+' %'));
+  setT('or-pap-cost',fE(orPapierAnnualCost()));
+  // Total global
+  setT('or-total-val',fE(orTotal()));
+}
+
+// ═══════════════ API GOLDAPI.IO ═══════════════
+async function fetchGoldSpot(silent){
+  if(!D.goldApiKey||!D.goldApiKey.trim()){
+    if(!silent)showToast('Cl\u00e9 API non configur\u00e9e');
+    return false;
+  }
+  try{
+    const res=await fetch('https://www.goldapi.io/api/XAU/EUR',{
+      method:'GET',
+      headers:{'x-access-token':D.goldApiKey.trim(),'Content-Type':'application/json'}
+    });
+    if(!res.ok){
+      if(!silent)showToast('Erreur API Gold ('+res.status+')');
+      return false;
+    }
+    const data=await res.json();
+    // data.price = prix par once troy (31.1035g) en EUR
+    // On veut le prix par gramme
+    if(data&&data.price_gram_24k){
+      D.goldSpot=+data.price_gram_24k;
+      D.goldSpotDate=new Date().toISOString();
+      save();
+      renderOrSpot();
+      if(typeof calcAll==='function')calcAll();
+      if(!silent)showToast('Prix spot Or mis \u00e0 jour');
+      return true;
+    } else if(data&&data.price){
+      // Fallback : prix par once, convertir en grammes (1 oz = 31.1035 g)
+      D.goldSpot=+data.price/31.1035;
+      D.goldSpotDate=new Date().toISOString();
+      save();
+      renderOrSpot();
+      if(typeof calcAll==='function')calcAll();
+      if(!silent)showToast('Prix spot Or mis \u00e0 jour');
+      return true;
+    }
+    if(!silent)showToast('R\u00e9ponse API invalide');
+    return false;
+  }catch(e){
+    if(!silent)showToast('Erreur de connexion API Gold');
+    console.error('GoldAPI error:',e);
+    return false;
+  }
+}
+
+async function testGoldApiKey(){
+  const key=(document.getElementById('e-goldapikey')||{}).value;
+  if(!key||!key.trim()){
+    showToast('Entrez une cl\u00e9 API d\u2019abord');
+    return;
+  }
+  D.goldApiKey=key.trim();
+  save();
+  showToast('Test en cours...');
+  const ok=await fetchGoldSpot(true);
+  if(ok){
+    showToast('\u2713 Connexion r\u00e9ussie · Prix mis \u00e0 jour');
+  } else {
+    showToast('\u2717 \u00c9chec de connexion');
+  }
+}
+// ═══════════════ /API GOLDAPI.IO ═══════════════
+
+// Wrapper : rendu global de la page Or
+function renderOrAll(){
+  renderOrSpot();
+  renderOrCoffre();
+  renderOrPapier();
+  renderOrKPIs();
+  const nco=document.getElementById('note-card-or');
+  if(nco)nco.style.display=(D.notePages&&D.notePages.or)?'block':'none';
+  const nao=document.getElementById('note-area-or');
+  if(nao&&document.activeElement!==nao)nao.value=D.note||'';
+}
+
+// Toggle historique sur une position
+function toggleCoffreItem(el){ el.classList.toggle('open'); }
+
+// Menu contextuel (trois points)
+function toggleOrCoffreMenu(btn,e){
+  e.stopPropagation();
+  const menu=btn.nextElementSibling;
+  const wasOpen=menu.classList.contains('open');
+  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
+  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
+  if(!wasOpen){ menu.classList.add('open'); btn.classList.add('active'); }
+}
+document.addEventListener('click',()=>{
+  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
+  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
+});
+
+// ── Formulaires Or Physique & Or Papier ──
+let _orPhysEditId=null;  // ID de la position en cours d'édition (null = nouveau)
+let _orPhysEditMode=false; // true = modifier position, false = ajouter achat
+
+function openOrPhysForm(posId,editMode){
+  // posId: ID de la position (null = créer une nouvelle)
+  // editMode: true = modifier info position, false = ajouter un achat à cette position
+  _orPhysEditId=posId||null;
+  _orPhysEditMode=editMode||false;
+  
+  const formEl=document.getElementById('or-phys-form');
+  if(!formEl)return;
+  
+  // Si on ajoute un achat, on crée une position d'abord si elle n'existe pas
+  if(!_orPhysEditId&&!editMode){
+    _orPhysEditId=uid();
+    D.orPhysique.push({id:_orPhysEditId,nom:'',poidsBrut:0,pureteMille:0,lieu:'',note:'',coutStockage:0,coutAssurance:0,coutAutres:0});
+  }
+  
+  renderOrPhysForm();
+  formEl.style.display='block';
+  // Scroll vers le formulaire
+  setTimeout(()=>formEl.scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+function renderOrPhysForm(){
+  const formEl=document.getElementById('or-phys-form');
+  if(!formEl)return;
+  
+  const pos=_orPhysEditId?D.orPhysique.find(p=>p.id===_orPhysEditId):null;
+  // Nouvelle position = pos existe mais vide (créée par openOrPhysForm sans id)
+  const isNewPos=pos&&!pos.nom;
+  const isEditPos=_orPhysEditMode&&pos&&pos.nom;
+  const isAddTx=!_orPhysEditMode&&pos&&pos.nom;
+  
+  let formContent='';
+  
+  if(isNewPos){
+    // NOUVELLE POSITION — Avec presets
+    formContent=`<div class="ct">Nouvel achat — Or physique</div>
+
+<div style="margin-bottom:10px">
+<label style="font-size:13px;color:rgba(255,255,255,0.75);font-weight:500;margin-bottom:6px;display:block">Choisir dans les listes pour pré-remplir les informations</label>
+
+<div class="preset-tabs">
+<button type="button" class="active" onclick="switchOrPhysPresetTab('pieces',event)">Pièces</button>
+<button type="button" onclick="switchOrPhysPresetTab('lingots',event)">Lingots</button>
+</div>
+
+<div class="preset-list" id="or-phys-preset-list">
+${OR_PRESETS_PIECES.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPreset(${i},false,this)"><div><div class="preset-row-t">${esc(p.nom)}</div><div class="preset-row-sub">${p.poids.toLocaleString('fr-FR',{maximumFractionDigits:4})} g · ${p.purete}‰</div></div><div class="preset-row-r">${(p.poids*p.purete/1000).toLocaleString('fr-FR',{maximumFractionDigits:2})} g</div></div>`).join('')}
+</div>
+</div>
+
+<div class="manual-divider">
+<div class="manual-divider-line"></div>
+<div class="manual-divider-txt">Ou saisir manuellement</div>
+<div class="manual-divider-line"></div>
+</div>
+<div style="text-align:center;margin-bottom:10px;font-size:12px;color:rgba(255,255,255,0.45);font-style:italic">Ajouter de l'or physique non présent dans les listes</div>
+
+<div class="ef">
+<label>Nom / Description</label>
+<input type="text" id="or-phys-nom" placeholder="ex: 20 Francs Napoléon">
+</div>
+
+<div class="g2">
+<div class="ef">
+<label>Quantité</label>
+<input type="number" id="or-phys-qty" value="1" min="1" step="1" oninput="updateOrPhysCalcul()">
+</div>
+<div class="ef">
+<label>Prix total payé (€)</label>
+<input type="number" id="or-phys-prix" placeholder="0,00" step="0.01" min="0">
+</div>
+</div>
+
+<div class="g2">
+<div class="ef">
+<label>Poids brut / unité (g)</label>
+<input type="number" id="or-phys-poids" placeholder="0" step="0.0001" min="0" oninput="updateOrPhysCalcul()">
+</div>
+<div class="ef">
+<label>Pureté (‰)</label>
+<input type="number" id="or-phys-purete" placeholder="900" step="0.1" min="0" max="1000" oninput="updateOrPhysCalcul()">
+</div>
+</div>
+
+<div class="pure-box">
+<div class="pl">Or pur / unité · total</div>
+<div class="pv" id="or-phys-pur-display">-- g · -- g</div>
+</div>
+
+<div class="g2">
+<div class="ef">
+<label>Date d'acquisition</label>
+<input type="date" id="or-phys-date" value="${new Date().toISOString().slice(0,10)}">
+</div>
+<div class="ef">
+<label>Spot à l'achat (€/g)</label>
+<input type="number" id="or-phys-spot" placeholder="0" step="0.01" min="0" value="${D.goldSpot||''}" oninput="updateOrPhysPrime()">
+</div>
+</div>
+<div class="hint" id="or-phys-prime-hint">Prime calculée automatiquement : <span style="color:#fff;font-weight:600" id="or-phys-prime-val">--</span></div>
+
+<div class="ibox" style="margin-top:12px">
+<div class="ibox-hd" onclick="this.parentNode.classList.toggle('open')">
+<div>
+<div class="ibox-hd-t">Frais d'acquisition supplémentaires</div>
+<div class="ibox-hd-sub">Livraison, certification, assurance transport… (la prime est déjà incluse dans le prix)</div>
+</div>
+<span class="caret">›</span>
+</div>
+<div class="ibox-body">
+<div id="or-phys-frais-list"></div>
+<button type="button" class="dyn-add" onclick="addOrPhysFrais()">+ Ajouter un frais</button>
+<div class="sub-total" id="or-phys-frais-total" style="display:none">
+<span class="l">Total frais</span>
+<span class="v" id="or-phys-frais-total-val">0 €</span>
+</div>
+</div>
+</div>
+
+<div class="ibox">
+<div class="ibox-hd" onclick="this.parentNode.classList.toggle('open')">
+<div>
+<div class="ibox-hd-t">Coûts annuels de détention</div>
+<div class="ibox-hd-sub">Indicatif — n'affecte pas le PRU, c'est un flux annuel séparé</div>
+</div>
+<span class="caret">›</span>
+</div>
+<div class="ibox-body">
+<div class="g2">
+<div class="ef">
+<label>Stockage / an (€)</label>
+<input type="number" id="or-phys-cost-stock" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()">
+</div>
+<div class="ef">
+<label>Assurance / an (€)</label>
+<input type="number" id="or-phys-cost-assurance" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()">
+</div>
+</div>
+<div class="sub-total">
+<span class="l">Coût annuel estimé</span>
+<span class="v" id="or-phys-cost-total">0 € / an</span>
+</div>
+</div>
+</div>
+
+<div class="ibox">
+<div class="ibox-hd" onclick="this.parentNode.classList.toggle('open')">
+<div class="ibox-hd-t">Informations complémentaires</div>
+<span class="caret">›</span>
+</div>
+<div class="ibox-body">
+<div class="ef">
+<label>Lieu de stockage</label>
+<input type="text" id="or-phys-lieu" placeholder="Coffre banque, domicile…">
+</div>
+<div class="ef">
+<label>Note libre</label>
+<textarea id="or-phys-note" placeholder="Numéro de série, remarques…"></textarea>
+</div>
+</div>
+</div>
+
+<div class="btn-row">
+<button type="button" class="btn btn-sec" onclick="cancelOrPhysForm()">Annuler</button>
+<button type="button" class="btn btn-grn" onclick="saveOrPhysPosition()">Enregistrer l'achat</button>
+</div>`;
+  } else if(isEditPos){
+    // MODIFIER POSITION
+    formContent=`<div class="ct">Modifier la position</div>
+
+<div class="ef">
+<label>Nom / Description</label>
+<input type="text" id="or-phys-nom" value="${esc(pos.nom||'')}" placeholder="ex: 20 Francs Napoléon">
+</div>
+
+<div class="g2">
+<div class="ef">
+<label>Poids brut / unité (g)</label>
+<input type="number" id="or-phys-poids" value="${pos.poidsBrut||''}" step="0.0001" min="0" oninput="updateOrPhysCalcul()">
+</div>
+<div class="ef">
+<label>Pureté (‰)</label>
+<input type="number" id="or-phys-purete" value="${pos.pureteMille||''}" step="0.1" min="0" max="1000" oninput="updateOrPhysCalcul()">
+</div>
+</div>
+
+<div class="pure-box">
+<div class="pl">Or pur / unité</div>
+<div class="pv" id="or-phys-pur-display">-- g</div>
+</div>
+
+<div class="ibox">
+<div class="ibox-hd" onclick="this.parentNode.classList.toggle('open')">
+<div>
+<div class="ibox-hd-t">Coûts annuels de détention</div>
+<div class="ibox-hd-sub">Indicatif — n'affecte pas le PRU, c'est un flux annuel séparé</div>
+</div>
+<span class="caret">›</span>
+</div>
+<div class="ibox-body">
+<div class="g2">
+<div class="ef">
+<label>Stockage / an (€)</label>
+<input type="number" id="or-phys-cost-stock" value="${pos.coutStockage||''}" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()">
+</div>
+<div class="ef">
+<label>Assurance / an (€)</label>
+<input type="number" id="or-phys-cost-assurance" value="${pos.coutAssurance||''}" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()">
+</div>
+</div>
+<div class="sub-total">
+<span class="l">Coût annuel estimé</span>
+<span class="v" id="or-phys-cost-total">${((pos.coutStockage||0)+(pos.coutAssurance||0)+(pos.coutAutres||0)).toLocaleString('fr-FR')} € / an</span>
+</div>
+</div>
+</div>
+
+<div class="ibox">
+<div class="ibox-hd" onclick="this.parentNode.classList.toggle('open')">
+<div class="ibox-hd-t">Informations complémentaires</div>
+<span class="caret">›</span>
+</div>
+<div class="ibox-body">
+<div class="ef">
+<label>Lieu de stockage</label>
+<input type="text" id="or-phys-lieu" value="${esc(pos.lieu||'')}" placeholder="Coffre banque, domicile…">
+</div>
+<div class="ef">
+<label>Note libre</label>
+<textarea id="or-phys-note" placeholder="Numéro de série, remarques…">${esc(pos.note||'')}</textarea>
+</div>
+</div>
+</div>
+
+<div class="btn-row">
+<button type="button" class="btn btn-sec" onclick="cancelOrPhysForm()">Annuler</button>
+<button type="button" class="btn btn-grn" onclick="saveOrPhysPosition()">Enregistrer</button>
+</div>`;
+  } else if(isAddTx){
+    // AJOUTER UN ACHAT
+    formContent=`<div class="ct">Ajouter un achat</div>
+
+<div style="padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;margin-bottom:12px">
+<div style="font-weight:600;color:#fff;font-size:14px">${esc(pos.nom)}</div>
+<div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px">${pos.poidsBrut.toLocaleString('fr-FR',{maximumFractionDigits:4})} g brut · ${pos.pureteMille}‰</div>
+</div>
+
+<div class="g2">
+<div class="ef">
+<label>Quantité</label>
+<input type="number" id="or-phys-qty" value="1" min="1" step="1">
+</div>
+<div class="ef">
+<label>Prix total payé (€)</label>
+<input type="number" id="or-phys-prix" placeholder="0,00" step="0.01" min="0">
+</div>
+</div>
+
+<div class="g2">
+<div class="ef">
+<label>Date d'acquisition</label>
+<input type="date" id="or-phys-date" value="${new Date().toISOString().slice(0,10)}">
+</div>
+<div class="ef">
+<label>Spot à l'achat (€/g)</label>
+<input type="number" id="or-phys-spot" placeholder="0" step="0.01" min="0" value="${D.goldSpot||''}">
+</div>
+</div>
+
+<div class="ibox">
+<div class="ibox-hd" onclick="this.parentNode.classList.toggle('open')">
+<div>
+<div class="ibox-hd-t">Frais d'acquisition supplémentaires</div>
+<div class="ibox-hd-sub">Livraison, certification, assurance transport…</div>
+</div>
+<span class="caret">›</span>
+</div>
+<div class="ibox-body">
+<div id="or-phys-frais-list"></div>
+<button type="button" class="dyn-add" onclick="addOrPhysFrais()">+ Ajouter un frais</button>
+<div class="sub-total" id="or-phys-frais-total" style="display:none">
+<span class="l">Total frais</span>
+<span class="v" id="or-phys-frais-total-val">0 €</span>
+</div>
+</div>
+</div>
+
+<div class="btn-row">
+<button type="button" class="btn btn-sec" onclick="cancelOrPhysForm()">Annuler</button>
+<button type="button" class="btn btn-grn" onclick="saveOrPhysTransaction()">Enregistrer l'achat</button>
+</div>`;
+  }
+  
+  formEl.innerHTML=formContent;
+  formEl.style.display='block';
+  // Déclencher le calcul initial après insertion
+  setTimeout(()=>{updateOrPhysCalcul();updateOrPhysCostTotal();},10);
+}
+
+function switchOrPhysPresetTab(tab,ev){
+  const list=document.getElementById('or-phys-preset-list');
+  if(!list)return;
+  const presets=tab==='pieces'?OR_PRESETS_PIECES:OR_PRESETS_LINGOTS;
+  const isLingot=tab==='lingots';
+  list.innerHTML=presets.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPreset(${i},${isLingot},this)"><div><div class="preset-row-t">${esc(p.nom)}</div><div class="preset-row-sub">${p.poids.toLocaleString('fr-FR',{maximumFractionDigits:4})} g · ${p.purete}‰</div></div><div class="preset-row-r">${(p.poids*p.purete/1000).toLocaleString('fr-FR',{maximumFractionDigits:2})} g</div></div>`).join('');
+  if(ev&&ev.target){
+    document.querySelectorAll('#pg-or .preset-tabs button').forEach(b=>b.classList.remove('active'));
+    ev.target.classList.add('active');
+  }
+}
+
+function selectOrPhysPreset(idx,isLingot,el){
+  const preset=isLingot?OR_PRESETS_LINGOTS[idx]:OR_PRESETS_PIECES[idx];
+  if(!preset)return;
+  // Marquer la row sélectionnée
+  document.querySelectorAll('#pg-or .preset-row').forEach(r=>r.classList.remove('selected'));
+  if(el)el.classList.add('selected');
+  // Remplir les champs
+  const nomEl=document.getElementById('or-phys-nom');
+  const poidsEl=document.getElementById('or-phys-poids');
+  const pureteEl=document.getElementById('or-phys-purete');
+  if(nomEl)nomEl.value=preset.nom;
+  if(poidsEl)poidsEl.value=preset.poids;
+  if(pureteEl)pureteEl.value=preset.purete;
+  updateOrPhysCalcul();
+}
+
+function updateOrPhysCalcul(){
+  const poidsEl=document.getElementById('or-phys-poids');
+  const pureteEl=document.getElementById('or-phys-purete');
+  const qtyEl=document.getElementById('or-phys-qty');
+  const display=document.getElementById('or-phys-pur-display');
+  if(!display)return;
+  const poids=+((poidsEl&&poidsEl.value)||0);
+  const purete=+((pureteEl&&pureteEl.value)||0);
+  const qty=+((qtyEl&&qtyEl.value)||1);
+  const pureUnit=poids*purete/1000;
+  const pureTotal=pureUnit*qty;
+  if(qtyEl){
+    display.textContent=pureUnit.toLocaleString('fr-FR',{maximumFractionDigits:4})+' g · '+pureTotal.toLocaleString('fr-FR',{maximumFractionDigits:3})+' g';
+  } else {
+    display.textContent=pureUnit.toLocaleString('fr-FR',{maximumFractionDigits:4})+' g';
+  }
+  updateOrPhysPrime();
+}
+
+function updateOrPhysPrime(){
+  const prixEl=document.getElementById('or-phys-prix');
+  const qtyEl=document.getElementById('or-phys-qty');
+  const poidsEl=document.getElementById('or-phys-poids');
+  const pureteEl=document.getElementById('or-phys-purete');
+  const spotEl=document.getElementById('or-phys-spot');
+  const primeVal=document.getElementById('or-phys-prime-val');
+  if(!primeVal)return;
+  const prix=+((prixEl&&prixEl.value)||0);
+  const qty=+((qtyEl&&qtyEl.value)||1);
+  const poids=+((poidsEl&&poidsEl.value)||0);
+  const purete=+((pureteEl&&pureteEl.value)||0);
+  const spot=+((spotEl&&spotEl.value)||0);
+  if(prix>0&&qty>0&&poids>0&&purete>0&&spot>0){
+    const pureTotal=poids*purete/1000*qty;
+    const prixParGr=prix/pureTotal;
+    const prime=(prixParGr/spot-1)*100;
+    primeVal.textContent=(prime>=0?'+':'')+prime.toFixed(1)+' %';
+    primeVal.style.color=prime>=0?'#fff':'var(--red)';
+  } else {
+    primeVal.textContent='--';
+    primeVal.style.color='#fff';
+  }
+}
+
+function updateOrPhysCostTotal(){
+  const stockEl=document.getElementById('or-phys-cost-stock');
+  const assuranceEl=document.getElementById('or-phys-cost-assurance');
+  const total=document.getElementById('or-phys-cost-total');
+  if(!total)return;
+  const stock=+((stockEl&&stockEl.value)||0);
+  const assurance=+((assuranceEl&&assuranceEl.value)||0);
+  total.textContent=(stock+assurance).toLocaleString('fr-FR')+' € / an';
+}
+
+function addOrPhysFrais(){
+  const list=document.getElementById('or-phys-frais-list');
+  if(!list)return;
+  const id='fr_'+Date.now();
+  const row=document.createElement('div');
+  row.className='dyn-row';
+  row.id=id;
+  row.innerHTML='<input type="text" placeholder="Libellé" class="or-phys-frais-lbl"><input type="number" placeholder="€" step="0.01" min="0" class="or-phys-frais-val" oninput="updateOrPhysFraisTotal()"><button type="button" class="dyn-rem" onclick="document.getElementById(\''+id+'\').remove();updateOrPhysFraisTotal()">×</button>';
+  list.appendChild(row);
+}
+
+function updateOrPhysFraisTotal(){
+  const inputs=document.querySelectorAll('#or-phys-frais-list .or-phys-frais-val');
+  let total=0;
+  inputs.forEach(i=>total+=(+i.value||0));
+  const totalBox=document.getElementById('or-phys-frais-total');
+  const totalVal=document.getElementById('or-phys-frais-total-val');
+  if(totalBox&&totalVal){
+    if(total>0){totalBox.style.display='flex';totalVal.textContent=total.toLocaleString('fr-FR')+' €';}
+    else totalBox.style.display='none';
+  }
+}
+
+function updateOrTxCalcul(){
+  const qty=+document.getElementById('or-tx-qty').value||0;
+  const price=+document.getElementById('or-tx-price').value||0;
+  const spot=+document.getElementById('or-tx-spot').value||0;
+  const pos=D.orPhysique.find(p=>p.id===_orPhysEditId);
+  if(!pos)return;
+  const pureUnit=pos.poidsBrut*pos.pureteMille/1000;
+  const pureTx=pureUnit*qty;
+  let primeCalc='--';
+  if(spot>0&&pureTx>0){
+    const prixParGramme=pureTx>0?price/pureTx:0;
+    const prime=(prixParGramme-spot)/spot*100;
+    primeCalc=(prime>=0?'+':'')+prime.toFixed(1)+' %';
+  }
+  document.getElementById('or-tx-calc').textContent=pureTx.toLocaleString('fr-FR',{maximumFractionDigits:3})+' g · '+primeCalc;
+}
+
+function addOrTxFrais(){
+  const fraisDiv=document.getElementById('or-tx-frais');
+  if(!fraisDiv)return;
+  const idx=fraisDiv.querySelectorAll('.or-dyn-row').length;
+  const html=`<div class="or-dyn-row">
+    <input type="text" placeholder="ex: Livraison, Certification">
+    <input type="number" placeholder="0" step="0.01" min="0">
+    <button type="button" class="or-dyn-rem" onclick="this.parentNode.remove()">✕</button>
+  </div>`;
+  fraisDiv.insertAdjacentHTML('beforeend',html);
+}
+
+function saveOrPhysPosition(){
+  const pos=D.orPhysique.find(p=>p.id===_orPhysEditId);
+  if(!pos)return;
+  
+  // Champs communs (nouvelle position + modifier position)
+  const nom=(document.getElementById('or-phys-nom')||{}).value||'Position';
+  const poidsBrut=+((document.getElementById('or-phys-poids')||{}).value)||0;
+  const pureteMille=+((document.getElementById('or-phys-purete')||{}).value)||0;
+  const lieu=(document.getElementById('or-phys-lieu')||{}).value||'';
+  const note=(document.getElementById('or-phys-note')||{}).value||'';
+  const coutStockage=+((document.getElementById('or-phys-cost-stock')||{}).value)||0;
+  const coutAssurance=+((document.getElementById('or-phys-cost-assurance')||{}).value)||0;
+  
+  if(!_orPhysEditMode){
+    // NOUVELLE POSITION : valider qu'on a aussi une première transaction
+    const qty=+((document.getElementById('or-phys-qty')||{}).value)||1;
+    const prix=+((document.getElementById('or-phys-prix')||{}).value)||0;
+    if(poidsBrut<=0||pureteMille<=0){showToast('Poids et pureté obligatoires');return;}
+    if(qty<=0||prix<=0){showToast('Quantité et prix obligatoires');return;}
+    
+    const date=(document.getElementById('or-phys-date')||{}).value||new Date().toISOString().slice(0,10);
+    const spot=+((document.getElementById('or-phys-spot')||{}).value)||0;
+    
+    // Frais supplémentaires
+    const fraisList=[];
+    document.querySelectorAll('#or-phys-frais-list .dyn-row').forEach(row=>{
+      const lblEl=row.querySelector('.or-phys-frais-lbl');
+      const valEl=row.querySelector('.or-phys-frais-val');
+      if(lblEl&&valEl){
+        const lbl=lblEl.value;
+        const val=+valEl.value||0;
+        if(lbl&&val>0)fraisList.push({lbl,val});
+      }
+    });
+    
+    // Remplir la position
+    pos.nom=nom;
+    pos.poidsBrut=poidsBrut;
+    pos.pureteMille=pureteMille;
+    pos.lieu=lieu;
+    pos.note=note;
+    pos.coutStockage=coutStockage;
+    pos.coutAssurance=coutAssurance;
+    pos.coutAutres=0;
+    
+    // Créer la première transaction
+    const tx={
+      id:uid(),
+      positionId:_orPhysEditId,
+      date:date,
+      quantite:qty,
+      prixTotal:prix,
+      spotAuMomentGramme:spot,
+      fraisSup:fraisList
+    };
+    D.orTransactions.push(tx);
+  } else {
+    // MODIFIER POSITION : juste les infos
+    pos.nom=nom;
+    pos.poidsBrut=poidsBrut;
+    pos.pureteMille=pureteMille;
+    pos.lieu=lieu;
+    pos.note=note;
+    pos.coutStockage=coutStockage;
+    pos.coutAssurance=coutAssurance;
+  }
+  
+  save();renderOrAll();if(typeof calcAll==='function')calcAll();
+  cancelOrPhysForm();
+  showToast(_orPhysEditMode?'Position modifiée':'Position enregistrée');
+}
+
+function saveOrPhysTransaction(){
+  const qty=+((document.getElementById('or-phys-qty')||{}).value)||0;
+  if(qty<=0){showToast('Quantité doit être > 0');return;}
+  const price=+((document.getElementById('or-phys-prix')||{}).value)||0;
+  if(price<=0){showToast('Prix doit être > 0');return;}
+  const date=(document.getElementById('or-phys-date')||{}).value||new Date().toISOString().slice(0,10);
+  const spot=+((document.getElementById('or-phys-spot')||{}).value)||0;
+  
+  // Frais supplémentaires
+  const fraisList=[];
+  document.querySelectorAll('#or-phys-frais-list .dyn-row').forEach(row=>{
+    const lblEl=row.querySelector('.or-phys-frais-lbl');
+    const valEl=row.querySelector('.or-phys-frais-val');
+    if(lblEl&&valEl){
+      const lbl=lblEl.value;
+      const val=+valEl.value||0;
+      if(lbl&&val>0)fraisList.push({lbl,val});
+    }
+  });
+  
+  const tx={
+    id:uid(),
+    positionId:_orPhysEditId,
+    date:date,
+    quantite:qty,
+    prixTotal:price,
+    spotAuMomentGramme:spot,
+    fraisSup:fraisList
+  };
+  D.orTransactions.push(tx);
+  save();renderOrAll();if(typeof calcAll==='function')calcAll();
+  cancelOrPhysForm();
+  showToast('Achat enregistré');
+}
+
+function cancelOrPhysForm(){
+  // Si c'est une nouvelle position vide, la supprimer
+  if(_orPhysEditId&&!_orPhysEditMode){
+    const pos=D.orPhysique.find(p=>p.id===_orPhysEditId);
+    if(pos&&!pos.nom){
+      D.orPhysique=D.orPhysique.filter(p=>p.id!==_orPhysEditId);
+    }
+  }
+  const formEl=document.getElementById('or-phys-form');
+  if(formEl){formEl.style.display='none';formEl.innerHTML='';}
+  _orPhysEditId=null;
+  _orPhysEditMode=false;
+}
+
+let _orPapEditId=null;  // ID de l'ETC en cours d'édition (null = nouveau)
+
+function openOrPapForm(etcId){
+  _orPapEditId=etcId||null;
+  
+  const formEl=document.getElementById('or-pap-form');
+  if(!formEl)return;
+  
+  // Si nouveau, créer une entrée
+  if(!_orPapEditId){
+    _orPapEditId=uid();
+    D.orPapier.push({id:_orPapEditId,name:'',ticker:'',isin:'',qty:0,pru:0,cours:0,ter:0.12,date:'',useApi:true});
+  }
+  
+  renderOrPapForm();
+  formEl.style.display='block';
+  setTimeout(()=>formEl.scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+function renderOrPapForm(){
+  const formEl=document.getElementById('or-pap-form');
+  if(!formEl)return;
+  
+  const etc=_orPapEditId?D.orPapier.find(e=>e.id===_orPapEditId):null;
+  const isNew=!etc||!etc.name;
+  
+  const formContent=`<div class="ct">${isNew?'Nouvel ETC — Or papier':'Modifier ETC'}</div>
+
+${isNew?`<div style="margin-bottom:10px">
+<label style="font-size:13px;color:rgba(255,255,255,0.75);font-weight:500;margin-bottom:6px;display:block">Choisir dans la liste pour pré-remplir les informations</label>
+<div class="preset-list">
+${OR_PRESETS_ETC.map((p,i)=>`<div class="preset-row" onclick="selectOrPapPreset(${i},this)"><div><div class="preset-row-t">${esc(p.name)}</div><div class="preset-row-sub">${esc(p.ticker)} · ${esc(p.isin)}</div></div><div class="preset-row-r">${p.ter.toFixed(2)} %</div></div>`).join('')}
+</div>
+</div>
+
+<div class="manual-divider">
+<div class="manual-divider-line"></div>
+<div class="manual-divider-txt">Ou saisir manuellement</div>
+<div class="manual-divider-line"></div>
+</div>`:''}
+
+<div class="ef">
+<label>Nom</label>
+<input type="text" id="or-pap-name" value="${esc(etc?.name||'')}" placeholder="iShares Physical Gold ETC">
+</div>
+
+<div class="g2">
+<div class="ef">
+<label>Ticker</label>
+<input type="text" id="or-pap-ticker" value="${esc(etc?.ticker||'')}" placeholder="SGLN" style="text-transform:uppercase">
+</div>
+<div class="ef">
+<label>ISIN</label>
+<input type="text" id="or-pap-isin" value="${esc(etc?.isin||'')}" placeholder="IE00B4ND3602" style="text-transform:uppercase">
+</div>
+</div>
+
+<div class="g3">
+<div class="ef">
+<label>Quantité</label>
+<input type="number" id="or-pap-qty" value="${+(etc?.qty||0)||''}" placeholder="0" step="0.01" min="0">
+</div>
+<div class="ef">
+<label>PRU (€)</label>
+<input type="number" id="or-pap-pru" value="${+(etc?.pru||0)||''}" placeholder="0" step="0.01" min="0">
+</div>
+<div class="ef">
+<label>Cours (€)</label>
+<input type="number" id="or-pap-cours" value="${+(etc?.cours||0)||''}" placeholder="0" step="0.01" min="0">
+</div>
+</div>
+
+<div class="g2">
+<div class="ef">
+<label>TER (%)</label>
+<input type="number" id="or-pap-ter" value="${+(etc?.ter||0)||''}" placeholder="0.12" step="0.01" min="0" max="10">
+</div>
+<div class="ef">
+<label>Date d'achat</label>
+<input type="date" id="or-pap-date" value="${etc?.date||new Date().toISOString().split('T')[0]}">
+</div>
+</div>
+
+<div class="btn-row">
+<button type="button" class="btn btn-sec" onclick="cancelOrPapForm()">Annuler</button>
+<button type="button" class="btn btn-grn" onclick="saveOrPapEtc()">Enregistrer</button>
+</div>`;
+  
+  formEl.innerHTML=formContent;
+  formEl.style.display='block';
+}
+
+function selectOrPapPreset(idx,el){
+  const preset=OR_PRESETS_ETC[idx];
+  if(!preset)return;
+  document.querySelectorAll('#pg-or .preset-row').forEach(r=>r.classList.remove('selected'));
+  if(el)el.classList.add('selected');
+  const nameEl=document.getElementById('or-pap-name');
+  const tickerEl=document.getElementById('or-pap-ticker');
+  const isinEl=document.getElementById('or-pap-isin');
+  const terEl=document.getElementById('or-pap-ter');
+  if(nameEl)nameEl.value=preset.name;
+  if(tickerEl)tickerEl.value=preset.ticker;
+  if(isinEl)isinEl.value=preset.isin;
+  if(terEl)terEl.value=preset.ter;
+}
+
+function saveOrPapEtc(){
+  const etc=D.orPapier.find(e=>e.id===_orPapEditId);
+  if(!etc)return;
+  etc.name=document.getElementById('or-pap-name').value||'ETC';
+  etc.ticker=document.getElementById('or-pap-ticker').value.toUpperCase()||'';
+  etc.isin=document.getElementById('or-pap-isin').value.toUpperCase()||'';
+  etc.qty=+document.getElementById('or-pap-qty').value||0;
+  etc.pru=+document.getElementById('or-pap-pru').value||0;
+  etc.cours=+document.getElementById('or-pap-cours').value||0;
+  etc.ter=+document.getElementById('or-pap-ter').value||0.12;
+  etc.date=document.getElementById('or-pap-date').value||'';
+  save();renderOrAll();if(typeof calcAll==='function')calcAll();
+  cancelOrPapForm();
+  showToast('ETC enregistré');
+}
+
+function cancelOrPapForm(){
+  // Si c'est un nouveau ETC vide, le supprimer
+  if(_orPapEditId){
+    const etc=D.orPapier.find(e=>e.id===_orPapEditId);
+    if(etc&&!etc.name){
+      D.orPapier=D.orPapier.filter(e=>e.id!==_orPapEditId);
+    }
+  }
+  const formEl=document.getElementById('or-pap-form');
+  if(formEl){formEl.style.display='none';formEl.innerHTML='';}
+  _orPapEditId=null;
+}
+
+// Suppressions (utilisées par le menu ⋯)
+function deleteOrPos(posId){
+  if(!confirm('Supprimer cette position et tous ses achats ?'))return;
+  D.orPhysique=(D.orPhysique||[]).filter(p=>p.id!==posId);
+  D.orTransactions=(D.orTransactions||[]).filter(t=>t.positionId!==posId);
+  save();renderOrAll();if(typeof calcAll==='function')calcAll();
+}
+function deleteOrEtc(etcId){
+  if(!confirm('Supprimer cet ETC ?'))return;
+  D.orPapier=(D.orPapier||[]).filter(e=>e.id!==etcId);
+  save();renderOrAll();if(typeof calcAll==='function')calcAll();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ═══  /OR FONCTIONS ═══
+// ═══════════════════════════════════════════════════════════════
+
 // ---- HOME CARD CHOICE ----
 function updateHomecardSel(){
   const sel=document.getElementById('homecard-select');
   if(sel){
     // Rebuild dynamic options (titres boursiers)
     // Keep the 3 static options, remove old dynamic ones
-    while(sel.options.length>3)sel.remove(3);
+    while(sel.options.length>4)sel.remove(4);
     D.titres.forEach((t,i)=>{
       const opt=document.createElement('option');
       opt.value='titre_'+i;
@@ -2790,6 +4458,7 @@ function updateHomecardSel(){
     let label='Bitcoin';
     if(hc==='bourse')label='Bourse';
     else if(hc==='immo')label='Immobilier';
+    else if(hc==='or')label='Or';
     else if(hc.startsWith('titre_')){
       const idx=+hc.split('_')[1];
       const t=D.titres[idx];
@@ -2942,6 +4611,17 @@ function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,imm
   if(btcInvested>0||btcEur>0)pvRows.push({l:'Bitcoin <span style="color:var(--btc)">&#x20BF;</span>',v:btcEur-btcInvested});
   if(bourseCost>0||bourseTotal>0)pvRows.push({l:'Bourse 📈',v:boursePnl});
   if(D.biens.length>0)pvRows.push({l:'Immo 🏢',v:immoGainVente});
+  // Or PnL (physique + papier)
+  const orPhysPnl=orPhysiquePnL();
+  const orPapPnl=orPapierPnL();
+  const orTotalPnl=orPhysPnl+orPapPnl;
+  const orPhysTot=orPhysiqueTotal();
+  const orPhysCst=orPhysiqueCost();
+  const orPapTot=orPapierTotal();
+  const orPapCst=orPapierCost();
+  if(orPhysCst>0||orPhysTot>0||orPapCst>0||orPapTot>0){
+    pvRows.push({l:'Or <svg style="width:11px;height:11px;vertical-align:-1px;display:inline-block"><use href="#lingots-icon"/></svg>',v:orTotalPnl});
+  }
   const pvTotal=pvRows.reduce((a,r)=>a+r.v,0);
   const pvCardHTML=`
     <div class="sq" style="background:var(--g);border-color:var(--gb)">
@@ -3035,6 +4715,36 @@ function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,imm
             <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(bestBien.name||'Bien')}</div>
             <span class="sq-badge ${bestGain>=0?'up':'dn'}" style="margin-top:3px">${bestGain>=0?'+':''}${fE(bestGain)}</span>
           </div>`:''}
+        </div>
+      </div>`;
+
+  }else if(hc==='or'){
+    // HOMECARD OR
+    const orVal=orTotal();
+    const orPur=orPhysiquePurTotal();
+    const positions=D.orPhysique||[];
+    let bestPos=null,bestPerf=-Infinity;
+    positions.forEach(p=>{
+      const melt=orPosMeltValue(p);
+      const cost=orPosCost(p);
+      const perf=cost>0?(melt-cost)/cost*100:-Infinity;
+      if(perf>bestPerf){bestPerf=perf;bestPos=p;}
+    });
+    const perfStr=bestPerf>-Infinity?fPct(bestPerf):'--';
+    const bestName=bestPos?bestPos.nom:'—';
+    leftHTML=`
+      <div class="sq" style="background:var(--g);border-color:var(--gb)">
+        <div style="font-size:12px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;display:flex;align-items:center;gap:6px"><svg style="width:14px;height:14px;flex-shrink:0"><use href="#lingots-icon"/></svg>Or</div>
+        <div style="display:flex;flex-direction:column;gap:5px;flex:1;justify-content:center">
+          <div>
+            ${sqLabel('Valeur totale')}
+            ${sqVal(fE(orVal),'var(--gold)',18)}
+          </div>
+          <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:6px;margin-top:2px">
+            ${sqLabel('Poids pur total')}
+            <div style="font-size:14px;font-weight:700;color:#fff">${orPur.toLocaleString('fr-FR',{maximumFractionDigits:3})} g</div>
+            <div style="font-size:11px;color:var(--tx3);margin-top:2px">Meilleure perf : <strong>${bestName}</strong> <span style="color:var(--grn)">${perfStr}</span></div>
+          </div>
         </div>
       </div>`;
 
