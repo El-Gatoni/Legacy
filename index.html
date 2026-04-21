@@ -1067,9 +1067,19 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
       <div class="about-acc-body" id="acc-immo">
         <div class="about-entry-title">&bull; Onglet Immobilier</div>
         <div class="about-entry-body">
-          Chaque bien est d&eacute;fini par sa surface, son prix au m&sup2; et sa <strong style="color:#fff">quote-part</strong> (votre pourcentage de d&eacute;tention). Tous les calculs &mdash; estimation, cr&eacute;dit restant, gain &agrave; la vente &mdash; sont automatiquement pond&eacute;r&eacute;s par ce pourcentage.<br><br>
-          Les <strong style="color:#fff">unit&eacute;s locatives</strong> permettent de d&eacute;tailler chaque espace lou&eacute; (appartement, d&eacute;pendance, local&#8230;) avec son loyer et ses charges propres. Le rendement locatif net est calcul&eacute; automatiquement.<br><br>
-          Le <strong style="color:#fff">cr&eacute;dit immobilier</strong> et les <strong style="color:#fff">frais d&#8217;acquisition</strong> se saisissent dans l&#8217;onglet <strong style="color:#fff">Passif</strong>, sur la fiche du bien. Les frais d&#8217;acquisition (apport, notaire, travaux...) sont pris en compte dans le calcul du gain net &agrave; la vente.
+          Chaque bien est d&eacute;fini par sa surface, son prix au m&sup2; et sa <strong style="color:#fff">quote-part</strong> (votre pourcentage de d&eacute;tention). L&rsquo;estimation et le cr&eacute;dit restant sont pond&eacute;r&eacute;s par ce pourcentage.<br><br>
+          Les <strong style="color:#fff">unit&eacute;s locatives</strong> permettent de d&eacute;tailler chaque espace lou&eacute; (appartement, d&eacute;pendance, local&hellip;) avec son loyer et ses charges propres.<br><br>
+          Le <strong style="color:#fff">cr&eacute;dit immobilier</strong> et les <strong style="color:#fff">frais d&rsquo;acquisition</strong> se saisissent dans l&rsquo;onglet <strong style="color:#fff">Passif</strong>, sur la fiche du bien.
+        </div>
+        <div class="about-acc-divider"></div>
+        <div class="about-entry-title">&bull; Modes de calcul</div>
+        <div class="about-entry-body">
+          <strong style="color:#fff">Equity</strong> = patrimoine brut (estimation &times; part) &minus; encours cr&eacute;dit restant (cr&eacute;dit &times; part) &mdash; la valeur nette de vos biens une fois les dettes d&eacute;duites.<br><br>
+          <strong style="color:#fff">A la vente (total)</strong> = somme des gains nets si vous vendiez tout aujourd&rsquo;hui : (estimation &times; part) &minus; (cr&eacute;dit &times; part) + solde compte &minus; (frais d&rsquo;acquisition &times; part) &minus; approvisionnements personnels.<br><br>
+          <strong style="color:#fff">Renta. Brute (globale)</strong> = loyers bruts annuels &divide; prix d&rsquo;acquisition total &times; 100.<br>
+          Le prix d&rsquo;acquisition = emprunt initial + frais d&rsquo;acquisition (apport, notaire, travaux&hellip;), sans pondération par la quote-part &mdash; le co&ucirc;t r&eacute;el de l&rsquo;op&eacute;ration.<br><br>
+          <strong style="color:#fff">Charges / an (par bien)</strong> = total des charges locatives annuelles de toutes les unit&eacute;s du bien.<br><br>
+          <strong style="color:#fff">Renta. Loc. nette (par bien)</strong> = (loyers bruts annuels &minus; charges locatives annuelles) &divide; prix d&rsquo;acquisition du bien &times; 100.
         </div>
       </div>
     </div>
@@ -1398,10 +1408,6 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
       <div class="gear-btn" onclick="openParams()">
         <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       </div>
-    </div>
-    <div class="sec-hd" style="margin-top:4px">
-      <div class="sec-hd-t">Biens</div>
-      <button class="ct-add" onclick="addBien()">+ Ajouter</button>
     </div>
     <div id="biens-display"></div>
     <div class="card" id="note-card-immo" style="display:none">
@@ -2569,9 +2575,7 @@ function _reopenActiveInline(){
   if(_activeBienInline===null)return;
   const bi=_activeBienInline;
   const inline=document.getElementById('bien-inline-'+bi);
-  const btn=document.getElementById('bien-edit-btn-'+bi);
   if(inline){inline.style.display='block';}
-  if(btn)btn.classList.add('active');
   renderBienInlineEditor(bi);
 }
 
@@ -2580,7 +2584,8 @@ function renderBiensDisplay(){
     setH('biens-display','<p style="font-size:13px;color:rgba(255,255,255,0.4);padding:8px 0">Ajoutez votre premier bien via le bouton + Ajouter</p>');
     return;
   }
-  let totalBrut=0,totalCredit=0,totalGain=0,totalLoyerNet=0,hasLocation=false;
+  let totalBrut=0,totalCredit=0,totalGainVente=0,totalLoyerNet=0,hasLocation=false;
+  let totalLoyerBrut=0,totalPrixAcquisition=0;
   D.biens.forEach(b=>{
     const est=(+b.surface||0)*(+b.prixm2||0),part=(+b.part||100)/100;
     const credit=+(b.credit||0),bank=+(b.bankAccount||0);
@@ -2588,63 +2593,146 @@ function renderBiensDisplay(){
     const chargesAcq=(b.charges||[]).reduce((s,ch)=>s+(+ch.value||0),0);
     const approsMe=(b.appros||[]).filter(a=>a.who==='me').reduce((s,a)=>s+(+a.amount||0),0);
     const rentalChargesTotal=bienChargesLocatives(b);
-    totalBrut+=est*part; totalCredit+=credit*part;
-    totalGain+=(est*part)-(credit*part)+bank-(chargesAcq*part)-approsMe;
-    if(loyer>0){totalLoyerNet+=loyer*12-rentalChargesTotal;hasLocation=true;}
+    totalBrut+=est*part;
+    totalCredit+=credit*part;
+    totalGainVente+=(est*part)-(credit*part)+bank-(chargesAcq*part)-approsMe;
+    if(loyer>0){
+      totalLoyerNet+=loyer*12-rentalChargesTotal;
+      totalLoyerBrut+=loyer*12;
+      hasLocation=true;
+    }
+    // Prix d'acquisition = emprunt initial + frais d'acquisition (sans pondération part)
+    const empInit=+(b.empruntinitial||0);
+    totalPrixAcquisition+=empInit+chargesAcq;
   });
-  const ltv=totalBrut>0?totalCredit/totalBrut*100:0;
-  const ltvColor=ltv<=50?'var(--grn)':ltv<=75?'var(--btc)':'var(--red)';
-  const rentGlobale=totalBrut>0&&hasLocation?totalLoyerNet/totalBrut*100:null;
-  const summaryHTML=`
-  <div class="immo-summary">
-    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Synthese &mdash; ${D.biens.length} bien${D.biens.length>1?'s':''}</div>
-    <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-1px;line-height:1.1">${fE(totalBrut)}</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:10px">Patrimoine brut total</div>
-    <div class="immo-sum-grid">
-      <div class="immo-sum-item"><div class="immo-sum-lbl">Encours credit</div><div class="immo-sum-val" style="color:var(--red)">${fE(totalCredit)}</div></div>
-      <div class="immo-sum-item"><div class="immo-sum-lbl">Equity nette</div><div class="immo-sum-val" style="color:${(totalBrut-totalCredit)>=0?'var(--grn)':'var(--red)'}">${fE(totalBrut-totalCredit)}</div></div>
-      <div class="immo-sum-item"><div class="immo-sum-lbl">Gain net vente</div><div class="immo-sum-val" style="color:${totalGain>=0?'var(--grn)':'var(--red)'}">${totalGain>=0?'+':''}${fE(totalGain)}</div></div>
-      <div class="immo-sum-item"><div class="immo-sum-lbl">${hasLocation?'Loyer net / an':'Biens'}</div><div class="immo-sum-val" style="color:${hasLocation?'var(--grn)':'#fff'}">${hasLocation?fE(totalLoyerNet):D.biens.length}</div></div>
-    </div>
-    ${rentGlobale!==null?`<div style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.4)">Rendement net global : <span style="color:${rentGlobale>=5?'var(--grn)':rentGlobale>=3?'var(--btc)':'var(--red)'};font-weight:700">${rentGlobale.toFixed(2)}%</span></div>`:''}
+  // Rentabilité locative brute globale = loyers bruts annuels / prix d'acquisition total × 100
+  const rentLocative=totalPrixAcquisition>0&&totalLoyerBrut>0?totalLoyerBrut/totalPrixAcquisition*100:null;
+
+  // ── Carte 1 : Mes biens immobiliers (style "Mon Or" centré) ──
+  const totalCardHTML=`
+  <div class="card">
+    <div class="or-total-lbl">Mes biens immobiliers</div>
+    <div class="or-total-val" style="color:#fff">${fE(totalBrut)}</div>
   </div>`;
-  const biensHTML=`<div class="bien-card-row">${D.biens.map((b,bi)=>{
+
+  // ── Carte 2 : Investissement & Performance ──
+  const totalEquite=totalBrut-totalCredit;
+  const perfCardHTML=`
+  <div class="card">
+    <div class="ct">Investissement &amp; Performance</div>
+    <div class="pru-grid">
+      <div class="pru-item">
+        <div class="pru-lbl">Equity<br>&nbsp;</div>
+        <div class="pru-val" style="color:${totalEquite>=0?'var(--grn)':'var(--red)'}">${totalEquite>=0?'+':''}${fE(totalEquite)}</div>
+      </div>
+      <div class="pru-item">
+        <div class="pru-lbl">A la<br>vente</div>
+        <div class="pru-val" style="color:${totalGainVente>=0?'var(--grn)':'var(--red)'}">${totalGainVente>=0?'+':''}${fE(totalGainVente)}</div>
+      </div>
+      <div class="pru-item">
+        <div class="pru-lbl">Renta.<br>Brute</div>
+        <div class="pru-val" style="color:${rentLocative===null?'#fff':rentLocative>=0?'var(--grn)':'var(--red)'}">${rentLocative!==null?rentLocative.toFixed(2)+'%':'—'}</div>
+      </div>
+    </div>
+  </div>`;
+
+  // ── Carte 3 : Mes biens (style "Mon coffre") ──
+  const biensListHTML=D.biens.map((b,bi)=>{
     const est=(+b.surface||0)*(+b.prixm2||0),part=(+b.part||100)/100;
     const credit=+(b.credit||0),bank=+(b.bankAccount||0);
     const chargesAcq=(b.charges||[]).reduce((s,ch)=>s+(+ch.value||0),0);
     const approsMe=(b.appros||[]).filter(a=>a.who==='me').reduce((s,a)=>s+(+a.amount||0),0);
     const loyer=bienLoyer(b);
     const rentalChargesTotal=bienChargesLocatives(b);
+    const loyerNetAn=loyer*12-rentalChargesTotal;
     const gainVente=(est*part)-(credit*part)+bank-(chargesAcq*part)-approsMe;
-    const remb=b.empruntinitial>0?Math.min(100,(1-(credit/b.empruntinitial))*100):0;
-    const rentNette=est*part>0&&loyer>0?((loyer*12-rentalChargesTotal))/(est*part)*100:null;
-    return `<div class="bien-sq" id="bien-card-${bi}">
-      <div class="bien-sq-hdr">
-        <div>
-          <div class="bien-sq-name">${esc(b.name||'Bien')}</div>
-          <div class="bien-sq-meta">${b.surface||0} m&sup2;${b.part&&+b.part!==100?' &middot; '+b.part+'% de d&eacute;tention':''}</div>
+    const units=b.units||[];
+    // Prix d'acquisition du bien = emprunt initial + frais d'acquisition
+    const empInit=+(b.empruntinitial||0);
+    const prixAcqBien=empInit+chargesAcq;
+    // Renta. Loc. nette = loyer net annuel / prix d'acquisition × 100
+    const bienRentLoc=prixAcqBien>0&&loyer>0?loyerNetAn/prixAcqBien*100:null;
+    // Sous-ligne : prix/m² · surface · détention
+    const prixM2=+(b.prixm2||0);
+    const bienSubLine=[
+      prixM2>0?(prixM2.toLocaleString('fr-FR',{maximumFractionDigits:0})+' \u20ac/m\u00b2'):null,
+      (b.surface||0)+' m\u00b2',
+      b.part&&+b.part!==100?b.part+'% d\u00e9tention':null
+    ].filter(Boolean).join(' \u00b7 ');
+    return `<div class="coffre-item" id="bien-card-${bi}">
+      <div class="coffre-hdr">
+        <div class="coffre-t">
+          <div class="coffre-name">${esc(b.name||'Bien')}</div>
+          <div class="coffre-sub">${bienSubLine}</div>
         </div>
-        <button class="bien-sq-edit-btn" id="bien-edit-btn-${bi}" onclick="toggleBienInline(${bi})">Modifier</button>
-      </div>
-      <div class="bien-sq-stats">
-        <div class="bien-sq-stat"><div class="bien-sq-lbl">Estimation</div><div class="bien-sq-val">${fE(est*part)}</div></div>
-        <div class="bien-sq-stat"><div class="bien-sq-lbl">Gain net vente</div><div class="bien-sq-val" style="color:${gainVente>=0?'var(--grn)':'var(--red)'}">${gainVente>=0?'+':''}${fE(gainVente)}</div></div>
-        ${credit>0?`<div class="bien-sq-stat"><div class="bien-sq-lbl">Cr&eacute;dit restant</div><div class="bien-sq-val" style="color:var(--red)">${fE(credit*part)}</div></div>`:
-        `<div class="bien-sq-stat"><div class="bien-sq-lbl">Cr&eacute;dit</div><div class="bien-sq-val" style="color:rgba(255,255,255,0.3)">—</div></div>`}
-      </div>
-      ${credit>0?`<div class="pbg" style="margin-bottom:8px"><div class="pfill" style="width:${remb.toFixed(1)}%"></div></div>`:''}
-      ${loyer>0?`<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-        <div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:2px">${b.units&&b.units.length>0?b.units.length+' unit&eacute;'+(b.units.length>1?'s':''):'Location'}</div>
-          <span style="font-size:14px;font-weight:700;color:var(--grn)">${fE(loyer)}<span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.4)">/mois</span></span>
+        <div class="coffre-menu-wrap">
+          <button class="coffre-menu-btn" onclick="toggleBienMenu(this,event)">&#8943;</button>
+          <div class="coffre-menu">
+            <button onclick="toggleBienInline(${bi})"><span class="coffre-menu-ic">&#9998;</span>Modifier les infos</button>
+            <button class="danger" onclick="if(confirm('Supprimer ce bien ?')){D.biens.splice(${bi},1);save();renderBiensDisplay();calcAll();}"><span class="coffre-menu-ic">&#10005;</span>Supprimer le bien</button>
+          </div>
         </div>
-        ${rentNette!==null?`<span style="font-size:13px;font-weight:700;color:${rentNette>=5?'var(--grn)':rentNette>=3?'var(--btc)':'var(--red)'}">${rentNette.toFixed(1)}% net</span>`:''}
-      </div>`:''}
+      </div>
+      <div class="coffre-meta">
+        <div><div class="pm-l">Estimation</div><div class="pm-v">${fE(est*part)}</div></div>
+        <div><div class="pm-l">Cr&eacute;dit</div><div class="pm-v" style="color:${credit>0?'var(--red)':'rgba(255,255,255,0.3)'}">${credit>0?fE(credit*part):'—'}</div></div>
+        <div><div class="pm-l">A la vente</div><div class="pm-v" style="color:${gainVente>=0?'var(--grn)':'var(--red)'}">${gainVente>=0?'+':''}${fE(gainVente)}</div></div>
+      </div>
+      <div class="coffre-meta" style="margin-top:6px;padding-top:8px">
+        <div><div class="pm-l">Loyer / mois</div><div class="pm-v" style="color:#fff">${loyer>0?fE(loyer):'—'}</div></div>
+        <div><div class="pm-l">Charges / an</div><div class="pm-v" style="color:#fff">${rentalChargesTotal>0?fE(rentalChargesTotal):'—'}</div></div>
+        <div><div class="pm-l">Renta. Loc.</div><div class="pm-v" style="color:${bienRentLoc===null?'rgba(255,255,255,0.3)':bienRentLoc>=0?'var(--grn)':'var(--red)'}">${bienRentLoc!==null?bienRentLoc.toFixed(2)+'%':'—'}</div></div>
+      </div>
+      ${units.length>0?`
+      <div class="coffre-toggle" onclick="toggleCoffreItem(this.parentNode)">
+        <span>Unit&eacute;s locatives (${units.length})</span>
+        <span class="caret">&rsaquo;</span>
+      </div>
+      <div class="coffre-tx-list">
+        ${units.map(u=>{
+          const uChg=unitChargesTotal(u);
+          const uLoyer=+(u.loyer||0);
+          const uNet=uLoyer*12-uChg;
+          return `<div class="coffre-tx-row">
+            <div class="coffre-tx-date" style="font-size:12px;color:#fff;font-weight:600">${esc(u.name||'Unit\u00e9')}</div>
+            <div class="coffre-tx-body">
+              <div class="tx-q" style="color:#fff">${fE(uLoyer)}<span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.5)">/mois</span></div>
+              <div class="tx-spot" style="color:#fff">Charges : ${fE(uChg)}/an</div>
+            </div>
+            <div class="coffre-tx-right">
+              <div class="coffre-tx-price" style="color:${uNet>0?'var(--grn)':uNet<0?'var(--red)':'#fff'}">${fE(uNet)}</div>
+              <div class="coffre-tx-prime" style="color:rgba(255,255,255,0.45)">net/an</div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+      `:''}
       <div class="bien-edit-inline" id="bien-inline-${bi}"></div>
     </div>`;
-  }).join('')}</div>`;
-  setH('biens-display', summaryHTML+biensHTML);
+  }).join('');
+
+  const biensCardHTML=`
+  <div class="card" style="padding-bottom:8px">
+    <div class="ct">
+      <span>Mes biens</span>
+      <span style="font-size:11px;color:var(--tx3);font-weight:500;text-transform:none;letter-spacing:0">${D.biens.length} bien${D.biens.length>1?'s':''}</span>
+    </div>
+    ${biensListHTML}
+    <button class="btn-add" onclick="addBien()">+ Ajouter un bien</button>
+  </div>`;
+
+  setH('biens-display', totalCardHTML+perfCardHTML+biensCardHTML);
   if(_activeBienInline!==null)_reopenActiveInline();
+}
+
+// Menu contextuel (trois points) pour les biens — mirror de toggleOrCoffreMenu
+function toggleBienMenu(btn,e){
+  e.stopPropagation();
+  const menu=btn.nextElementSibling;
+  const wasOpen=menu.classList.contains('open');
+  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
+  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
+  if(!wasOpen){ menu.classList.add('open'); btn.classList.add('active'); }
 }
 
 function renderBiensEditors(preselectBi){
@@ -2888,16 +2976,16 @@ function toggleBiensEdit(){} // legacy stub
 let _activeBienInline=null;
 
 function toggleBienInline(bi){
+  // Fermer le menu 3-points si ouvert
+  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
+  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
   const inline=document.getElementById('bien-inline-'+bi);
-  const btn=document.getElementById('bien-edit-btn-'+bi);
   if(!inline)return;
   const isOpen=inline.style.display==='block';
   document.querySelectorAll('.bien-edit-inline').forEach(el=>el.style.display='none');
-  document.querySelectorAll('.bien-sq-edit-btn').forEach(el=>el.classList.remove('active'));
   if(!isOpen){
     _activeBienInline=bi;
     inline.style.display='block';
-    if(btn)btn.classList.add('active');
     renderBienInlineEditor(bi);
     const card=document.getElementById('bien-card-'+bi);
     if(card)setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
@@ -2945,7 +3033,9 @@ function buildBienForm(bi){
   h+='<div class="ef"><label>Prix au m\u00b2 (\u20ac)</label><input type="number" inputmode="decimal" step="any" value="'+(b.prixm2||0)+'" onchange="D.biens['+bi+'].prixm2=+this.value;save();calcAll();renderBiensDisplay()"></div>';
   h+='</div>';
 
-  // ── Compte bancaire ──
+  // ── Prix d'achat initial + Solde compte bancaire ──
+  h+='<div class="ef"><label>Prix d\u2019achat initial (\u20ac) <span class="hint" style="display:inline;font-size:11px">Emprunt initial — utilis\u00e9 pour la rentabilit\u00e9</span></label>';
+  h+='<input type="number" inputmode="decimal" step="any" value="'+(b.empruntinitial||0)+'" onchange="D.biens['+bi+'].empruntinitial=+this.value;save();calcAll()"></div>';
   h+='<div class="ef"><label>Solde compte bancaire associ\u00e9 (\u20ac)</label>';
   h+='<input type="number" inputmode="decimal" step="any" value="'+(b.bankAccount||0)+'" onchange="D.biens['+bi+'].bankAccount=+this.value;save();calcAll()"></div>';
 
@@ -3493,11 +3583,13 @@ function renderOrCoffre(){
     const qty=orPosQty(pos);
     const pur=orPureWeight(pos);
     const melt=orPosMeltValue(pos);
+    const cost=orPosCost(pos);
     const pru=orPosPRU(pos);
     const primeAvg=orPosPrimeAvg(pos);
     const txs=(D.orTransactions||[]).filter(t=>t.positionId===pos.id).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
     const pureUnit=(+pos.poidsBrut||0)*((+pos.pureteMille||0)/1000);
     const unitLbl=pos.typePreset==='piece'?'pièce':pos.typePreset==='lingot'?'lingot':'unité';
+    const meltColor=cost>0?(melt>=cost?'var(--grn)':'var(--red)'):'#fff';
     return `<div class="coffre-item" data-pos-id="${esc(pos.id)}">
       <div class="coffre-hdr">
         <div class="coffre-t">
@@ -3505,7 +3597,7 @@ function renderOrCoffre(){
           <div class="coffre-sub">${unitLbl.charAt(0).toUpperCase()+unitLbl.slice(1)} · ${(+pos.poidsBrut||0).toLocaleString('fr-FR',{maximumFractionDigits:4})} g brut · ${(+pos.pureteMille||0).toLocaleString('fr-FR',{maximumFractionDigits:1})}‰</div>
         </div>
         <div class="coffre-r">
-          <div class="coffre-val">${fE(melt)}</div>
+          <div class="coffre-val" style="color:${meltColor}">${fE(melt)}</div>
           <div class="coffre-qty">${qty.toLocaleString('fr-FR')} ${unitLbl}${qty>1?'s':''}</div>
         </div>
         <div class="coffre-menu-wrap">
