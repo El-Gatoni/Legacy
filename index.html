@@ -25,7 +25,7 @@
   --nav-bg:rgba(20,17,38,0.94);
   --tx:#f0ecff;
   --tx2:#9d93bc;
-  --tx3:#5a5275;
+  --tx3:rgba(255,255,255,0.42);
   --btc:#f59e0b;
   --grn:#34d399;
   --red:#f87171;
@@ -308,6 +308,10 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .ef input:focus,.ef select:focus,.ef textarea:focus{outline:none;border-color:rgba(255,255,255,0.3)}
 .ef select option{background:#1e1c2e;color:var(--tx)}
 .ef textarea{resize:vertical;min-height:50px;font-size:14px}
+/* Input with suffix symbol (€, %) */
+.ef-suffix-wrap{position:relative;display:flex;align-items:center}
+.ef-suffix-wrap input{padding-right:28px;width:100%;box-sizing:border-box}
+.ef-suffix{position:absolute;right:10px;font-size:13px;color:rgba(255,255,255,0.28);pointer-events:none;user-select:none;font-weight:500}
 .hint{font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px}
 .ibox{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:10px 12px;margin-bottom:9px}
 .ibox-hd{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:7px}
@@ -504,6 +508,11 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
 .or-spot-l{display:flex;align-items:center;gap:9px;min-width:0;flex:1}
 .or-spot-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.45);flex-shrink:0}
 .or-spot-dot.live{background:var(--gold);box-shadow:0 0 0 3px rgba(201,169,97,0.18)}
+/* Bourse variant — compact, white */
+.bourse-spot-card{padding:7px 11px;border-radius:12px;margin-bottom:10px}
+.bourse-spot-card .or-spot-lbl{font-size:10px}
+.bourse-spot-card .or-spot-val{font-size:13px;color:#fff}
+.bourse-spot-card .or-spot-edit-btn{font-size:11px;padding:4px 9px;color:#fff}
 .or-spot-txt{min-width:0;flex:1}
 .or-spot-lbl{font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.05em}
 .or-spot-val{font-size:15px;font-weight:700;color:var(--gold);margin-top:1px;line-height:1.2}
@@ -1072,14 +1081,26 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
           Le <strong style="color:#fff">cr&eacute;dit immobilier</strong> et les <strong style="color:#fff">frais d&rsquo;acquisition</strong> se saisissent dans l&rsquo;onglet <strong style="color:#fff">Passif</strong>, sur la fiche du bien.
         </div>
         <div class="about-acc-divider"></div>
+        <div class="about-entry-title">&bull; Prix d&rsquo;achat vs Emprunt initial</div>
+        <div class="about-entry-body">
+          Ces deux montants sont ind&eacute;pendants et servent &agrave; des calculs diff&eacute;rents&nbsp;:<br><br>
+          <strong style="color:#fff">Prix d&rsquo;achat initial</strong> (onglet Immobilier &rsaquo; Modifier les infos) &mdash; le prix total du bien &agrave; l&rsquo;achat. Utilis&eacute; comme base du calcul de <strong style="color:#fff">rentabilit&eacute; locative</strong> : loyer net annuel &divide; (prix d&rsquo;achat + frais d&rsquo;acquisition) &times; 100.<br><br>
+          <strong style="color:#fff">Emprunt initial</strong> (onglet Passif) &mdash; le montant emprunt&eacute; &agrave; la banque. Peut diff&eacute;rer du prix d&rsquo;achat apr&egrave;s une ren&eacute;gociation. Utilis&eacute; pour la barre de progression du remboursement.
+        </div>
+        <div class="about-acc-divider"></div>
+        <div class="about-entry-title">&bull; D&eacute;duction automatique des mensualit&eacute;s</div>
+        <div class="about-entry-body">
+          Dans l&rsquo;onglet <strong style="color:#fff">Passif</strong>, saisissez la <strong style="color:#fff">mensualit&eacute;</strong> et le <strong style="color:#fff">jour de pr&eacute;l&egrave;vement</strong> sur la fiche du cr&eacute;dit. &Agrave; chaque ouverture de l&rsquo;application, Legacy d&eacute;duit automatiquement du reste &agrave; rembourser toutes les mensualit&eacute;s &eacute;coul&eacute;es depuis la derni&egrave;re visite.<br><br>
+          <strong style="color:#fff">⚠️ Limite importante</strong>&nbsp;: le calcul est purement capital brut &mdash; les int&eacute;r&ecirc;ts ne sont pas mod&eacute;lis&eacute;s. Le reste affich&eacute; sera progressivement sous-estim&eacute; par rapport &agrave; votre relev&eacute; bancaire r&eacute;el (car votre mensualit&eacute; bancaire inclut une part d&rsquo;int&eacute;r&ecirc;ts qui ne r&eacute;duit pas le capital). Il est conseill&eacute; de corriger manuellement le champ <strong style="color:#fff">Reste &agrave; rembourser</strong> de temps en temps avec votre relev&eacute; r&eacute;el.<br><br>
+          En cas de ren&eacute;gociation ou changement de mensualit&eacute;&nbsp;: mettez simplement &agrave; jour les deux champs (reste &agrave; rembourser + mensualit&eacute;) &mdash; Legacy repart de ces nouvelles valeurs.
+        </div>
+        <div class="about-acc-divider"></div>
         <div class="about-entry-title">&bull; Modes de calcul</div>
         <div class="about-entry-body">
-          <strong style="color:#fff">Equity</strong> = patrimoine brut (estimation &times; part) &minus; encours cr&eacute;dit restant (cr&eacute;dit &times; part) &mdash; la valeur nette de vos biens une fois les dettes d&eacute;duites.<br><br>
-          <strong style="color:#fff">A la vente (total)</strong> = somme des gains nets si vous vendiez tout aujourd&rsquo;hui : (estimation &times; part) &minus; (cr&eacute;dit &times; part) + solde compte &minus; (frais d&rsquo;acquisition &times; part) &minus; approvisionnements personnels.<br><br>
-          <strong style="color:#fff">Renta. Brute (globale)</strong> = loyers bruts annuels &divide; prix d&rsquo;acquisition total &times; 100.<br>
-          Le prix d&rsquo;acquisition = emprunt initial + frais d&rsquo;acquisition (apport, notaire, travaux&hellip;), sans pondération par la quote-part &mdash; le co&ucirc;t r&eacute;el de l&rsquo;op&eacute;ration.<br><br>
-          <strong style="color:#fff">Charges / an (par bien)</strong> = total des charges locatives annuelles de toutes les unit&eacute;s du bien.<br><br>
-          <strong style="color:#fff">Renta. Loc. nette (par bien)</strong> = (loyers bruts annuels &minus; charges locatives annuelles) &divide; prix d&rsquo;acquisition du bien &times; 100.
+          <strong style="color:#fff">Equity</strong> = patrimoine brut (estimation &times; part) &minus; encours cr&eacute;dit restant (cr&eacute;dit &times; part).<br><br>
+          <strong style="color:#fff">A la vente (total)</strong> = (estimation &times; part) &minus; (cr&eacute;dit &times; part) + solde compte &minus; (frais d&rsquo;acquisition &times; part) &minus; approvisionnements personnels.<br><br>
+          <strong style="color:#fff">Renta. Brute (globale)</strong> = loyers bruts annuels &divide; (prix d&rsquo;achat + frais d&rsquo;acquisition) &times; 100, sans pond&eacute;ration par la quote-part.<br><br>
+          <strong style="color:#fff">Renta. Loc. nette (par bien)</strong> = (loyers bruts annuels &minus; charges locatives annuelles) &divide; (prix d&rsquo;achat + frais d&rsquo;acquisition) &times; 100.
         </div>
       </div>
     </div>
@@ -1377,24 +1398,57 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
         <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       </div>
     </div>
-    <div class="st-row"><span class="dot off" id="b-dot"></span><span id="b-txt">Cliquez Actualiser</span></div>
-    <div class="card card-green">
-      <div class="ct">Total portefeuille</div>
-      <div class="row"><span class="rl">Valeur totale</span><span class="rv" id="b-total">--</span></div>
-      <div class="row"><span class="rl">Cout total</span><span class="rv" id="b-cost">--</span></div>
-      <div class="row"><span class="rl">Plus/moins value</span><span class="rv" id="b-pv">--</span></div>
+
+    <!-- 1. Mes titres boursiers (centré) -->
+    <div class="card">
+      <div class="or-total-lbl">Mes titres boursiers</div>
+      <div class="or-total-val" style="color:#fff" id="b-total">0 €</div>
     </div>
-    <button class="btn-add" onclick="fetchBourse()" style="margin-bottom:12px">Actualiser les cours</button>
-    <div class="sec-hd">
-      <div class="sec-hd-t">Titres</div>
-      <button class="ct-add" id="bourse-edit-btn" onclick="toggleBourseEdit()">Modifier</button>
+
+    <!-- 2. Actualiser les cours -->
+    <div class="or-spot-card bourse-spot-card">
+      <div class="or-spot-l">
+        <div class="or-spot-dot" id="b-dot"></div>
+        <div class="or-spot-txt">
+          <div class="or-spot-lbl">Cours boursiers</div>
+          <div class="or-spot-val"><span id="b-txt">Cliquez Actualiser</span></div>
+        </div>
+      </div>
+      <button class="or-spot-edit-btn" onclick="fetchBourse()">Actualiser</button>
     </div>
-    <div id="bourse-display"></div>
-    <div id="bourse-edit-panel" style="display:none">
-      <button class="btn-add" style="padding:8px;margin-bottom:10px" onclick="addTitre()">+ Nouveau titre</button>
-      <div id="bourse-editors"></div>
-      <button class="btn btn-dark" style="margin-top:4px" onclick="toggleBourseEdit()">Valider</button>
+
+    <!-- 3. Investissement & Performance -->
+    <div class="card" id="b-perf-card">
+      <div class="ct">Investissement &amp; Performance</div>
+      <div class="pru-grid">
+        <div class="pru-item">
+          <div class="pru-lbl">Performance<br>&nbsp;</div>
+          <div class="pru-val" id="b-perf-pct">—</div>
+        </div>
+        <div class="pru-item">
+          <div class="pru-lbl">Plus-value<br>&nbsp;</div>
+          <div class="pru-val" id="b-perf-eur">—</div>
+        </div>
+        <div class="pru-item">
+          <div class="pru-lbl">Total<br>investi</div>
+          <div class="pru-val" id="b-perf-cost">—</div>
+        </div>
+      </div>
     </div>
+
+    <!-- 4. Mes titres (coffre style) -->
+    <div class="card" style="padding-bottom:8px" id="b-titres-card">
+      <div class="ct">
+        <span>Mes titres</span>
+        <span id="b-titres-count" style="font-size:11px;color:var(--tx3);font-weight:500;text-transform:none;letter-spacing:0">0 titre</span>
+      </div>
+      <div id="bourse-display"></div>
+      <button class="btn-add" onclick="openTitreForm()">+ Nouveau titre</button>
+    </div>
+
+    <!-- Formulaire inline titre -->
+    <div id="bourse-form-card" class="card" style="display:none"></div>
+
     <div class="card" id="note-card-bourse" style="display:none">
       <div class="ct">Note</div>
       <textarea class="note-area" id="note-area-bourse" placeholder="Notes Bourse 📈..."></textarea>
@@ -1701,9 +1755,17 @@ let D=(()=>{
       p.wallets=p.wallets.map((w,i)=>({id:w.id||'w'+i,name:w.name,btcAlloc:+(w.btcAlloc||0)}));
       if(!p.collPrets)p.collPrets=[];
       if(!p.biens)p.biens=[];
-      p.biens=p.biens.map(b=>({...b,apportMe:b.apportMe!==undefined?b.apportMe:(b.apport||0)}));
+      p.biens=p.biens.map(b=>({
+        ...b,
+        apportMe:b.apportMe!==undefined?b.apportMe:(b.apport||0),
+        prixAchat:b.prixAchat!==undefined?b.prixAchat:(b.empruntinitial||0), // migration: copie initiale
+        mensualite:b.mensualite||0,
+        jourPrelevement:b.jourPrelevement||0,
+        lastAutoDebit:b.lastAutoDebit||''
+      }));
       if(!p.prets)p.prets=[];
       if(!p.titres)p.titres=[];
+      p.titres=p.titres.map(t=>({...t,txs:t.txs||[]}));
       // ── Migrations OR ──
       if(!p.orPhysique)p.orPhysique=[];
       if(!p.orTransactions)p.orTransactions=[];
@@ -2017,11 +2079,8 @@ function calcAll(){
   setT('coll-total-eur',fE(cTotBtc*(D.btcPrice||0)));
   setT('coll-total-emp',fE(collDette));
 
-  // BOURSE
-  const bourseCostEl=document.getElementById('b-cost');
-  setT('b-total',fE(bourseTotal));
-  if(bourseCostEl)bourseCostEl.textContent=fE(bourseCost);
-  setH('b-pv',pvBadge(bourseTotal,bourseCost));
+  // BOURSE — totaux gérés par renderBourseDisplay()
+  renderBourseDisplay();
 
   // PASSIF — total seulement (p-immo-list est géré par renderBiensPassif)
   setT('p-total',fE(totalPassif));
@@ -2068,8 +2127,7 @@ function renderCashEditors(){
         <input class="name-inp" value="${esc(c.name)}" onchange="D.cashAccounts[${i}].name=this.value;save();calcAll()">
         <button class="del-btn" onclick="D.cashAccounts.splice(${i},1);save();renderCashEditors();calcAll()">×</button>
       </div>
-      <div class="ef" style="margin:0"><label>Solde (EUR)</label>
-        <input type="number" inputmode="decimal" step="any" value="${c.value||0}" onchange="D.cashAccounts[${i}].value=+this.value;save();calcAll()">
+      <div class="ef" style="margin:0"><label>Solde</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="${c.value||0}" onchange="D.cashAccounts[${i}].value=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div>
       </div>
     </div>`).join(''));
 }
@@ -2082,8 +2140,7 @@ function renderLivretEditors(){
         <input class="name-inp" value="${esc(l.name)}" onchange="D.livrets[${i}].name=this.value;save();calcAll()">
         <button class="del-btn" onclick="D.livrets.splice(${i},1);save();renderLivretEditors();calcAll()">×</button>
       </div>
-      <div class="ef" style="margin:0"><label>Solde (EUR)</label>
-        <input type="number" inputmode="decimal" step="any" value="${l.value||0}" onchange="D.livrets[${i}].value=+this.value;save();calcAll()">
+      <div class="ef" style="margin:0"><label>Solde</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="${l.value||0}" onchange="D.livrets[${i}].value=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div>
       </div>
     </div>`).join(''));
 }
@@ -2110,7 +2167,7 @@ function openTxForm(type){
     `:`
       <div class="g2">
         <div class="ef"><label>Montant BTC</label><input type="number" inputmode="decimal" step="0.00000001" id="tx-btc" placeholder="0.00000000" oninput="updateTxPreview()"></div>
-        <div class="ef"><label>Montant EUR</label><input type="number" inputmode="decimal" step="any" id="tx-eur" placeholder="0" oninput="updateTxPreview()"></div>
+        <div class="ef"><label>Montant</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" id="tx-eur" placeholder="0" oninput="updateTxPreview()"><span class="ef-suffix">€</span></div></div>
         <div class="ef"><label>Date</label><input type="date" id="tx-date"></div>
         <div class="ef"><label>Prix unit. (calcule)</label><input type="number" id="tx-pu" placeholder="Auto" readonly style="opacity:.6"></div>
       </div>
@@ -2489,26 +2546,271 @@ function addColl(){addCollPret();goTo(5);}
 // ============================================================
 function renderBourseDisplay(){
   const totPort=D.titres.reduce((a,t)=>a+(+t.qty||0)*(+t.cours||0),0);
+  const totCost=D.titres.reduce((a,t)=>a+(+t.qty||0)*(+t.pru||0),0);
+  const totPnl=totPort-totCost;
+  const totPnlPct=totCost>0?totPnl/totCost*100:null;
+
+  // Carte 1 — total
+  const totalEl=document.getElementById('b-total');
+  if(totalEl)totalEl.textContent=fE(totPort);
+
+  // Carte 3 — KPIs perf
+  const perfPctEl=document.getElementById('b-perf-pct');
+  const perfEurEl=document.getElementById('b-perf-eur');
+  const perfCostEl=document.getElementById('b-perf-cost');
+  if(perfPctEl)perfPctEl.innerHTML=totPnlPct!==null?`<span style="color:${totPnlPct>=0?'var(--grn)':'var(--red)'}">${totPnlPct>=0?'+':''}${totPnlPct.toFixed(2)}%</span>`:'—';
+  if(perfEurEl)perfEurEl.innerHTML=totCost>0?`<span style="color:${totPnl>=0?'var(--grn)':'var(--red)'}">${totPnl>=0?'+':''}${fE(totPnl)}</span>`:'—';
+  if(perfCostEl)perfCostEl.textContent=totCost>0?fE(totCost):'—';
+
+  // Count
+  const countEl=document.getElementById('b-titres-count');
+  if(countEl)countEl.textContent=D.titres.length===0?'0 titre':(D.titres.length+' titre'+(D.titres.length>1?'s':''));
+
+  // Carte 4 — liste titres (coffre style)
   if(!D.titres.length){
-    setH('bourse-display','<p style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:8px">Aucun titre</p>');
+    setH('bourse-display','<div class="or-empty">Aucun titre dans votre portefeuille.<br>Cliquez sur « + Nouveau titre » pour commencer.</div>');
     return;
   }
-  setH('bourse-display',`<div class="titre-sq-grid">${D.titres.map(t=>{
-    const val=(+t.qty||0)*(+t.cours||0),cost=(+t.qty||0)*(+t.pru||0);
-    const pvPct=cost>0?(val-cost)/cost*100:null;
-    const pvEur=val-cost;
+  setH('bourse-display',D.titres.map((t,i)=>{
+    const val=(+t.qty||0)*(+t.cours||0);
+    const cost=(+t.qty||0)*(+t.pru||0);
+    const pnl=val-cost;
+    const pnlPct=cost>0?pnl/cost*100:null;
     const poids=totPort>0?val/totPort*100:0;
-    return `<div class="titre-sq">
-      <div><div class="titre-sq-name">${esc(t.name)}</div><div class="titre-sq-sym">${esc(t.symbol||'--')} &middot; ${poids.toFixed(1)}%</div></div>
-      <div><div class="titre-sq-cours">${fE2(t.cours||0)}</div><div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:1px">${t.qty||0} titres &middot; <span style="color:${t.useApi?'var(--grn)':'rgba(255,255,255,0.25)'}">${t.useApi?'auto':'manuel'}</span></div></div>
-      <div style="margin-top:auto">
-        <div style="font-size:13px;font-weight:700;color:#fff">${fE(val)}</div>
-        ${pvPct!==null?`<span class="badge ${pvPct>=0?'green':'red'}" style="margin-top:3px">${pvPct>=0?'+':''}${pvPct.toFixed(1)}% &middot; ${pvEur>=0?'+':''}${fE(pvEur)}</span>`:''}
+    const txs=t.txs||[];
+    const valColor=cost>0?(val>=cost?'var(--grn)':'var(--red)'):'#fff';
+    return `<div class="coffre-item" id="titre-card-${i}">
+      <div class="coffre-hdr">
+        <div class="coffre-t">
+          <div class="coffre-name">${esc(t.name||'Titre')}</div>
+          <div class="coffre-sub">${esc(t.symbol||'—')} &middot; ${poids.toFixed(1)}% du portefeuille &middot; <span style="color:${t.useApi?'var(--grn)':'rgba(255,255,255,0.35)'}">${t.useApi?'auto':'manuel'}</span></div>
+        </div>
+        <div class="coffre-r">
+          <div class="coffre-val" style="color:${valColor}">${fE(val)}</div>
+          <div class="coffre-qty">${(+t.qty||0).toLocaleString('fr-FR')} titre${(+t.qty||0)>1?'s':''}</div>
+        </div>
+        <div class="coffre-menu-wrap">
+          <button class="coffre-menu-btn" onclick="toggleTitreMenu(this,event)">&#8943;</button>
+          <div class="coffre-menu">
+            <button onclick="openTitreForm(${i},true)"><span class="coffre-menu-ic">+</span>Ajouter un achat</button>
+            <button onclick="openTitreForm(${i},false,true)"><span class="coffre-menu-ic">&#9998;</span>Modifier les infos</button>
+            <button class="danger" onclick="if(confirm('Supprimer ce titre ?')){D.titres.splice(${i},1);save();renderBourseDisplay();updateHomecardSel();calcAll();}"><span class="coffre-menu-ic">&#10005;</span>Supprimer le titre</button>
+          </div>
+        </div>
       </div>
+      <div class="coffre-meta">
+        <div><div class="pm-l">Cours</div><div class="pm-v">${fE2(+t.cours||0)}</div></div>
+        <div><div class="pm-l">PRU</div><div class="pm-v">${fE2(+t.pru||0)}</div></div>
+        <div><div class="pm-l">Performance</div><div class="pm-v" style="color:${pnlPct===null?'#fff':pnlPct>=0?'var(--grn)':'var(--red)'}">${pnlPct!==null?(pnlPct>=0?'+':'')+pnlPct.toFixed(2)+'%':'—'}</div></div>
+      </div>
+      ${txs.length>0?`
+      <div class="coffre-toggle" onclick="toggleCoffreItem(this.parentNode)">
+        <span>Historique des achats (${txs.length})</span>
+        <span class="caret">&rsaquo;</span>
+      </div>
+      <div class="coffre-tx-list">
+        ${txs.map(tx=>{
+          const dateStr=tx.date?new Date(tx.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'}):'—';
+          const txVal=(+tx.qty||0)*(+tx.pru||0);
+          return `<div class="coffre-tx-row">
+            <div class="coffre-tx-date">${dateStr}</div>
+            <div class="coffre-tx-body">
+              <div class="tx-q" style="color:#fff">${(+tx.qty||0).toLocaleString('fr-FR')} titre${(+tx.qty||0)>1?'s':''}</div>
+              <div class="tx-spot">PRU : ${fE2(+tx.pru||0)}</div>
+            </div>
+            <div class="coffre-tx-right">
+              <div class="coffre-tx-price">${fE(txVal)}</div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`:''}
     </div>`;
-  }).join('')}</div>`);
+  }).join(''));
 }
-function addTitre(){D.titres.push({id:uid(),name:'Nouveau titre',symbol:'',qty:0,pru:0,cours:0,useApi:true});save();renderBourseEditors();renderBourseDisplay();updateHomecardSel();calcAll();}
+function addTitre(){
+  const t={id:uid(),name:'Nouveau titre',symbol:'',qty:0,pru:0,cours:0,useApi:true,txs:[]};
+  D.titres.push(t);
+  save();
+  renderBourseDisplay();
+  updateHomecardSel();
+  calcAll();
+  return D.titres.length-1;
+}
+
+// ── Presets ETF populaires ──
+const ETF_PRESETS=[
+  {cat:'Monde',items:[
+    {name:'Amundi MSCI World',symbol:'CW8',ter:'0,38%',desc:'MSCI World — 1 500 actions, 23 pays'},
+    {name:'iShares MSCI World Swap PEA',symbol:'WPEA',ter:'0,20%',desc:'MSCI World synthétique PEA'},
+    {name:'Lyxor MSCI World',symbol:'EWLD',ter:'0,30%',desc:'MSCI World — réplication synthétique'},
+  ]},
+  {cat:'S&P 500',items:[
+    {name:'BNP Paribas Easy S&P 500',symbol:'ESE',ter:'0,15%',desc:'S&P 500 — 500 grandes cap. US (PEA)'},
+    {name:'Amundi S&P 500 II',symbol:'500',ter:'0,15%',desc:'S&P 500 synthétique PEA'},
+    {name:'iShares Core S&P 500',symbol:'CSPX',ter:'0,07%',desc:'S&P 500 — réplication physique CTO'},
+  ]},
+  {cat:'Europe',items:[
+    {name:'Lyxor STOXX Europe 600',symbol:'MSE',ter:'0,07%',desc:'STOXX 600 — 600 entreprises européennes'},
+    {name:'Amundi CAC 40',symbol:'CAC',ter:'0,25%',desc:'CAC 40 — 40 grandes cap. françaises'},
+    {name:'iShares EURO STOXX 50',symbol:'C50',ter:'0,10%',desc:'Euro Stoxx 50 — grandes cap. zone euro'},
+  ]},
+  {cat:'Émergents',items:[
+    {name:'Amundi MSCI Emerging Markets',symbol:'AEEM',ter:'0,20%',desc:'Marchés émergents — Asie, Latam, EMEA'},
+    {name:'Lyxor MSCI Emerging Markets',symbol:'LEM',ter:'0,14%',desc:'Émergents synthétique PEA'},
+  ]},
+  {cat:'Nasdaq / Tech',items:[
+    {name:'Lyxor Nasdaq 100',symbol:'PUST',ter:'0,22%',desc:'Nasdaq 100 — 100 grandes cap. tech US (PEA)'},
+    {name:'iShares Nasdaq 100',symbol:'SXRV',ter:'0,33%',desc:'Nasdaq 100 — réplication physique CTO'},
+  ]},
+  {cat:'Autres',items:[
+    {name:'iShares Core MSCI World (CTO)',symbol:'IWDA',ter:'0,20%',desc:'MSCI World — réplication physique CTO'},
+    {name:'Vanguard FTSE All-World',symbol:'VWCE',ter:'0,22%',desc:'FTSE All-World — 3 700 titres CTO'},
+  ]},
+];
+
+let _titreFormIdx=null; // index dans D.titres, null = nouveau
+let _titreFormMode='new'; // 'new' | 'achat' | 'edit'
+let _etfPresetCat=0;
+let _etfPresetSel=null;
+
+function openTitreForm(idx,isAchat,isEdit){
+  _titreFormMode=isEdit?'edit':isAchat?'achat':'new';
+  _titreFormIdx=(idx!==undefined&&idx!==null)?idx:null;
+  _etfPresetSel=null;
+  _etfPresetCat=0;
+  const card=document.getElementById('bourse-form-card');
+  if(!card)return;
+  card.style.display='block';
+  _renderTitreForm();
+  setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
+
+function _renderTitreForm(){
+  const card=document.getElementById('bourse-form-card');
+  if(!card)return;
+  const t=_titreFormIdx!==null?D.titres[_titreFormIdx]:null;
+
+  if(_titreFormMode==='edit'&&t){
+    // ── Mode édition infos ──
+    card.innerHTML=`
+      <div class="ct">Modifier les infos</div>
+      <div class="ef"><label>Nom</label><input value="${esc(t.name||'')}" oninput="D.titres[${_titreFormIdx}].name=this.value;save();renderBourseDisplay()"></div>
+      <div class="g2">
+        <div class="ef"><label>Symbole Yahoo</label><input type="text" value="${esc(t.symbol||'')}" oninput="setTitreSymbol(${_titreFormIdx},this.value)"></div>
+        <div class="ef"><label>Cours</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${t.cours||0}" ${t.useApi?'readonly style="opacity:.4"':''} oninput="D.titres[${_titreFormIdx}].cours=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <label class="toggle-wrap" onclick="event.stopPropagation()">
+          <input type="checkbox" ${!t.useApi?'checked':''} onchange="D.titres[${_titreFormIdx}].useApi=!this.checked;save();_renderTitreForm()">
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="font-size:12px;color:rgba(255,255,255,0.5)">Saisie manuelle du cours</span>
+      </div>
+      <button class="btn btn-dark" onclick="closeTitreForm()">Fermer</button>`;
+    return;
+  }
+
+  if(_titreFormMode==='achat'&&t){
+    // ── Mode ajout achat sur titre existant ──
+    card.innerHTML=`
+      <div class="ct">Ajouter un achat — ${esc(t.name)}</div>
+      <div class="g2">
+        <div class="ef"><label>Quantité</label><input type="number" id="tx-qty" min="0" step="any" value="0"></div>
+        <div class="ef"><label>PRU</label><div class="ef-suffix-wrap"><input type="number" id="tx-pru" min="0" step="0.001" value="${t.pru||0}"><span class="ef-suffix">€</span></div></div>
+      </div>
+      <div class="ef"><label>Date d'achat</label><input type="date" id="tx-date" value="${new Date().toISOString().slice(0,10)}"></div>
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <button class="btn btn-grn" style="flex:1" onclick="_saveTitreAchat(${_titreFormIdx})">Valider</button>
+        <button class="btn btn-dark" onclick="closeTitreForm()">Annuler</button>
+      </div>`;
+    return;
+  }
+
+  // ── Mode nouveau titre : presets ETF ──
+  const catHtml=ETF_PRESETS.map((c,ci)=>
+    `<button class="or-preset-tabs" style="display:inline-block;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;background:${ci===_etfPresetCat?'rgba(255,255,255,0.12)':'transparent'};color:${ci===_etfPresetCat?'#fff':'rgba(255,255,255,0.55)'}" onclick="_setEtfCat(${ci})">${c.cat}</button>`
+  ).join('');
+  const items=ETF_PRESETS[_etfPresetCat].items;
+  const itemsHtml=items.map((e,ei)=>{
+    const sel=_etfPresetSel&&_etfPresetSel.symbol===e.symbol;
+    return `<div class="preset-row${sel?' selected':''}" onclick="_selectEtfPreset(${_etfPresetCat},${ei})">
+      <div><div class="preset-row-t">${esc(e.name)}</div><div class="preset-row-sub">${esc(e.desc)}</div></div>
+      <div class="preset-row-r">TER ${e.ter}</div>
+    </div>`;
+  }).join('');
+
+  card.innerHTML=`
+    <div class="ct">Nouveau titre</div>
+    <div class="or-form-presets">
+      <div class="or-form-presets-lbl">S&eacute;lectionner un ETF</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">${catHtml}</div>
+      <div class="preset-list">${itemsHtml}</div>
+    </div>
+    <div class="manual-divider"><div class="manual-divider-line"></div><div class="manual-divider-txt">Ou saisir manuellement</div><div class="manual-divider-line"></div></div>
+    <div class="ef"><label>Nom du titre</label><input id="nt-name" value="${_etfPresetSel?_etfPresetSel.name:''}" placeholder="ex: Amundi MSCI World"></div>
+    <div class="g2">
+      <div class="ef"><label>Symbole Yahoo Finance</label><input id="nt-sym" value="${_etfPresetSel?_etfPresetSel.symbol:''}" placeholder="ex: CW8 ou CW8.PA"></div>
+      <div class="ef"><label>Quantit&eacute;</label><input type="number" id="nt-qty" min="0" step="any" value="0"></div>
+    </div>
+    <div class="ef"><label>PRU</label><div class="ef-suffix-wrap"><input type="number" id="nt-pru" min="0" step="0.001" value="0"><span class="ef-suffix">€</span></div></div>
+    <div class="ef"><label>Date d'achat</label><input type="date" id="nt-date" value="${new Date().toISOString().slice(0,10)}"></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn btn-grn" style="flex:1" onclick="_saveNewTitre()">Ajouter</button>
+      <button class="btn btn-dark" onclick="closeTitreForm()">Annuler</button>
+    </div>`;
+}
+
+function _setEtfCat(ci){_etfPresetCat=ci;_etfPresetSel=null;_renderTitreForm();}
+function _selectEtfPreset(ci,ei){
+  _etfPresetSel=ETF_PRESETS[ci].items[ei];
+  _renderTitreForm();
+}
+
+function _saveNewTitre(){
+  const name=(document.getElementById('nt-name')||{}).value||'';
+  let sym=((document.getElementById('nt-sym')||{}).value||'').trim().toUpperCase();
+  const qty=+((document.getElementById('nt-qty')||{}).value||0);
+  const pru=+((document.getElementById('nt-pru')||{}).value||0);
+  const date=((document.getElementById('nt-date')||{}).value)||new Date().toISOString().slice(0,10);
+  if(!name&&!sym){alert('Veuillez saisir un nom ou un symbole.');return;}
+  if(!D.apiKey&&sym&&!sym.includes('.')&&!sym.includes(':'))sym+='.PA';
+  const tx=qty>0?[{id:uid(),date,qty,pru}]:[];
+  D.titres.push({id:uid(),name:name||sym,symbol:sym,qty,pru,cours:0,useApi:true,txs:tx});
+  save();renderBourseDisplay();updateHomecardSel();calcAll();
+  closeTitreForm();
+}
+
+function _saveTitreAchat(i){
+  const qty=+((document.getElementById('tx-qty')||{}).value||0);
+  const pru=+((document.getElementById('tx-pru')||{}).value||0);
+  const date=((document.getElementById('tx-date')||{}).value)||new Date().toISOString().slice(0,10);
+  if(qty<=0){alert('Quantité invalide.');return;}
+  if(!D.titres[i].txs)D.titres[i].txs=[];
+  D.titres[i].txs.push({id:uid(),date,qty,pru});
+  // Recalcul PRU moyen pondéré et quantité totale
+  const allTxs=D.titres[i].txs;
+  const totalQty=allTxs.reduce((a,t)=>a+(+t.qty||0),0);
+  const totalCost=allTxs.reduce((a,t)=>a+(+t.qty||0)*(+t.pru||0),0);
+  D.titres[i].qty=totalQty;
+  D.titres[i].pru=totalQty>0?totalCost/totalQty:0;
+  save();renderBourseDisplay();calcAll();
+  closeTitreForm();
+}
+
+function closeTitreForm(){
+  const card=document.getElementById('bourse-form-card');
+  if(card){card.style.display='none';card.innerHTML='';}
+  _titreFormIdx=null;
+}
+
+function toggleTitreMenu(btn,e){
+  e.stopPropagation();
+  const menu=btn.nextElementSibling;
+  const wasOpen=menu.classList.contains('open');
+  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
+  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
+  if(!wasOpen){menu.classList.add('open');btn.classList.add('active');}
+}
 function setTitreSymbol(i,val){
   let s=val.trim().toUpperCase();
   // Ajoute .PA automatiquement si Yahoo Finance (pas de clé API) et pas de suffixe
@@ -2561,7 +2863,7 @@ async function fetchBourse(){
     }catch(err){fail++;failed.push(e.ticker);}
   }));
 
-  save();calcAll();renderBourseEditors();if(typeof renderOrAll==='function')renderOrAll();
+  save();calcAll();if(typeof renderOrAll==='function')renderOrAll();
   document.getElementById('b-dot').className=ok>0?'dot live':'dot off';
   document.getElementById('b-txt').textContent=ok>0
     ?(ok+' cours mis a jour'+(fail?' — '+fail+' echec'+(failed.length?' ('+failed.join(', ')+')':''):''))
@@ -2601,9 +2903,9 @@ function renderBiensDisplay(){
       totalLoyerBrut+=loyer*12;
       hasLocation=true;
     }
-    // Prix d'acquisition = emprunt initial + frais d'acquisition (sans pondération part)
-    const empInit=+(b.empruntinitial||0);
-    totalPrixAcquisition+=empInit+chargesAcq;
+    // Prix d'acquisition = prix d'achat + frais d'acquisition (sans pondération part)
+    const prixAchat=+(b.prixAchat||0);
+    totalPrixAcquisition+=prixAchat+chargesAcq;
   });
   // Rentabilité locative brute globale = loyers bruts annuels / prix d'acquisition total × 100
   const rentLocative=totalPrixAcquisition>0&&totalLoyerBrut>0?totalLoyerBrut/totalPrixAcquisition*100:null;
@@ -2647,9 +2949,9 @@ function renderBiensDisplay(){
     const loyerNetAn=loyer*12-rentalChargesTotal;
     const gainVente=(est*part)-(credit*part)+bank-(chargesAcq*part)-approsMe;
     const units=b.units||[];
-    // Prix d'acquisition du bien = emprunt initial + frais d'acquisition
-    const empInit=+(b.empruntinitial||0);
-    const prixAcqBien=empInit+chargesAcq;
+    // Prix d'acquisition du bien = prix d'achat + frais d'acquisition
+    const prixAchat=+(b.prixAchat||0);
+    const prixAcqBien=prixAchat+chargesAcq;
     // Renta. Loc. nette = loyer net annuel / prix d'acquisition × 100
     const bienRentLoc=prixAcqBien>0&&loyer>0?loyerNetAn/prixAcqBien*100:null;
     // Sous-ligne : prix/m² · surface · détention
@@ -2768,17 +3070,17 @@ function selectBien(val){
         <button class="del-btn" onclick="D.biens.splice(${bi},1);save();renderBiensEditors();renderBiensDisplay();calcAll()">×</button>
       </div>
       <div class="g2">
-        <div class="ef"><label>Surface (m2)</label><input type="number" inputmode="decimal" step="any" value="${b.surface||0}" onchange="D.biens[${bi}].surface=+this.value;save();calcAll()"></div>
-        <div class="ef"><label>Prix au m2</label><input type="number" inputmode="decimal" step="any" value="${b.prixm2||0}" onchange="D.biens[${bi}].prixm2=+this.value;save();calcAll()"></div>
-        <div class="ef"><label>Part (%)</label><input type="number" inputmode="decimal" step="any" max="100" value="${b.part||100}" onchange="D.biens[${bi}].part=+this.value;save();calcAll()"></div>
+        <div class="ef"><label>Surface</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="${b.surface||0}" onchange="D.biens[${bi}].surface=+this.value;save();calcAll()"><span class="ef-suffix">m²</span></div></div>
+        <div class="ef"><label>Prix au m²</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="${b.prixm2||0}" onchange="D.biens[${bi}].prixm2=+this.value;save();calcAll()"><span class="ef-suffix">€/m²</span></div></div>
+        <div class="ef"><label>Part</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" max="100" value="${b.part||100}" onchange="D.biens[${bi}].part=+this.value;save();calcAll()"><span class="ef-suffix">%</span></div></div>
         <div class="ef"><label>Emprunt initial</label><input type="number" inputmode="decimal" step="any" value="${b.empruntinitial||0}" onchange="D.biens[${bi}].empruntinitial=+this.value;save();calcAll()"></div>
         <div class="ef"><label>Reste a rembourser</label><input type="number" inputmode="decimal" step="any" value="${b.credit||0}" onchange="D.biens[${bi}].credit=+this.value;save();calcAll()"></div>
-        <div class="ef"><label>Taux (%)</label><input type="number" inputmode="decimal" step="0.01" value="${b.tauxPret||0}" onchange="D.biens[${bi}].tauxPret=+this.value;save()"></div>
+        <div class="ef"><label>Taux</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="0.01" value="${b.tauxPret||0}" onchange="D.biens[${bi}].tauxPret=+this.value;save()"><span class="ef-suffix">%</span></div></div>
         <div class="ef"><label>Date fin pret</label><input type="date" value="${b.dateFinPret||''}" onchange="D.biens[${bi}].dateFinPret=this.value;save();calcAll()"></div>
         <div class="ef"><label>Apport initial total (&#8364;)</label><input type="number" inputmode="decimal" step="any" value="${b.apport||0}" onchange="D.biens[${bi}].apport=+this.value;save()"></div>
         <div class="ef"><label>Dont votre part (&#8364;)</label><input type="number" inputmode="decimal" step="any" value="${b.apportMe||0}" placeholder="Votre mise personnelle" onchange="D.biens[${bi}].apportMe=+this.value;save();calcAll()"><span class="hint">Utilise pour le gain net vente et votre capital investi</span></div>
       </div>
-      <div class="ef"><label>Compte bancaire associe (EUR)</label><input type="number" inputmode="decimal" step="any" value="${b.bankAccount||0}" onchange="D.biens[${bi}].bankAccount=+this.value;save();calcAll()"></div>
+      <div class="ef"><label>Solde compte bancaire</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="${b.bankAccount||0}" onchange="D.biens[${bi}].bankAccount=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
       <div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:8px 0 6px">Approvisionnements</div>
       ${(b.appros||[]).map((a,ai)=>`
         <div class="ibox" style="background:rgba(255,255,255,0.03);margin-bottom:6px">
@@ -2790,7 +3092,7 @@ function selectBien(val){
             </select>
             <button class="del-btn" onclick="D.biens[${bi}].appros.splice(${ai},1);save();selectBien(${bi})">×</button>
           </div>
-          <div class="ef" style="margin:0"><label>Montant (EUR)</label><input type="number" inputmode="decimal" step="any" value="${a.amount||0}" onchange="D.biens[${bi}].appros[${ai}].amount=+this.value;save();calcAll()"></div>
+          <div class="ef" style="margin:0"><label>Montant</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="${a.amount||0}" onchange="D.biens[${bi}].appros[${ai}].amount=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
         </div>`).join('')}
       <button class="btn-add" style="margin-bottom:8px;padding:7px" onclick="(D.biens[${bi}].appros=D.biens[${bi}].appros||[]).push({label:'',who:'me',amount:0});save();selectBien(${bi});calcAll()">+ Approvisionnement</button>
       <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.05em;margin:6px 0">Charges du bien</div>
@@ -2800,7 +3102,7 @@ function selectBien(val){
             <input class="name-inp" style="font-size:14px" value="${esc(c.name||'')}" placeholder="ex: Impots, travaux..." onchange="D.biens[${bi}].charges[${ci}].name=this.value;save()">
             <button class="del-btn" onclick="D.biens[${bi}].charges.splice(${ci},1);save();selectBien(${bi});calcAll()">×</button>
           </div>
-          <div class="ef" style="margin:0"><label>Montant (EUR)</label><input type="number" inputmode="decimal" step="any" value="${c.value||0}" onchange="D.biens[${bi}].charges[${ci}].value=+this.value;save();calcAll()"></div>
+          <div class="ef" style="margin:0"><label>Montant</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="${c.value||0}" onchange="D.biens[${bi}].charges[${ci}].value=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
         </div>`).join('')}
       <button class="btn-add" style="padding:7px;margin-bottom:10px" onclick="(D.biens[${bi}].charges=D.biens[${bi}].charges||[]).push({name:'',value:0});save();selectBien(${bi});calcAll()">+ Charge</button>
       <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.05em;margin:10px 0 6px">Unites locatives</div>
@@ -2812,8 +3114,8 @@ function selectBien(val){
             <button class="del-btn" onclick="D.biens[${bi}].units.splice(${ui},1);save();selectBien(${bi});calcAll()">×</button>
           </div>
           <div class="g2">
-            <div class="ef" style="margin:0"><label>Loyer mensuel (EUR)</label><input type="number" inputmode="decimal" step="any" value="${u.loyer||0}" onchange="D.biens[${bi}].units[${ui}].loyer=+this.value;save();calcAll()"></div>
-            <div class="ef" style="margin:0"><label>Charges annuelles (EUR)</label><input type="number" inputmode="decimal" step="any" value="${u.charges||0}" onchange="D.biens[${bi}].units[${ui}].charges=+this.value;save();calcAll()"></div>
+            <div class="ef" style="margin:0"><label>Loyer mensuel</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="${u.loyer||0}" onchange="D.biens[${bi}].units[${ui}].loyer=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
+            <div class="ef" style="margin:0"><label>Charges annuelles</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="${u.charges||0}" onchange="D.biens[${bi}].units[${ui}].charges=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
           </div>
         </div>`).join('')}
       ${(b.units||[]).length===0&&(b.loyer||0)>0?`
@@ -2824,7 +3126,7 @@ function selectBien(val){
     </div>`;
 }
 
-function addBien(){D.biens.push({name:'',surface:0,prixm2:0,empruntinitial:0,credit:0,tauxPret:0,dateFinPret:'',part:100,apport:0,apportMe:0,bankAccount:0,loyer:0,appros:[],charges:[],rentalCharges:[],units:[]});save();renderBiensEditors();renderBiensDisplay();calcAll();}
+function addBien(){D.biens.push({name:'',surface:0,prixm2:0,prixAchat:0,empruntinitial:0,credit:0,tauxPret:0,dateFinPret:'',part:100,apport:0,apportMe:0,bankAccount:0,loyer:0,mensualite:0,jourPrelevement:0,lastAutoDebit:'',appros:[],charges:[],rentalCharges:[],units:[]});save();renderBiensEditors();renderBiensDisplay();calcAll();}
 
 // ============================================================
 // PRETS & COLLPRETS
@@ -2837,10 +3139,10 @@ function renderPretsEditors(){
         <button class="del-btn" onclick="D.prets.splice(${i},1);save();renderPretsEditors();calcAll()">×</button>
       </div>
       <div class="g2">
-        <div class="ef"><label>Montant (EUR)</label><input type="number" inputmode="decimal" step="any" value="${p.montant||0}" onchange="D.prets[${i}].montant=+this.value;save();calcAll()"></div>
-        <div class="ef"><label>Reste (EUR)</label><input type="number" inputmode="decimal" step="any" value="${p.restant||0}" onchange="D.prets[${i}].restant=+this.value;save();calcAll()"></div>
-        <div class="ef"><label>Taux (%)</label><input type="number" inputmode="decimal" step="0.01" value="${p.taux||0}" onchange="D.prets[${i}].taux=+this.value;save()"></div>
-        <div class="ef"><label>Votre part (%)</label><input type="number" inputmode="decimal" step="any" max="100" value="${p.part||100}" onchange="D.prets[${i}].part=+this.value;save();calcAll()"></div>
+        <div class="ef"><label>Montant</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="${p.montant||0}" onchange="D.prets[${i}].montant=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
+        <div class="ef"><label>Reste</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="${p.restant||0}" onchange="D.prets[${i}].restant=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
+        <div class="ef"><label>Taux</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="0.01" value="${p.taux||0}" onchange="D.prets[${i}].taux=+this.value;save()"><span class="ef-suffix">%</span></div></div>
+        <div class="ef"><label>Votre part</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" max="100" value="${p.part||100}" onchange="D.prets[${i}].part=+this.value;save();calcAll()"><span class="ef-suffix">%</span></div></div>
         <div class="ef"><label>Date de fin</label><input type="date" value="${p.dateFin||''}" onchange="D.prets[${i}].dateFin=this.value;save();calcAll()"></div>
       </div>
     </div>`).join(''));
@@ -2856,8 +3158,8 @@ function renderCollPretsEditors(){
         <button class="del-btn" onclick="D.collPrets.splice(${i},1);save();renderCollPretsEditors();renderCollDisplay();calcAll()">×</button>
       </div>
       <div class="g2">
-        <div class="ef"><label>Emprunte (EUR)</label><input type="number" inputmode="decimal" step="any" value="${c.eurBorrowed||0}" onchange="D.collPrets[${i}].eurBorrowed=+this.value;save();calcAll()"></div>
-        <div class="ef"><label>Taux (%)</label><input type="number" inputmode="decimal" step="0.01" value="${c.rate||0}" onchange="D.collPrets[${i}].rate=+this.value;save()"></div>
+        <div class="ef"><label>Emprunte</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="${c.eurBorrowed||0}" onchange="D.collPrets[${i}].eurBorrowed=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
+        <div class="ef"><label>Taux</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="0.01" value="${c.rate||0}" onchange="D.collPrets[${i}].rate=+this.value;save()"><span class="ef-suffix">%</span></div></div>
         <div class="ef"><label>Echeance</label><input type="date" value="${c.dueDate||''}" onchange="D.collPrets[${i}].dueDate=this.value;save();calcAll()"></div>
       </div>
       <div class="ef"><label>Note</label><textarea onchange="D.collPrets[${i}].note=this.value;save()">${esc(c.note||'')}</textarea></div>
@@ -2961,14 +3263,8 @@ function toggleCollEdit(){
 function addCollFromBitcoin(){addCollPret();}
 
 let _bourseEditing=false;
-function toggleBourseEdit(){
-  _bourseEditing=!_bourseEditing;
-  const panel=document.getElementById('bourse-edit-panel');
-  const btn=document.getElementById('bourse-edit-btn');
-  if(panel)panel.style.display=_bourseEditing?'block':'none';
-  if(btn)btn.textContent=_bourseEditing?'Valider':'Modifier';
-  if(_bourseEditing)renderBourseEditors();
-}
+function toggleBourseEdit(){} // legacy stub
+function renderBourseEditors(){} // legacy stub
 
 let _biensEditing=false;
 function toggleBiensEdit(){} // legacy stub
@@ -3029,15 +3325,15 @@ function buildBienForm(bi){
   h+='<div class="ef"><label>Nom du bien</label>';
   h+='<input value="'+esc(b.name||'')+'" placeholder="ex: Appartement Lyon 2e" onchange="D.biens['+bi+'].name=this.value;save();renderBiensDisplay()"></div>';
   h+='<div class="g2">';
-  h+='<div class="ef"><label>Surface (m\u00b2)</label><input type="number" inputmode="decimal" step="any" value="'+(b.surface||0)+'" onchange="D.biens['+bi+'].surface=+this.value;save();calcAll();renderBiensDisplay()"></div>';
-  h+='<div class="ef"><label>Prix au m\u00b2 (\u20ac)</label><input type="number" inputmode="decimal" step="any" value="'+(b.prixm2||0)+'" onchange="D.biens['+bi+'].prixm2=+this.value;save();calcAll();renderBiensDisplay()"></div>';
+  h+='<div class="ef"><label>Surface</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.surface||0)+'" onchange="D.biens['+bi+'].surface=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">m²</span></div></div>';
+  h+='<div class="ef"><label>Prix au m²</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.prixm2||0)+'" onchange="D.biens['+bi+'].prixm2=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">€/m²</span></div></div>';
   h+='</div>';
 
   // ── Prix d'achat initial + Solde compte bancaire ──
-  h+='<div class="ef"><label>Prix d\u2019achat initial (\u20ac) <span class="hint" style="display:inline;font-size:11px">Emprunt initial — utilis\u00e9 pour la rentabilit\u00e9</span></label>';
-  h+='<input type="number" inputmode="decimal" step="any" value="'+(b.empruntinitial||0)+'" onchange="D.biens['+bi+'].empruntinitial=+this.value;save();calcAll()"></div>';
-  h+='<div class="ef"><label>Solde compte bancaire associ\u00e9 (\u20ac)</label>';
-  h+='<input type="number" inputmode="decimal" step="any" value="'+(b.bankAccount||0)+'" onchange="D.biens['+bi+'].bankAccount=+this.value;save();calcAll()"></div>';
+  h+='<div class="ef"><label>Prix d\u2019achat initial <span class="hint" style="display:inline;font-size:11px">utilis\u00e9 pour la rentabilit\u00e9 locative</span></label>';
+  h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.prixAchat||0)+'" onchange="D.biens['+bi+'].prixAchat=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>';
+  h+='<div class="ef"><label>Solde compte bancaire</label>';
+  h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.bankAccount||0)+'" onchange="D.biens['+bi+'].bankAccount=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>';
 
   // ── Approvisionnements ──
   h+='<div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 8px">Approvisionnements</div>';
@@ -3055,8 +3351,8 @@ function buildBienForm(bi){
     h+='<select onchange="D.biens['+bi+'].appros['+ai+'].who=this.value;save();calcAll()" style="width:100%">';
     h+='<option value="me"'+(a.who==='me'?' selected':'')+'>Ma part</option>';
     h+='<option value="other"'+(a.who==='other'?' selected':'')+'>Autre</option></select></div>';
-    h+='<div class="ef" style="margin:0"><label>Montant (\u20ac)</label>';
-    h+='<input type="number" inputmode="decimal" step="any" value="'+(a.amount||0)+'" onchange="D.biens['+bi+'].appros['+ai+'].amount=+this.value;save();calcAll()"></div>';
+    h+='<div class="ef" style="margin:0"><label>Montant</label>';
+    h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(a.amount||0)+'" onchange="D.biens['+bi+'].appros['+ai+'].amount=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>';
     h+='</div></div>';
   });
   h+='<button class="btn-add" style="width:100%;padding:10px;margin-bottom:4px" onclick="(D.biens['+bi+'].appros=D.biens['+bi+'].appros||[]).push({label:\'\',who:\'me\',amount:0});save();selectBienInline('+bi+',\''+fid+'\');calcAll()">+ Approvisionnement</button>';
@@ -3070,18 +3366,16 @@ function buildBienForm(bi){
     h+='<input class="name-inp" value="'+esc(u.name||'')+'" placeholder="ex: Appartement T2, D\u00e9pendance..." onchange="D.biens['+bi+'].units['+ui+'].name=this.value;save();calcAll()">';
     h+='<button class="del-btn" onclick="D.biens['+bi+'].units.splice('+ui+',1);save();selectBienInline('+bi+',\''+fid+'\');calcAll()">&#215;</button>';
     h+='</div>';
-    h+='<div class="ef" style="margin-bottom:12px"><label>Loyer mensuel (\u20ac)</label>';
-    h+='<input type="number" inputmode="decimal" step="any" value="'+(u.loyer||0)+'" onchange="D.biens['+bi+'].units['+ui+'].loyer=+this.value;save();calcAll();renderBiensDisplay()"></div>';
+    h+='<div class="ef" style="margin-bottom:12px"><label>Loyer mensuel</label>';
+    h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(u.loyer||0)+'" onchange="D.biens['+bi+'].units['+ui+'].loyer=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">€</span></div></div>';
     // Charges locatives — chaque ligne occupe toute la largeur
     h+='<div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Charges locatives (Annuelles)</div>';
     (u.rentalCharges||[]).forEach((rc,rci)=>{
-      h+='<div class="ef" style="margin-bottom:8px">';
-      h+='<label>Libell\u00e9 de la charge</label>';
-      h+='<div style="display:flex;gap:6px;align-items:center">';
-      h+='<input style="flex:1;min-width:0" value="'+esc(rc.name||'')+'" placeholder="ex: Taxe ordures, copropri\u00e9t\u00e9..." onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].name=this.value;save()">';
-      h+='<input type="number" inputmode="decimal" step="any" style="width:90px;text-align:right;flex-shrink:0" value="'+(rc.value||0)+'" placeholder="\u20ac/an" onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].value=+this.value;save();calcAll()">';
-      h+='<button class="del-btn" style="flex-shrink:0" onclick="D.biens['+bi+'].units['+ui+'].rentalCharges.splice('+rci+',1);save();selectBienInline('+bi+',\''+fid+'\');calcAll()">&#215;</button>';
-      h+='</div></div>';
+      h+='<div class="g2" style="margin-bottom:6px">';
+      h+='<div class="ef" style="margin:0"><input value="'+esc(rc.name||'')+'" placeholder="ex: Taxe ordures, copropri\u00e9t\u00e9..." onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].name=this.value;save()"></div>';
+      h+='<div class="ef" style="margin:0"><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" style="text-align:right" value="'+(rc.value||0)+'" onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].value=+this.value;save();calcAll()"><span class="ef-suffix">\u20ac</span></div></div>';
+      h+='</div>';
+      h+='<div style="text-align:right;margin-top:-4px;margin-bottom:8px"><button class="del-btn" onclick="D.biens['+bi+'].units['+ui+'].rentalCharges.splice('+rci+',1);save();selectBienInline('+bi+',\''+fid+'\');calcAll()">&#215; Supprimer</button></div>';
     });
     h+='<button class="btn-add" style="width:100%;padding:8px" onclick="(D.biens['+bi+'].units['+ui+'].rentalCharges=D.biens['+bi+'].units['+ui+'].rentalCharges||[]).push({name:\'\',value:0});save();selectBienInline('+bi+',\''+fid+'\');calcAll()">+ Charge locative</button>';
     h+='</div>';
@@ -3100,27 +3394,31 @@ function buildImmoCredit(bi){
   let h='';
   h+='<p style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:12px;line-height:1.5">';
   h+='Ces informations sont liées au bien « <strong style="color:rgba(255,255,255,0.7)">'+esc(b.name||'Bien')+'</strong> » de l’onglet Immobilier.</p>';
-  // Quote-part
-  h+='<div class="ef"><label>Quote-part de détention (%)</label>';
-  h+='<input type="number" inputmode="decimal" step="any" max="100" value="'+(b.part||100)+'" onchange="D.biens['+bi+'].part=+this.value;save()"></div>';
-  // Crédit
+  // Crédit — Emprunt initial pleine largeur
+  h+='<div class="ef"><label>Emprunt initial</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.empruntinitial||0)+'" onchange="D.biens['+bi+'].empruntinitial=+this.value;save()"><span class="ef-suffix">\u20ac</span></div></div>';
   h+='<div class="g2">';
-  h+='<div class="ef"><label>Emprunt initial (€)</label><input type="number" inputmode="decimal" step="any" value="'+(b.empruntinitial||0)+'" onchange="D.biens['+bi+'].empruntinitial=+this.value;save()"></div>';
-  h+='<div class="ef"><label>Reste à rembourser (€)</label><input type="number" inputmode="decimal" step="any" value="'+(b.credit||0)+'" onchange="D.biens['+bi+'].credit=+this.value;save()"></div>';
-  h+='<div class="ef"><label>Taux annuel (%)</label><input type="number" inputmode="decimal" step="0.01" value="'+(b.tauxPret||0)+'" onchange="D.biens['+bi+'].tauxPret=+this.value;save()"></div>';
+  h+='<div class="ef"><label>Reste \u00e0 rembourser</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.credit||0)+'" onchange="D.biens['+bi+'].credit=+this.value;save();calcAll()"><span class="ef-suffix">\u20ac</span></div></div>';
+  h+='<div class="ef"><label>Taux annuel</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="0.01" value="'+(b.tauxPret||0)+'" onchange="D.biens['+bi+'].tauxPret=+this.value;save()"><span class="ef-suffix">%</span></div></div>';
   h+='<div class="ef"><label>Date de fin</label><input type="date" value="'+(b.dateFinPret||'')+'" onchange="D.biens['+bi+'].dateFinPret=this.value;save()"></div>';
+  h+='<div class="ef"><label>D\u00e9tention</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" max="100" value="'+(b.part||100)+'" onchange="D.biens['+bi+'].part=+this.value;save()"><span class="ef-suffix">%</span></div></div>';
   h+='</div>';
-  // Frais d'acquisition
+  // Mensualité automatique
+  h+='<div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 8px">D\u00e9duction automatique</div>';
+  h+='<div class="g2">';
+  h+='<div class="ef"><label>Mensualit\u00e9</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.mensualite||0)+'" onchange="D.biens['+bi+'].mensualite=+this.value;save()"><span class="ef-suffix">\u20ac</span></div><span class="hint">0 = d\u00e9sactiv\u00e9</span></div>';
+  h+='<div class="ef"><label>Jour de pr\u00e9l\u00e8vement</label><input type="number" inputmode="numeric" min="1" max="28" step="1" value="'+(b.jourPrelevement||0)+'" onchange="D.biens['+bi+'].jourPrelevement=+this.value;save()"><span class="hint">ex: 10 pour le 10 du mois</span></div>';
+  h+='</div>';
+  if(b.lastAutoDebit)h+='<div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:10px">Dernier pr\u00e9l\u00e8vement appliqu\u00e9\u00a0: '+b.lastAutoDebit+'</div>';
+  // Frais d’acquisition
   h+='<div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 8px">Frais d’acquisition</div>';
-  h+='<div style="background:rgba(109,40,217,0.1);border:1px solid rgba(109,40,217,0.2);border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:12px;color:rgba(200,180,255,0.8);line-height:1.5">';
+  h+='<div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:12px;color:rgba(255,255,255,0.6);line-height:1.5">';
   h+='Listez ici toutes vos sorties d’argent hors crédit : apport personnel, frais de notaire, travaux, ameublement... Ces montants seront pondérés à hauteur de <strong>'+(b.part||100)+'%</strong> dans le calcul du gain net à la vente.</div>';
   (b.charges||[]).forEach((ch,ci)=>{
-    h+='<div class="ef" style="margin-bottom:6px"><label>Libellé</label>';
-    h+='<div style="display:flex;gap:6px;align-items:center">';
-    h+='<input style="flex:1;min-width:0" value="'+esc(ch.name||'')+'" placeholder="ex: Notaire, apport, travaux..." onchange="D.biens['+bi+'].charges['+ci+'].name=this.value;save()">';
-    h+='<input type="number" inputmode="decimal" step="any" style="width:90px;text-align:right;flex-shrink:0" value="'+(ch.value||0)+'" placeholder="€" onchange="D.biens['+bi+'].charges['+ci+'].value=+this.value;save()">';
-    h+='<button class="del-btn" style="flex-shrink:0" onclick="D.biens['+bi+'].charges.splice('+ci+',1);save();_renderImmoCredit('+bi+')">&#215;</button>';
-    h+='</div></div>';
+    h+='<div class="g2" style="margin-bottom:6px">';
+    h+='<div class="ef" style="margin:0"><input value="'+esc(ch.name||'')+'" placeholder="ex: Notaire, apport, travaux..." onchange="D.biens['+bi+'].charges['+ci+'].name=this.value;save()"></div>';
+    h+='<div class="ef" style="margin:0"><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" style="text-align:right" value="'+(ch.value||0)+'" onchange="D.biens['+bi+'].charges['+ci+'].value=+this.value;save()"><span class="ef-suffix">\u20ac</span></div></div>';
+    h+='</div>';
+    h+='<div style="text-align:right;margin-top:-4px;margin-bottom:8px"><button class="del-btn" onclick="D.biens['+bi+'].charges.splice('+ci+',1);save();_renderImmoCredit('+bi+')">&#215; Supprimer</button></div>';
   });
   h+='<button class="btn-add" style="width:100%;padding:10px;margin-top:4px" onclick="(D.biens['+bi+'].charges=D.biens['+bi+'].charges||[]).push({name:\'\',value:0});save();_renderImmoCredit('+bi+')">+ Frais d’acquisition</button>';
   h+='<button class="btn btn-dark" style="width:100%;margin-top:10px" onclick="calcAll()">Recalculer le patrimoine</button>';
@@ -3145,6 +3443,7 @@ function renderBiensPassif(){
     h+='</div>';
     if(hasCredit){
       h+='<div class="row" style="padding-top:0"><span class="rl">Reste</span><span class="rv" style="color:var(--red)">'+fE(credit*part)+'</span></div>';
+      if(b.mensualite)h+='<div class="row"><span class="rl">Mensualit\u00e9</span><span class="rv">'+fE(b.mensualite)+'/mois</span></div>';
       if(b.tauxPret)h+='<div class="row"><span class="rl">Taux</span><span class="rv">'+b.tauxPret+'%</span></div>';
       if(b.dateFinPret)h+='<div class="row"><span class="rl">Fin</span><span class="rv">'+fmtDate(b.dateFinPret)+'</span></div>';
       if(chargesTotal>0)h+='<div class="row"><span class="rl">Frais d’acquisition</span><span class="rv">'+fE(chargesTotal)+'</span></div>';
@@ -3888,8 +4187,7 @@ ${OR_PRESETS_PIECES.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPre
 <input type="number" id="or-phys-qty" value="1" min="1" step="1" oninput="updateOrPhysCalcul()">
 </div>
 <div class="ef">
-<label>Prix total payé (€)</label>
-<input type="number" id="or-phys-prix" placeholder="0,00" step="0.01" min="0">
+<label>Prix total payé</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-prix" placeholder="0,00" step="0.01" min="0"><span class="ef-suffix">€</span></div>
 </div>
 </div>
 
@@ -3899,8 +4197,7 @@ ${OR_PRESETS_PIECES.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPre
 <input type="number" id="or-phys-poids" placeholder="0" step="0.0001" min="0" oninput="updateOrPhysCalcul()">
 </div>
 <div class="ef">
-<label>Pureté (‰)</label>
-<input type="number" id="or-phys-purete" placeholder="900" step="0.1" min="0" max="1000" oninput="updateOrPhysCalcul()">
+<label>Pureté</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-purete" placeholder="900" step="0.1" min="0" max="1000" oninput="updateOrPhysCalcul()"><span class="ef-suffix">‰</span></div>
 </div>
 </div>
 
@@ -3915,8 +4212,7 @@ ${OR_PRESETS_PIECES.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPre
 <input type="date" id="or-phys-date" value="${new Date().toISOString().slice(0,10)}">
 </div>
 <div class="ef">
-<label>Spot à l'achat (€/g)</label>
-<input type="number" id="or-phys-spot" placeholder="0" step="0.01" min="0" value="${D.goldSpot||''}" oninput="updateOrPhysPrime()">
+<label>Spot à l'achat</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-spot" placeholder="0" step="0.01" min="0" value="${D.goldSpot||''}" oninput="updateOrPhysPrime()"><span class="ef-suffix">€/g</span></div>
 </div>
 </div>
 <div class="hint" id="or-phys-prime-hint">Prime calculée automatiquement : <span style="color:#fff;font-weight:600" id="or-phys-prime-val">--</span></div>
@@ -3950,12 +4246,10 @@ ${OR_PRESETS_PIECES.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPre
 <div class="ibox-body">
 <div class="g2">
 <div class="ef">
-<label>Stockage / an (€)</label>
-<input type="number" id="or-phys-cost-stock" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()">
+<label>Stockage / an</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-cost-stock" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()"><span class="ef-suffix">€</span></div>
 </div>
 <div class="ef">
-<label>Assurance / an (€)</label>
-<input type="number" id="or-phys-cost-assurance" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()">
+<label>Assurance / an</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-cost-assurance" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()"><span class="ef-suffix">€</span></div>
 </div>
 </div>
 <div class="sub-total">
@@ -4001,8 +4295,7 @@ ${OR_PRESETS_PIECES.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPre
 <input type="number" id="or-phys-poids" value="${pos.poidsBrut||''}" step="0.0001" min="0" oninput="updateOrPhysCalcul()">
 </div>
 <div class="ef">
-<label>Pureté (‰)</label>
-<input type="number" id="or-phys-purete" value="${pos.pureteMille||''}" step="0.1" min="0" max="1000" oninput="updateOrPhysCalcul()">
+<label>Pureté</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-purete" value="${pos.pureteMille||''}" step="0.1" min="0" max="1000" oninput="updateOrPhysCalcul()"><span class="ef-suffix">‰</span></div>
 </div>
 </div>
 
@@ -4022,12 +4315,10 @@ ${OR_PRESETS_PIECES.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPre
 <div class="ibox-body">
 <div class="g2">
 <div class="ef">
-<label>Stockage / an (€)</label>
-<input type="number" id="or-phys-cost-stock" value="${pos.coutStockage||''}" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()">
+<label>Stockage / an</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-cost-stock" value="${pos.coutStockage||''}" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()"><span class="ef-suffix">€</span></div>
 </div>
 <div class="ef">
-<label>Assurance / an (€)</label>
-<input type="number" id="or-phys-cost-assurance" value="${pos.coutAssurance||''}" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()">
+<label>Assurance / an</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-cost-assurance" value="${pos.coutAssurance||''}" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()"><span class="ef-suffix">€</span></div>
 </div>
 </div>
 <div class="sub-total">
@@ -4073,8 +4364,7 @@ ${OR_PRESETS_PIECES.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPre
 <input type="number" id="or-phys-qty" value="1" min="1" step="1">
 </div>
 <div class="ef">
-<label>Prix total payé (€)</label>
-<input type="number" id="or-phys-prix" placeholder="0,00" step="0.01" min="0">
+<label>Prix total payé</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-prix" placeholder="0,00" step="0.01" min="0"><span class="ef-suffix">€</span></div>
 </div>
 </div>
 
@@ -4084,8 +4374,7 @@ ${OR_PRESETS_PIECES.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPre
 <input type="date" id="or-phys-date" value="${new Date().toISOString().slice(0,10)}">
 </div>
 <div class="ef">
-<label>Spot à l'achat (€/g)</label>
-<input type="number" id="or-phys-spot" placeholder="0" step="0.01" min="0" value="${D.goldSpot||''}">
+<label>Spot à l'achat</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-spot" placeholder="0" step="0.01" min="0" value="${D.goldSpot||''}"><span class="ef-suffix">€/g</span></div>
 </div>
 </div>
 
@@ -4437,19 +4726,16 @@ ${OR_PRESETS_ETC.map((p,i)=>`<div class="preset-row" onclick="selectOrPapPreset(
 <input type="number" id="or-pap-qty" value="${+(etc?.qty||0)||''}" placeholder="0" step="0.01" min="0">
 </div>
 <div class="ef">
-<label>PRU (€)</label>
-<input type="number" id="or-pap-pru" value="${+(etc?.pru||0)||''}" placeholder="0" step="0.01" min="0">
+<label>PRU</label><div class="ef-suffix-wrap"><input type="number" id="or-pap-pru" value="${+(etc?.pru||0)||''}" placeholder="0" step="0.01" min="0"><span class="ef-suffix">€</span></div>
 </div>
 <div class="ef">
-<label>Cours (€)</label>
-<input type="number" id="or-pap-cours" value="${+(etc?.cours||0)||''}" placeholder="0" step="0.01" min="0">
+<label>Cours</label><div class="ef-suffix-wrap"><input type="number" id="or-pap-cours" value="${+(etc?.cours||0)||''}" placeholder="0" step="0.01" min="0"><span class="ef-suffix">€</span></div>
 </div>
 </div>
 
 <div class="g2">
 <div class="ef">
-<label>TER (%)</label>
-<input type="number" id="or-pap-ter" value="${+(etc?.ter||0)||''}" placeholder="0.12" step="0.01" min="0" max="10">
+<label>TER</label><div class="ef-suffix-wrap"><input type="number" id="or-pap-ter" value="${+(etc?.ter||0)||''}" placeholder="0.12" step="0.01" min="0" max="10"><span class="ef-suffix">%</span></div>
 </div>
 <div class="ef">
 <label>Date d'achat</label>
@@ -4628,59 +4914,9 @@ function renderDeadlineAlerts(alerts){
 }
 
 // ============================================================
-// BOURSE EDITORS
+// BOURSE EDITORS (legacy stubs — replaced by coffre-style UI)
 // ============================================================
-function renderBourseEditors(){
-  const sel=document.getElementById('bourse-sel');
-  const prev=sel?sel.value:'';
-  const opts=D.titres.length
-    ?D.titres.map((t,i)=>`<option value="${i}">${esc(t.name||'Titre '+(i+1))} — ${esc(t.symbol||'--')}</option>`).join('')
-    :'<option value="">Aucun titre</option>';
-  setH('bourse-editors',`
-    <div class="edit-sel-wrap">
-      <select id="bourse-sel" onchange="selectTitre(this.value)">
-        <option value="">— Choisir un titre —</option>
-        ${opts}
-      </select>
-    </div>
-    <div class="edit-sel-form" id="bourse-form"></div>`);
-  // Restaurer la sélection précédente si possible
-  const newSel=document.getElementById('bourse-sel');
-  if(newSel&&prev!==''&&D.titres[+prev]){newSel.value=prev;selectTitre(prev);}
-}
-
-function selectTitre(val){
-  const form=document.getElementById('bourse-form');
-  if(!form)return;
-  if(val===''||val===null||val===undefined){form.classList.remove('open');form.innerHTML='';return;}
-  const i=+val;
-  const t=D.titres[i];
-  if(!t){form.classList.remove('open');return;}
-  form.classList.add('open');
-  form.innerHTML=`
-    <div class="ibox">
-      <div class="ibox-hd">
-        <input class="name-inp" value="${esc(t.name)}" onchange="D.titres[${i}].name=this.value;save();renderBourseEditors();renderBourseDisplay();updateHomecardSel()">
-        <button class="del-btn" onclick="D.titres.splice(${i},1);save();renderBourseEditors();renderBourseDisplay();updateHomecardSel();calcAll()">×</button>
-      </div>
-      <div class="g2">
-        <div class="ef"><label>Symbole</label><input type="text" data-sym value="${esc(t.symbol)}" onchange="setTitreSymbol(${i},this.value)"></div>
-        <div class="ef"><label>Quantite</label><input type="number" inputmode="numeric" value="${t.qty||0}" onchange="D.titres[${i}].qty=+this.value;save();calcAll()"></div>
-        <div class="ef"><label>PRU (EUR)</label><input type="number" inputmode="decimal" step="0.001" value="${t.pru||0}" onchange="D.titres[${i}].pru=+this.value;save();calcAll()"></div>
-        <div class="ef">
-          <label>Cours (EUR)</label>
-          <input type="number" inputmode="decimal" step="0.01" value="${t.cours||0}" ${t.useApi?'readonly':''} style="${t.useApi?'opacity:0.4;cursor:not-allowed;':''}" onchange="D.titres[${i}].cours=+this.value;save();calcAll()">
-          <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
-            <label class="toggle-wrap" onclick="event.stopPropagation()">
-              <input type="checkbox" ${!t.useApi?'checked':''} onchange="D.titres[${i}].useApi=!this.checked;save();renderBourseEditors()">
-              <span class="toggle-slider"></span>
-            </label>
-            <span style="font-size:12px;color:rgba(255,255,255,0.5)">Modifier manuellement</span>
-          </div>
-        </div>
-      </div>
-    </div>`;
-}
+function selectTitre(){}
 
 
 function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,immoGainVente,pru,btcInvested,bourseCost){
@@ -5203,12 +5439,58 @@ function setupNotes(){
   });
 }
 
+// ── Déduction automatique des mensualités ──
+function applyMensualites(){
+  const today=new Date();
+  const todayY=today.getFullYear(),todayM=today.getMonth(),todayD=today.getDate();
+  let changed=false;
+  D.biens.forEach((b,bi)=>{
+    const mensualite=+(b.mensualite||0);
+    const jour=+(b.jourPrelevement||0);
+    if(mensualite<=0||jour<1||jour>28)return;
+    // Date du dernier prélèvement appliqué (ou date de création si vide)
+    const lastStr=b.lastAutoDebit||'';
+    let lastDate=lastStr?new Date(lastStr):null;
+    // Construire la liste de toutes les dates de prélèvement depuis lastDate jusqu'à aujourd'hui
+    // Point de départ : mois/an du dernier prélèvement appliqué, ou 2 ans en arrière si jamais configuré
+    let cursor;
+    if(lastDate){
+      // Partir du mois suivant le dernier prélèvement appliqué
+      cursor=new Date(lastDate.getFullYear(),lastDate.getMonth()+1,jour);
+    }else{
+      // Jamais appliqué : ne rien déduire, juste enregistrer aujourd'hui comme point de départ
+      // (on ne veut pas déduire des mois passés inconnus)
+      const thisPrelev=new Date(todayY,todayM,jour);
+      b.lastAutoDebit=thisPrelev<=today
+        ?thisPrelev.toISOString().slice(0,10)
+        :new Date(todayY,todayM-1,jour).toISOString().slice(0,10);
+      changed=true;
+      return;
+    }
+    let count=0;
+    while(cursor<=today){
+      // Ne compter que si la date de prélèvement de ce mois est passée
+      if(cursor.getDate()===jour&&cursor<=today)count++;
+      cursor=new Date(cursor.getFullYear(),cursor.getMonth()+1,jour);
+    }
+    if(count>0){
+      const deduction=mensualite*count;
+      b.credit=Math.max(0,+(b.credit||0)-deduction);
+      // Dernière date appliquée = dernier prélèvement compté
+      const lastApplied=new Date(cursor.getFullYear(),cursor.getMonth()-1,jour);
+      b.lastAutoDebit=lastApplied.toISOString().slice(0,10);
+      changed=true;
+    }
+  });
+  if(changed)save();
+}
+
 function initAll(){
+  applyMensualites();
   renderBiensPassif();
   checkDeadlines();
   renderCashEditors();
   renderLivretEditors();
-  renderBourseEditors();
   renderBiensEditors();
   renderPretsEditors();
   renderCollPretsEditors();
