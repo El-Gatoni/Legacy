@@ -80,8 +80,9 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .card{
   background:var(--g);border:1px solid var(--gb);
   border-radius:18px;padding:14px;margin-bottom:10px;
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  position:relative;
 }
+.card-blur{backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .card-btc{background:rgba(245,158,11,0.07);border-color:rgba(245,158,11,0.16)}
 .card-green{background:rgba(52,211,153,0.06);border-color:rgba(52,211,153,0.16)}
 .card-red{background:rgba(248,113,113,0.06);border-color:rgba(248,113,113,0.16)}
@@ -329,8 +330,10 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .btn-add{background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.14);width:100%;padding:10px;border-radius:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:2px}
 
 /* TX history minimized */
-.tx-hist{background:rgba(255,255,255,0.04);border-radius:10px;overflow:hidden;margin-bottom:8px}
-.tx-hist-row{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px;min-width:0}
+.tx-hist{background:rgba(255,255,255,0.04);border-radius:10px;overflow:visible;margin-bottom:8px}
+.tx-hist-row{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px;min-width:0;position:relative;}
+.tx-hist-row:first-child{border-radius:10px 10px 0 0;}
+.tx-hist-row:last-child{border-bottom:none;border-radius:0 0 10px 10px;}
 .tx-hist-row:last-child{border-bottom:none}
 .tx-type-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-right:7px}
 .tx-left{display:flex;align-items:center}
@@ -344,7 +347,8 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .note-area:focus{outline:none;border-color:rgba(255,255,255,0.3)}
 
 /* Goal selector */
-.goal-sel{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.goal-sel{margin-top:8px}
+.goal-sel-presets{display:flex;flex-wrap:wrap;gap:5px}
 .goal-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:5px 12px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);cursor:pointer}
 .goal-btn.active{background:rgba(245,158,11,0.18);border-color:rgba(245,158,11,0.3);color:var(--btc)}
 
@@ -489,7 +493,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
 
 /* Valeur totale Or — grande valeur centrée */
 .or-total-lbl{
-  font-size:11px;color:#fff;font-weight:700;
+  font-size:13px;color:#fff;font-weight:700;
   text-transform:uppercase;letter-spacing:.08em;
   text-align:center;margin-bottom:6px;
 }
@@ -582,7 +586,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
 .coffre-menu-wrap{position:relative;flex-shrink:0}
 .coffre-menu-btn{width:28px;height:28px;border-radius:8px;background:transparent;border:none;color:rgba(255,255,255,0.70);cursor:pointer;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit}
 .coffre-menu-btn:hover,.coffre-menu-btn.active{background:rgba(255,255,255,0.08);color:#fff}
-.coffre-menu{display:none;position:absolute;top:32px;right:0;z-index:20;background:#1e1a36;border:1px solid var(--gb);border-radius:10px;padding:4px;min-width:210px;box-shadow:0 6px 20px rgba(0,0,0,0.5)}
+.coffre-menu{display:none;position:absolute;top:32px;right:0;z-index:200;background:#1e1a36;border:1px solid var(--gb);border-radius:10px;padding:4px;min-width:210px;box-shadow:0 6px 20px rgba(0,0,0,0.5)}
 .coffre-menu.open{display:block}
 .coffre-menu button{display:flex;align-items:center;gap:8px;width:100%;padding:9px 10px;background:transparent;border:none;cursor:pointer;color:var(--tx);font-size:13px;font-family:inherit;border-radius:7px;text-align:left}
 .coffre-menu button:hover{background:rgba(255,255,255,0.06)}
@@ -695,8 +699,31 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
 
 /* HINT */
 .hint{font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px}
+/* ── Shimmer (actualisation API en cours) ── */
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.shimmer{
+  background:linear-gradient(90deg,rgba(255,255,255,0.06) 25%,rgba(255,255,255,0.14) 50%,rgba(255,255,255,0.06) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.4s infinite;
+  border-radius:6px;
+  color:transparent!important;
+  pointer-events:none;
+}
+/* ── Highlight (valeur mise à jour) ── */
+@keyframes highlight-fade{0%{background:rgba(52,211,153,0.18)}100%{background:transparent}}
+.highlight-update{
+  animation:highlight-fade .7s ease forwards;
+  border-radius:6px;
+}
 
-/* ══ Micro-animations ══ */
+/* Refresh icon button */
+.refresh-btn{
+  background:none;border:none;cursor:pointer;padding:4px;
+  color:rgba(255,255,255,0.55);display:flex;align-items:center;
+  border-radius:8px;transition:color .15s,transform .3s ease;
+}
+.refresh-btn:active{color:#fff;transform:rotate(180deg);}
+.refresh-btn svg{width:18px;height:18px;}
 
 /* 1. Feedback tactile — tous les boutons interactifs */
 .btn-add:active,.btn:active,.coffre-menu-btn:active,
@@ -736,7 +763,11 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
   opacity:1;
 }
 
-/* ── Long press delete ── */
+
+
+/* ── TX params search input ── */
+.tx-sheet-search{-webkit-appearance:none;outline:none;}
+.tx-sheet-search:focus{border-color:rgba(255,255,255,0.3)!important;} */
 .lp-active{outline:2px solid rgba(248,113,113,0.5);outline-offset:-2px;border-radius:14px}
 .lp-del-btn{
   display:none;position:absolute;top:8px;right:8px;z-index:10;
@@ -811,10 +842,10 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
       </div>
 
       <div class="pmenu-sep"></div>
-      <div class="pmenu-item" onclick="openSubPanel('sub-goal')">
+      <div class="pmenu-item" onclick="openSubPanel('sub-btc')">
         <div class="pmenu-left">
           <div class="pmenu-icon" style="color:var(--btc)">&#x20BF;</div>
-          <div><div class="pmenu-title">Objectif de Stack Bitcoin <span style="color:var(--btc)">&#x20BF;</span></div><div class="pmenu-sub" id="pmenu-goal-sub">Objectif actuel : --</div></div>
+          <div><div class="pmenu-title">Configuration Bitcoin</div><div class="pmenu-sub">Objectif, affichage, pr&ecirc;ts</div></div>
         </div>
         <div class="pmenu-arrow">&#8250;</div>
       </div>
@@ -830,11 +861,12 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     </div>
     <div style="padding:16px 4px 8px;text-align:center">
       <div style="font-size:12px;color:rgba(255,255,255,0.25);line-height:1.8">
-        Legacy v2.6.0<br>
+        Legacy v2.7.0<br>
         <span style="font-size:11px">Stockage local — aucun serveur</span>
       </div>
     </div>
   </div>
+
 
   <!-- SUB PANELS -->
   <div id="sub-config" class="sub-panel" style="display:none">
@@ -983,11 +1015,98 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     </div>
   </div>
 
-  <div id="sub-goal" class="sub-panel" style="display:none">
-    <div class="sub-back" onclick="closeSubPanel()">&#8249; Parametres</div>
-    <div class="sub-title">Objectif de Stack Bitcoin <span style="color:var(--btc)">&#x20BF;</span></div>
+  <div id="sub-tx-hist" class="sub-panel" data-parent="sub-btc" style="display:none">
+    <div class="sub-back" onclick="openSubPanel('sub-btc')">&#8249; Bitcoin</div>
+    <div class="sub-title">Historique des transactions</div>
+    <div class="card" style="padding-bottom:8px">
+      <div class="ef" style="margin-bottom:8px">
+        <input id="tx-params-search" placeholder="Note, date, type, montant..." oninput="renderTxParamsHistory()" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:8px 11px;color:#fff;font-size:14px;font-family:inherit;width:100%;-webkit-appearance:none;outline:none">
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-size:11px;color:rgba(255,255,255,0.35)">Type, date (ex: 2024-03), note, montant BTC/€</span>
+        <select id="tx-params-sort" onchange="renderTxParamsHistory()" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:5px 8px;color:rgba(255,255,255,0.7);font-size:12px;font-family:inherit;cursor:pointer;flex-shrink:0">
+          <option value="date-desc">Plus r&eacute;cent</option>
+          <option value="date-asc">Plus ancien</option>
+          <option value="btc-desc">BTC &darr;</option>
+          <option value="eur-desc">EUR &darr;</option>
+        </select>
+      </div>
+      <div id="tx-params-list"></div>
+      <div class="btn-row" style="margin-top:10px">
+        <button class="btn btn-sec" onclick="importTxCSV()">Importer CSV</button>
+        <button class="btn btn-sec" onclick="exportTxCSV()">Exporter CSV</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sub-btc" class="sub-panel" style="display:none">
+    <div class="sub-back" onclick="closeSubPanel()">&#8249; Param&egrave;tres</div>
+    <div class="sub-title">Configuration Bitcoin <span style="color:var(--btc)">&#x20BF;</span></div>
+
+    <!-- Objectif de stack -->
     <div class="card">
+      <div class="ct" style="margin-bottom:10px">Objectif de stack</div>
       <div class="goal-sel" id="goal-sel"></div>
+    </div>
+
+    <!-- Affichage -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">Affichage des montants</div>
+      <div class="pmenu-item" style="padding:8px 0;border-bottom:1px solid var(--bdr)">
+        <div class="pmenu-left" style="gap:10px">
+          <div>
+            <div class="pmenu-title">Carte principale</div>
+            <div class="pmenu-sub">Mon Bitcoin</div>
+          </div>
+        </div>
+        <div class="chart-evo-tabs">
+          <button class="chart-evo-tab" id="cfg-card-btc" onclick="setBtcCardUnit('btc')">BTC</button>
+          <button class="chart-evo-tab" id="cfg-card-sats" onclick="setBtcCardUnit('sats')">Sats</button>
+        </div>
+      </div>
+      <div class="pmenu-item" style="padding:8px 0">
+        <div class="pmenu-left" style="gap:10px">
+          <div>
+            <div class="pmenu-title">Wallets</div>
+            <div class="pmenu-sub">Montant par wallet</div>
+          </div>
+        </div>
+        <div class="chart-evo-tabs">
+          <button class="chart-evo-tab" id="cfg-wallet-btc" onclick="setBtcWalletUnit('btc')">BTC</button>
+          <button class="chart-evo-tab" id="cfg-wallet-sats" onclick="setBtcWalletUnit('sats')">Sats</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historique -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">Historique des transactions</div>
+      <div class="pmenu-item" style="padding:8px 0;cursor:pointer" onclick="openSubPanel('sub-tx-hist')">
+        <div class="pmenu-left" style="gap:10px">
+          <div>
+            <div class="pmenu-title">Toutes les transactions</div>
+            <div class="pmenu-sub" id="btc-hist-sub">0 transaction</div>
+          </div>
+        </div>
+        <div class="pmenu-arrow">&#8250;</div>
+      </div>
+    </div>
+
+    <!-- Prêts collatéralisés -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:10px">Pr&ecirc;ts collat&eacute;ralis&eacute;s</div>
+      <div class="pmenu-item" style="padding:8px 0">
+        <div class="pmenu-left" style="gap:10px">
+          <div>
+            <div class="pmenu-title">Afficher les pr&ecirc;ts</div>
+            <div class="pmenu-sub">Carte pr&ecirc;ts et synth&egrave;se</div>
+          </div>
+        </div>
+        <label class="toggle-wrap" onclick="event.stopPropagation()">
+          <input type="checkbox" id="cfg-show-colls" onchange="D.showColls=this.checked;save();applyCollsVisibility()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
     </div>
   </div>
 
@@ -1145,7 +1264,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
         <div class="about-entry-body">
           Dans l&rsquo;onglet <strong style="color:#fff">Passif</strong>, saisissez la <strong style="color:#fff">mensualit&eacute;</strong> et le <strong style="color:#fff">jour de pr&eacute;l&egrave;vement</strong> sur la fiche du cr&eacute;dit. &Agrave; chaque ouverture de l&rsquo;application, Legacy d&eacute;duit automatiquement du reste &agrave; rembourser toutes les mensualit&eacute;s &eacute;coul&eacute;es depuis la derni&egrave;re visite.<br><br>
           <strong style="color:#fff">⚠️ Limite importante</strong>&nbsp;: le calcul est purement capital brut &mdash; les int&eacute;r&ecirc;ts ne sont pas mod&eacute;lis&eacute;s. Le reste affich&eacute; sera progressivement sous-estim&eacute; par rapport &agrave; votre relev&eacute; bancaire r&eacute;el (car votre mensualit&eacute; bancaire inclut une part d&rsquo;int&eacute;r&ecirc;ts qui ne r&eacute;duit pas le capital). Il est conseill&eacute; de corriger manuellement le champ <strong style="color:#fff">Reste &agrave; rembourser</strong> de temps en temps avec votre relev&eacute; r&eacute;el.<br><br>
-          En cas de ren&eacute;gociation ou changement de mensualit&eacute;&nbsp;: mettez simplement &agrave; jour les deux champs (reste &agrave; rembourser + mensualit&eacute;) &mdash; Legacy repart de ces nouvelles valeurs.
+          En cas de ren&eacute;gociation ou changement de mensualit&eacute;&nbsp;: mettez simplement &agrave; jour les deux champs (reste &agrave; rembourser + mensualit&eacute;) &mdash; Legacy repart de ces nouvelles valeurs. Fonctionne pour les cr&eacute;dits immobiliers <strong style="color:#fff">et</strong> les pr&ecirc;ts personnels.
         </div>
         <div class="about-acc-divider"></div>
         <div class="about-entry-title">&bull; Modes de calcul</div>
@@ -1386,15 +1505,9 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
       </div>
     </div>
 
-    <!-- 1. Mon Bitcoin (centré) avec toggle BTC/Sats -->
+    <!-- 1. Mon Bitcoin (centré) -->
     <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-        <div class="or-total-lbl" style="margin:0">Mon Bitcoin</div>
-        <div class="chart-evo-tabs">
-          <button class="chart-evo-tab active" id="btc-unit-btc" onclick="setBtcUnit('btc')">BTC</button>
-          <button class="chart-evo-tab" id="btc-unit-sats" onclick="setBtcUnit('sats')">Sats</button>
-        </div>
-      </div>
+      <div class="or-total-lbl">Mon Bitcoin</div>
       <div class="or-total-val" id="c-stack-display" style="color:var(--btc)">—</div>
     </div>
 
@@ -1404,13 +1517,16 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
         <div style="display:flex;align-items:center;gap:8px">
           <div class="or-spot-dot" id="btc-dot"></div>
           <span style="font-size:11px;color:rgba(255,255,255,0.5)">CoinGecko</span>
-          <div class="chg-badge up" id="btc-chg-badge" style="display:none"></div>
         </div>
         <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:17px;font-weight:800;color:var(--btc)" id="c-price">--</span>
-          <button class="or-spot-edit-btn" style="padding:4px 10px;font-size:11px" onclick="fetchBTC()">Actualiser</button>
+          <div class="chg-badge up" id="btc-chg-badge" style="display:none"></div>
+          <span style="font-size:19px;font-weight:800;color:var(--btc);letter-spacing:-.5px" id="c-price">--</span>
+          <button class="refresh-btn" onclick="fetchBTC()" title="Actualiser">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          </button>
         </div>
       </div>
+      <div id="btc-price-age" style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:6px;text-align:right"></div>
       <div class="prog-wrap">
         <div class="prog-top">
           <div class="prog-top-l">Objectif : <span id="prog-goal-lbl" style="color:var(--btc)">0,1 ₿</span> · <span id="prog-pct">--</span></div>
@@ -1484,14 +1600,8 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     <!-- 7. Historique transactions -->
     <div class="card" style="padding-bottom:8px">
       <div class="ct">
-        <span>Historique</span>
-        <div class="coffre-menu-wrap" style="display:inline-block">
-          <button class="coffre-menu-btn" onclick="toggleTxHistMenu(this,event)">&#8943;</button>
-          <div class="coffre-menu">
-            <button onclick="importTxCSV()"><span class="coffre-menu-ic">&#8659;</span>Importer CSV</button>
-            <button onclick="exportTxCSV()"><span class="coffre-menu-ic">&#8657;</span>Exporter CSV</button>
-          </div>
-        </div>
+        <span>Historique <span id="tx-count-badge" style="font-size:11px;color:var(--tx3);font-weight:500;text-transform:none;letter-spacing:0"></span></span>
+        <span style="font-size:11px;color:rgba(255,255,255,0.35)">5 derni&egrave;res</span>
       </div>
       <div id="tx-history"></div>
     </div>
@@ -1546,7 +1656,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
           <div class="or-spot-val"><span id="b-txt">Cliquez Actualiser</span></div>
         </div>
       </div>
-      <button class="or-spot-edit-btn" onclick="fetchBourse()">Actualiser</button>
+      <button class="refresh-btn" onclick="fetchBourse()" title="Actualiser"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
     </div>
 
     <!-- 3. Investissement & Performance -->
@@ -1657,34 +1767,49 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
         <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       </div>
     </div>
-    <div class="card card-red">
-      <div class="ct">Total passif</div>
-      <div class="row" style="padding-top:0"><span class="rl">Total dettes</span><span style="font-size:28px;font-weight:800;color:var(--red)" id="p-total">--</span></div>
+
+    <!-- 1. Total Passif centré -->
+    <div class="card">
+      <div class="or-total-lbl">Mon Passif</div>
+      <div class="or-total-val" style="color:var(--red)" id="p-total">—</div>
     </div>
-    <div class="sec-hd">
-      <div class="sec-hd-t">Crédits immobiliers</div>
+
+    <!-- 2. Crédits immobiliers -->
+    <div class="card card-red" style="padding-bottom:8px">
+      <div class="ct">Cr&eacute;dits immobiliers</div>
+      <div id="p-immo-list"></div>
     </div>
-    <div id="p-immo-list"></div>
-    <div class="sec-hd">
-      <div class="sec-hd-t">Prets personnels</div>
-      <button class="ct-add" id="prets-edit-btn" onclick="togglePretsEdit()">Modifier</button>
+
+    <!-- 3. Prêts personnels -->
+    <div class="card card-red" style="padding-bottom:8px">
+      <div class="ct">
+        <span>Pr&ecirc;ts personnels</span>
+        <div class="coffre-menu-wrap" style="display:inline-block">
+          <button class="coffre-menu-btn" onclick="togglePassifMenu(this,event,'prets')">&#8943;</button>
+          <div class="coffre-menu">
+            <button onclick="addPret();renderPretsDisplay()"><span class="coffre-menu-ic">+</span>Nouveau pr&ecirc;t</button>
+          </div>
+        </div>
+      </div>
+      <div id="p-prets-list"></div>
+      <div id="prets-editors" style="display:none"></div>
     </div>
-    <div id="p-prets-list"></div>
-    <div id="prets-edit-panel" style="display:none">
-      <div id="prets-editors"></div>
-      <button class="btn-add" style="padding:8px;margin-bottom:8px" onclick="addPret()">+ Nouveau pret</button>
-      <button class="btn btn-dark" onclick="togglePretsEdit()">Valider</button>
+
+    <!-- 4. Prêts collatéralisés -->
+    <div class="card card-red" style="padding-bottom:8px">
+      <div class="ct">
+        <span>Pr&ecirc;ts collat&eacute;ralis&eacute;s <span style="color:var(--btc)">&#x20BF;</span></span>
+        <div class="coffre-menu-wrap" style="display:inline-block">
+          <button class="coffre-menu-btn" onclick="togglePassifMenu(this,event,'colls')">&#8943;</button>
+          <div class="coffre-menu">
+            <button onclick="addCollPret()"><span class="coffre-menu-ic">+</span>Nouveau pr&ecirc;t</button>
+          </div>
+        </div>
+      </div>
+      <div id="p-colls-list"></div>
+      <div id="collprets-saisie" style="display:none"></div>
     </div>
-    <div class="sec-hd">
-      <div class="sec-hd-t">Prets collateralises <span style="color:var(--btc)">&#x20BF;</span></div>
-      <button class="ct-add" id="collprets-edit-btn" onclick="toggleCollPretsEdit()">Modifier</button>
-    </div>
-    <div id="p-colls-list"></div>
-    <div id="collprets-edit-panel" style="display:none">
-      <div id="collprets-saisie"></div>
-      <button class="btn-add" style="padding:8px;margin-bottom:8px" onclick="addCollPret()">+ Nouveau pret collateralise</button>
-      <button class="btn btn-dark" onclick="toggleCollPretsEdit()">Valider</button>
-    </div>
+
     <div class="card" id="note-card-passif" style="display:none">
       <div class="ct">Note</div>
       <textarea class="note-area" id="note-area-passif" placeholder="Notes Passif ⚖️..."></textarea>
@@ -1720,7 +1845,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
         </div>
       </div>
       <button class="or-spot-edit-btn" id="or-spot-btn" onclick="toggleOrSpotEdit()">Modifier</button>
-      <button class="or-spot-edit-btn" id="or-spot-refresh" onclick="fetchGoldSpot()" style="display:none;margin-left:4px" title="Actualiser depuis GoldApi.io">\u21bb</button>
+      <button class="refresh-btn" id="or-spot-refresh" onclick="fetchGoldSpot()" style="display:none;margin-left:4px" title="Actualiser depuis GoldApi.io"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
     </div>
 
     <!-- 3. Toggle Physique | Papier -->
@@ -1802,7 +1927,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
           <span class="or-list-total-l">Total Or papier</span>
           <span class="or-list-total-v" id="or-papier-total-val">0 €</span>
         </div>
-        <button class="btn-add" onclick="fetchBourse()" style="margin-bottom:8px">Actualiser les cours</button>
+        <button class="refresh-btn" onclick="fetchBourse()" title="Actualiser les cours" style="margin-bottom:8px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
         <button class="btn-add" onclick="openOrPapForm()">+ Nouvel ETC Or</button>
       </div>
 
@@ -1912,6 +2037,7 @@ let D=(()=>{
         lastAutoDebit:b.lastAutoDebit||''
       }));
       if(!p.prets)p.prets=[];
+      p.prets=p.prets.map(pr=>({...pr,mensualite:pr.mensualite||0,jourPrelevement:pr.jourPrelevement||0,lastAutoDebit:pr.lastAutoDebit||''}));
       if(!p.titres)p.titres=[];
       p.titres=p.titres.map(t=>({...t,txs:t.txs||[]}));
       // ── Migrations OR ──
@@ -1926,7 +2052,11 @@ let D=(()=>{
       if(!p.apiKey)p.apiKey='';
       if(!p.note)p.note='Bienvenue sur Legacy — votre suivi de patrimoine privé.\nRendez-vous dans Paramètres → A propos pour découvrir toutes les fonctionnalités de l’application.';
       if(!p.notePages)p.notePages={accueil:true,bitcoin:false,bourse:false,immo:false,cash:false,passif:false,or:false}; if(!p.notePages.cash)p.notePages.cash=false; if(p.notePages.or===undefined)p.notePages.or=false;
-      if(!p.btcGoal)p.btcGoal=1;
+      if(!p.btcGoal)p.btcGoal=0.1;
+      if(!p.btcPriceDate)p.btcPriceDate='';
+      if(!p.bourseFetchDate)p.bourseFetchDate='';
+      if(!p.btcUnit)p.btcUnit='btc';
+      if(!p.btcWalletUnit)p.btcWalletUnit='btc';
       if(!p.notifEnabled)p.notifEnabled=false;
       if(p.hideAmounts===undefined)p.hideAmounts=false;
       if(!p.homeCard)p.homeCard='btc';
@@ -2086,6 +2216,35 @@ function bienChargesLocatives(b){
   return (b.rentalCharges||[]).reduce((s,rc)=>s+(+rc.value||0),0);
 }
 
+
+// ── Préservation du scroll par page ──
+const _scrollPos={};
+function _saveScroll(){
+  const active=document.querySelector('.page.active,.page[style*="display:block"]');
+  if(active&&active.id)_scrollPos[active.id]=window.scrollY;
+}
+function _restoreScroll(pageId){
+  if(pageId&&_scrollPos[pageId]!==undefined){
+    requestAnimationFrame(()=>window.scrollTo(0,_scrollPos[pageId]));
+  }
+}
+
+// ── Affichage relatif de la date de mise à jour ──
+function _fmtAge(isoStr){
+  if(!isoStr)return null;
+  try{
+    const d=new Date(isoStr);
+    const mins=Math.floor((Date.now()-d)/60000);
+    if(mins<1)return 'à l\'instant';
+    if(mins<60)return 'il y a '+mins+' min';
+    const h=Math.floor(mins/60);
+    if(h<24)return 'il y a '+h+'h';
+    const days=Math.floor(h/24);
+    if(days===1)return 'hier';
+    if(days<30)return 'il y a '+days+' j';
+    return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'});
+  }catch(e){return null;}
+}
 // ── Count-up patrimoine net (premier chargement uniquement) ──
 let _netAnimDone=false;
 function animateNetVal(end){
@@ -2274,6 +2433,7 @@ function calcAll(){
   const kpiNetEl=document.getElementById('kpi-net');
   if(kpiNetEl)kpiNetEl.style.color=net>=0?'var(--grn)':'var(--red)';
   animateNetVal(Math.round(net));
+  highlightUpdate(['kpi-brut','kpi-fin']);
   setT('kpi-brut',fE(brut));
   setT('kpi-fin',fE(financier));
   // Homecard (gauche) + PV card (droite) — tout rendu par updateHomecardDisplay
@@ -2283,7 +2443,7 @@ function calcAll(){
   window._allocData={
     // Valeur actuelle (marché)
     val:[
-      {l:'Immobilier',  v:immoVal,         c:'#dc2626'},
+      {l:'Immobilier',  v:immoVal,         c:'#0d9488'},
       {l:'Bitcoin',     v:btcEur,           c:'#f59e0b'},
       {l:'Bourse',      v:bourseTotal,      c:'#22c55e'},
       {l:'Or physique', v:orPhysTotal,      c:'#c9a961'},
@@ -2293,7 +2453,7 @@ function calcAll(){
     ].filter(a=>a.v>0),
     // Coût d'acquisition (ce que j'ai réellement investi)
     cost:[
-      {l:'Immobilier',  v:immoInvested,     c:'#dc2626'},
+      {l:'Immobilier',  v:immoInvested,     c:'#0d9488'},
       {l:'Bitcoin',     v:btcInvested,      c:'#f59e0b'},
       {l:'Bourse',      v:bourseCost,       c:'#22c55e'},
       {l:'Or',          v:orTotal(),        c:'#c9a961'},
@@ -2325,8 +2485,12 @@ function calcAll(){
   const na=document.getElementById('note-area');
   if(na&&document.activeElement!==na)na.value=D.note||'';
 
-  // BITCOIN
+  // BITCOIN — totaux
+  removeShimmer(['c-price','c-stack-display','c-valeur','c-pnl','c-perf']);
   setT('c-price',fE(D.btcPrice));
+  highlightUpdate(['c-price']);
+  const btcAgeEl=document.getElementById('btc-price-age');
+  if(btcAgeEl){const a=_fmtAge(D.btcPriceDate);btcAgeEl.textContent=a?'Mis à jour '+a:'';}
   // Stack display (BTC ou Sats selon toggle)
   _updateBtcStackDisplay(stackBtc);
   const goal=D.btcGoal||0.1;
@@ -2364,28 +2528,78 @@ function calcAll(){
 
   // PASSIF — total seulement (p-immo-list est géré par renderBiensPassif)
   setT('p-total',fE(totalPassif));
-  setH('p-colls-list',D.collPrets.map(c=>`
-    <div class="passif-item">
-      <div class="ct">${esc(c.name)} ₿</div>
-      <div class="row" style="padding-top:0"><span class="rl">Emprunte</span><span class="rv" style="color:var(--red)">${fE(c.eurBorrowed)}</span></div>
-      <div class="row"><span class="rl">Taux</span><span class="rv">${c.rate||0}%</span></div>
-      ${c.dueDate?`<div class="row"><span class="rl">Echeance</span><span class="rv">${fmtDate(c.dueDate)}</span></div>`:''}
-    </div>`).join('')||'<p style="font-size:12px;color:var(--tx3);margin-bottom:8px">Aucun</p>');
 
-  // Prets personnels display (barres de progression)
-  setH('p-prets-list',D.prets.filter(p=>+(p.montant||0)>0||+(p.restant||0)>0).map(p=>{
+  // Prêts collatéralisés — avec barre de progression temporelle
+  const today=new Date();
+  setH('p-colls-list',D.collPrets.length===0?'<div class="or-empty">Aucun prêt collatéralisé.</div>':D.collPrets.map((c,i)=>{
+    const dueDateStr=c.dueDate||'';
+    let timePct=null,daysLeft=null;
+    if(dueDateStr&&c.dateStart){
+      const start=new Date(c.dateStart),due=new Date(dueDateStr);
+      const total=due-start,elapsed=today-start;
+      timePct=Math.min(100,Math.max(0,elapsed/total*100));
+      daysLeft=Math.ceil((due-today)/86400000);
+    }else if(dueDateStr){
+      daysLeft=Math.ceil((new Date(dueDateStr)-today)/86400000);
+    }
+    return `<div class="passif-item" id="collpret-card-${i}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#fff">${esc(c.name||'Prêt')} <span style="color:var(--btc)">₿</span></div>
+          ${c.dueDate?`<div style="font-size:11px;color:rgba(255,255,255,0.4)">Échéance : ${fmtDate(c.dueDate)}${daysLeft!==null?' · '+(daysLeft>0?daysLeft+' j':'Expiré'):''}</div>`:''}
+        </div>
+        <div class="coffre-menu-wrap">
+          <button class="coffre-menu-btn" onclick="togglePassifItemMenu(this,event)">&#8943;</button>
+          <div class="coffre-menu">
+            <button onclick="toggleCollpretInline(${i})"><span class="coffre-menu-ic">&#9998;</span>Modifier</button>
+            <button class="danger" onclick="D.collPrets.splice(${i},1);save();calcAll()"><span class="coffre-menu-ic">&#10005;</span>Supprimer</button>
+          </div>
+        </div>
+      </div>
+      <div class="row" style="padding-top:0"><span class="rl">Emprunt&eacute;</span><span class="rv" style="color:var(--red)">${fE(c.eurBorrowed)}</span></div>
+      ${c.rate?`<div class="row"><span class="rl">Taux</span><span class="rv">${c.rate}%</span></div>`:''}
+      ${c.note?`<div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;font-style:italic">${esc(c.note)}</div>`:''}
+      ${timePct!==null?`<div style="margin-top:8px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+          <span style="font-size:11px;color:rgba(255,255,255,0.45)">Durée écoulée</span>
+          <span style="font-size:11px;color:${timePct>80?'var(--red)':'rgba(255,255,255,0.45)'}">${timePct.toFixed(0)}%</span>
+        </div>
+        <div class="pbg"><div class="pfill" style="width:${timePct.toFixed(1)}%;background:${timePct>80?'var(--red)':timePct>60?'var(--btc)':'var(--grn)'}"></div></div>
+      </div>`:''}
+      <div class="bien-edit-inline" id="collpret-inline-${i}"></div>
+    </div>`;
+  }).join(''));
+
+  // Prêts personnels
+  setH('p-prets-list',D.prets.filter(p=>+(p.montant||0)>0||+(p.restant||0)>0).length===0?'<div class="or-empty">Aucun prêt personnel.</div>':D.prets.filter(p=>+(p.montant||0)>0||+(p.restant||0)>0).map((p,i)=>{
     const remb=p.montant>0?Math.min(100,(1-(+(p.restant||0))/(+(p.montant||0)))*100):0;
-    return `
-    <div class="passif-item">
-      <div class="ct">${esc(p.name||'Pret')}</div>
+    return `<div class="passif-item" id="pret-card-${i}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#fff">${esc(p.name||'Prêt')}</div>
+          ${p.dateFin?`<div style="font-size:11px;color:rgba(255,255,255,0.4)">Fin : ${fmtDate(p.dateFin)}</div>`:''}
+        </div>
+        <div class="coffre-menu-wrap">
+          <button class="coffre-menu-btn" onclick="togglePassifItemMenu(this,event)">&#8943;</button>
+          <div class="coffre-menu">
+            <button onclick="togglePretInline(${i})"><span class="coffre-menu-ic">&#9998;</span>Modifier</button>
+            <button class="danger" onclick="D.prets.splice(${i},1);save();calcAll()"><span class="coffre-menu-ic">&#10005;</span>Supprimer</button>
+          </div>
+        </div>
+      </div>
       <div class="row" style="padding-top:0"><span class="rl">Reste (votre part)</span><span class="rv" style="color:var(--red)">${fE((+(p.restant||0))*(+(p.part||100)/100))}</span></div>
-      <div class="row"><span class="rl">Taux</span><span class="rv">${p.taux||0}%</span></div>
-      ${p.dateFin?`<div class="row"><span class="rl">Fin</span><span class="rv">${fmtDate(p.dateFin)}</span></div>`:''}
+      ${p.taux?`<div class="row"><span class="rl">Taux</span><span class="rv">${p.taux}%</span></div>`:''}
+      ${p.mensualite?`<div class="row"><span class="rl">Mensualité</span><span class="rv">${fE(p.mensualite)}/mois</span></div>`:''}
       <div style="margin-top:8px">
-        <div class="prow" style="margin-bottom:3px;display:flex;justify-content:space-between"><span style="color:rgba(255,255,255,0.5);font-size:11px">Remboursement credit</span><span style="color:rgba(255,255,255,0.5);font-size:11px">${remb.toFixed(1)} %</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+          <span style="font-size:11px;color:rgba(255,255,255,0.45)">Remboursement</span>
+          <span style="font-size:11px;color:rgba(255,255,255,0.45)">${remb.toFixed(1)}%</span>
+        </div>
         <div class="pbg"><div class="pfill" style="width:${remb.toFixed(1)}%"></div></div>
       </div>
-    </div>`;}).join('')||'');
+      <div class="bien-edit-inline" id="pret-inline-${i}"></div>
+    </div>`;
+  }).join(''));
 
   // Dynamic renders (display only)
   renderWalletDisplay();
@@ -2475,32 +2689,55 @@ function toggleCashInline(i, type){
 // TRANSACTIONS
 // ============================================================
 let _txFormType=null;
-function openTxForm(type){
+let _txEditIdx=null; // null = new, number = editing index
+
+function openTxForm(type, editIdx){
   _txFormType=type;
+  _txEditIdx=(editIdx!==undefined&&editIdx!==null)?+editIdx:null;
+  const tx=_txEditIdx!==null?D.transactions[_txEditIdx]:null;
+
+  // Open the tx panel if collapsed
+  const panel=document.getElementById('btc-tx-panel');
+  const caret=document.getElementById('btc-tx-caret');
+  if(panel&&panel.style.display==='none'){
+    _btcTxOpen=true;
+    panel.style.display='block';
+    if(caret)caret.style.transform='rotate(90deg)';
+  }
+
+  // Close any open menus
+  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
+  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
+
   const frm=document.getElementById('tx-form');
   frm.style.display='block';
   const colors={achat:'var(--grn)',vente:'var(--red)',frais:'var(--btc)'};
-  const labels={achat:'Nouvel achat Bitcoin ₿',vente:'Nouvelle vente Bitcoin ₿',frais:'Frais de transaction'};
+  const labels={
+    achat: tx?'Modifier l\'achat Bitcoin ₿':'Nouvel achat Bitcoin ₿',
+    vente: tx?'Modifier la vente Bitcoin ₿':'Nouvelle vente Bitcoin ₿',
+    frais: tx?'Modifier les frais':'Frais de transaction'
+  };
   frm.innerHTML=`
     <div class="ct" style="color:${colors[type]}">${labels[type]}</div>
     ${type==='frais'?`
       <div class="g2">
-        <div class="ef"><label>Satoshis</label><input type="number" inputmode="numeric" id="tx-sats" placeholder="0"></div>
-        <div class="ef"><label>Date</label><input type="date" id="tx-date"></div>
+        <div class="ef"><label>Satoshis</label><input type="number" inputmode="numeric" id="tx-sats" placeholder="0" value="${tx?tx.sats||0:''}"></div>
+        <div class="ef"><label>Date</label><input type="date" id="tx-date" value="${tx?tx.date||'':''}"></div>
       </div>
-      <div style="font-size:11px;color:var(--tx3);margin-bottom:10px">= <span id="tx-sats-preview">0.00000000</span> ₿ deduit du stack</div>
+      <div style="font-size:11px;color:var(--tx3);margin-bottom:10px">= <span id="tx-sats-preview">${tx?((tx.sats||0)/1e8).toFixed(8):'0.00000000'}</span> ₿ déduit du stack</div>
+      <div class="ef"><label>Note</label><textarea id="tx-note" placeholder="Optionnel...">${tx?esc(tx.note||''):''}</textarea></div>
     `:`
       <div class="g2">
-        <div class="ef"><label>Montant BTC</label><input type="number" inputmode="decimal" step="0.00000001" id="tx-btc" placeholder="0.00000000" oninput="updateTxPreview()"></div>
-        <div class="ef"><label>Montant</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" id="tx-eur" placeholder="0" oninput="updateTxPreview()"><span class="ef-suffix">€</span></div></div>
-        <div class="ef"><label>Date</label><input type="date" id="tx-date"></div>
-        <div class="ef"><label>Prix unit. (calcule)</label><input type="number" id="tx-pu" placeholder="Auto" readonly style="opacity:.6"></div>
+        <div class="ef"><label>Montant BTC</label><input type="number" inputmode="decimal" step="0.00000001" id="tx-btc" placeholder="0.00000000" value="${tx?tx.btc||'':''}" oninput="updateTxPreview()"></div>
+        <div class="ef"><label>Montant</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" id="tx-eur" placeholder="0" value="${tx?tx.eur||'':''}" oninput="updateTxPreview()"><span class="ef-suffix">€</span></div></div>
+        <div class="ef"><label>Date</label><input type="date" id="tx-date" value="${tx?tx.date||'':''}"></div>
+        <div class="ef"><label>Prix unit. (calculé)</label><input type="number" id="tx-pu" placeholder="Auto" readonly style="opacity:.6"></div>
       </div>
-      <div class="ef"><label>Note</label><textarea id="tx-note" placeholder="Optionnel..."></textarea></div>
+      <div class="ef"><label>Note</label><textarea id="tx-note" placeholder="Optionnel...">${tx?esc(tx.note||''):''}</textarea></div>
     `}
     <div class="btn-row">
       <button class="btn btn-sec" onclick="closeTxForm()">Annuler</button>
-      <button class="btn btn-${type==='achat'?'grn':type==='vente'?'red':'amb'}" onclick="submitTx()">Valider</button>
+      <button class="btn btn-${type==='achat'?'grn':type==='vente'?'red':'amb'}" onclick="submitTx()">${tx?'Enregistrer':'Valider'}</button>
     </div>`;
 
   if(type==='frais'){
@@ -2510,9 +2747,13 @@ function openTxForm(type){
       if(prev)prev.textContent=((+satsInput.value||0)/1e8).toFixed(8);
     });
   }
-  // Set today's date
-  const di=document.getElementById('tx-date');
-  if(di)di.value=new Date().toISOString().slice(0,10);
+  if(!tx){
+    const di=document.getElementById('tx-date');
+    if(di)di.value=new Date().toISOString().slice(0,10);
+  }
+  updateTxPreview();
+  // Scroll to form
+  setTimeout(()=>frm.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
 }
 
 function updateTxPreview(){
@@ -2525,31 +2766,42 @@ function updateTxPreview(){
 function submitTx(){
   const type=_txFormType;
   const date=document.getElementById('tx-date')?.value||'';
+  let txObj;
   if(type==='frais'){
     const sats=+(document.getElementById('tx-sats')?.value||0);
     if(!sats){alert('Renseignez un montant en satoshis.');return;}
-    D.transactions.unshift({type,sats,date,note:''});
+    const noteF=document.getElementById('tx-note')?.value||'';
+    txObj={type,sats,date,note:noteF};
   }else{
     const btc=+(document.getElementById('tx-btc')?.value||0);
     const eur=+(document.getElementById('tx-eur')?.value||0);
     const note=document.getElementById('tx-note')?.value||'';
     if(!btc){alert('Renseignez un montant en BTC.');return;}
-    D.transactions.unshift({type,btc,eur,date,note});
+    txObj={type,btc,eur,date,note};
+  }
+  if(_txEditIdx!==null&&D.transactions[_txEditIdx]){
+    D.transactions[_txEditIdx]={...D.transactions[_txEditIdx],...txObj};
+  }else{
+    D.transactions.unshift(txObj);
   }
   save();closeTxForm();calcAll();
 }
 function closeTxForm(){
   _txFormType=null;
+  _txEditIdx=null;
   const frm=document.getElementById('tx-form');
   if(frm)frm.style.display='none';
 }
 
 function renderTxHistory(){
   const txs=D.transactions;
+  const badge=document.getElementById('tx-count-badge');
+  if(badge)badge.textContent=txs.length?txs.length+' transaction'+(txs.length>1?'s':''):'';
   const colors={achat:'var(--grn)',vente:'var(--red)',frais:'var(--btc)'};
-  setH('tx-history',txs.length?`
+  const preview=txs.slice(0,5);
+  setH('tx-history',(preview.length?`
     <div class="tx-hist">
-      ${txs.map((tx,i)=>`
+      ${preview.map((tx,i)=>`
         <div class="tx-hist-row" style="position:relative">
           <div class="tx-left">
             <div class="tx-type-dot" style="background:${colors[tx.type]}"></div>
@@ -2557,8 +2809,9 @@ function renderTxHistory(){
             <span class="tx-date">${tx.date||'--'}</span>
           </div>
           <div class="tx-right">
-            <div class="tx-btc" style="color:${colors[tx.type]}">${tx.type==='frais'?((tx.sats||0)/1e8).toFixed(8)+' ₿':((tx.btc>=0?'+':'')+fB8(tx.btc*(tx.type==='vente'?-1:1)))}</div>
+            <div class="tx-btc" style="color:${colors[tx.type]}">${tx.type==='frais'?((tx.sats||0)/1e8).toFixed(8)+' ₿':(tx.type==='vente'?'-':'+')+fB8(tx.btc||0)}</div>
             ${tx.eur?`<div class="tx-eur">${fE(tx.eur)}</div>`:''}
+            ${tx.note?`<div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px;font-style:italic">${esc(tx.note)}</div>`:''}
           </div>
           <div class="coffre-menu-wrap">
             <button class="coffre-menu-btn" style="font-size:14px;width:24px;height:24px" onclick="toggleTxMenu(this,event)">&#8943;</button>
@@ -2569,15 +2822,61 @@ function renderTxHistory(){
           </div>
         </div>`).join('')}
     </div>
-  `:'<div class="or-empty">Aucune transaction enregistrée.</div>');
+    ${txs.length>5?`<div style="font-size:11px;color:rgba(255,255,255,0.35);text-align:center;padding:8px 0">L'historique complet est consultable en cliquant sur la roue cranté​e ⚙</div>`:''}`
+  :'<div class="or-empty">Aucune transaction enregistrée.</div>'));
 }
-function toggleTxMenu(btn,e){
-  e.stopPropagation();
-  const menu=btn.nextElementSibling;
-  const wasOpen=menu.classList.contains('open');
-  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
-  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
-  if(!wasOpen){menu.classList.add('open');btn.classList.add('active');}
+function toggleTxMenu(btn,e){e.stopPropagation();_openMenu(btn,btn.nextElementSibling);}
+
+// ── TX History Bottom Sheet ──
+function openTxSheet(){
+  const backdrop=document.getElementById('tx-sheet-backdrop');
+  const sheet=document.getElementById('tx-sheet');
+  if(!backdrop||!sheet)return;
+  backdrop.classList.add('open');
+  sheet.style.display='flex';
+  requestAnimationFrame(()=>sheet.classList.add('open'));
+  renderTxSheet();
+}
+function closeTxSheet(){
+  const backdrop=document.getElementById('tx-sheet-backdrop');
+  const sheet=document.getElementById('tx-sheet');
+  if(!sheet)return;
+  sheet.classList.remove('open');
+  setTimeout(()=>{
+    sheet.style.display='none';
+    if(backdrop)backdrop.classList.remove('open');
+  },300);
+}
+function renderTxSheet(){
+  const q=(document.getElementById('tx-sheet-search')?.value||'').toLowerCase();
+  const sort=document.getElementById('tx-sheet-sort')?.value||'date-desc';
+  const colors={achat:'var(--grn)',vente:'var(--red)',frais:'var(--btc)'};
+  let txs=D.transactions.map((tx,i)=>({...tx,_i:i}));
+  // Filter
+  if(q)txs=txs.filter(tx=>(tx.note||'').toLowerCase().includes(q)||(tx.date||'').includes(q)||(tx.type||'').includes(q));
+  // Sort
+  if(sort==='date-asc')txs.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  else if(sort==='date-desc')txs.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  else if(sort==='btc-desc')txs.sort((a,b)=>(+(b.btc||b.sats/1e8||0))-(+(a.btc||a.sats/1e8||0)));
+  else if(sort==='eur-desc')txs.sort((a,b)=>(+(b.eur||0))-(+(a.eur||0)));
+  const list=document.getElementById('tx-sheet-list');
+  if(!list)return;
+  if(!txs.length){list.innerHTML='<div class="or-empty">Aucune transaction trouvée.</div>';return;}
+  list.innerHTML=txs.map(tx=>{
+    const c=colors[tx.type]||'#fff';
+    const btcStr=tx.type==='frais'?((tx.sats||0)/1e8).toFixed(8)+' ₿':fB8(tx.btc||0)+' ₿';
+    return `<div class="tx-sheet-row">
+      <div class="tx-sheet-dot" style="background:${c}"></div>
+      <div class="tx-sheet-main">
+        <div class="tx-sheet-type" style="color:${c}">${tx.type.charAt(0).toUpperCase()+tx.type.slice(1)}<span class="tx-sheet-date"> · ${tx.date||'—'}</span></div>
+        ${tx.note?`<div class="tx-sheet-note">${esc(tx.note)}</div>`:''}
+      </div>
+      <div class="tx-sheet-r">
+        <div class="tx-sheet-btc" style="color:${c}">${tx.type==='vente'?'-':''}${btcStr}</div>
+        ${tx.eur?`<div class="tx-sheet-eur">${fE(tx.eur)}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function exportTxCSV(){
@@ -2637,6 +2936,9 @@ function importTxCSV(){
         // Legacy (export propre de Legacy) : Type,Date,BTC,EUR,...
         if(headers[0]==='type'&&headers[1]==='date'&&(headers[2]==='btc'||headers[2]==='bitcoin'))
           platform='legacy';
+        // Bittr : colonnes "btc amount" + "price per btc" + "total amount"
+        else if(headers.some(c=>c==='btc amount')&&headers.some(c=>c==='price per btc'))
+          platform='bittr';
         // Relai : colonne specifique "outsellamount"
         else if(headers.some(c=>c.includes('outsellamount')||c.includes('outbuycurrency')))
           platform='relai';
@@ -2658,6 +2960,12 @@ function importTxCSV(){
         // Bitstack
         else if(headers.some(c=>c.includes('bitstack')))
           platform='bitstack';
+        // Binance Transaction History : User_ID,UTC_Time,Account,Operation,Coin,Change,Remark
+        else if(headers.some(c=>c==='utc_time'||c==='utc time')&&headers.some(c=>c==='operation')&&headers.some(c=>c==='coin')&&headers.some(c=>c==='change'))
+          platform='binance_tx';
+        // Binance Trade History : time,base-asset,quote-asset,type,price,quantity,total,...
+        else if(headers.some(c=>c==='base-asset'||c==='base asset')&&headers.some(c=>c==='quote-asset'||c==='quote asset')&&headers.some(c=>c==='quantity'))
+          platform='binance_trade';
 
         let imported=0,skipped=0;
 
@@ -2678,6 +2986,28 @@ function importTxCSV(){
             else if(txType==='vente'||txType==='sell'){btc=rawBtc;eur=rawEur;type='vente';}
             else if(txType==='frais'||txType==='fee'){btc=rawSats/1e8;type='frais';}
             else{skipped++;continue;}
+
+          // ──────────── BTC TRACKER ────────────
+          // Format: ID,Type,BTC Amount,Price per BTC,Currency,Total Amount,Fees,Fees Currency,Transaction Date,...
+          }else if(platform==='bittr'){
+            const rawType=cv(row,'type').toUpperCase();
+            date=cv(row,'transaction date').slice(0,10);
+            const btcAmt=pf(cv(row,'btc amount'));
+            const totalEur=pf(cv(row,'total amount'));
+            if(rawType==='BUY'){
+              btc=btcAmt; eur=totalEur; type='achat';
+            } else if(rawType==='SELL'){
+              btc=btcAmt; eur=totalEur; type='vente';
+            } else if(rawType==='TRANSFER'||rawType==='TRANSFER_OUT'){
+              // Frais de minage saisis manuellement — réduisent le stack
+              if(btcAmt>0){
+                D.transactions.unshift({type:'frais',date,sats:Math.round(btcAmt*1e8),btc:0,eur:0,note:'Import BTC Tracker'});
+                imported++; continue;
+              }
+              skipped++; continue;
+            } else {
+              skipped++; continue;
+            }
 
           // ──────────── NEXO ────────────
           // Format: Transaction,Currency,Amount,USD Equivalent,Details,Outstanding Loan,Date / Time
@@ -2799,6 +3129,51 @@ function importTxCSV(){
               if(btc<0){btc=Math.abs(btc);type='vente';}
             }else{skipped++;continue;}
 
+          // ──────────── BINANCE Transaction History ────────────
+          // Format: User_ID,UTC_Time,Account,Operation,Coin,Change,Remark
+          }else if(platform==='binance_tx'){
+            const coin=(cv(row,'coin')||'').toUpperCase();
+            if(!coin.includes('BTC')&&!coin.includes('BITCOIN')){skipped++;continue;}
+            const operation=(cv(row,'operation')||'').toLowerCase();
+            const change=pf(cv(row,'change'));
+            date=(cv(row,'utc_time','utc time')||'').slice(0,10);
+            // Buy : change positif + operation buy/purchase
+            if((operation.includes('buy')||operation.includes('achat'))&&change>0){
+              btc=change; type='achat';
+              // Pas de montant EUR fiable dans ce format — laisser à 0
+            }else if((operation.includes('sell')||operation.includes('vente'))&&change<0){
+              btc=Math.abs(change); type='vente';
+            }else if(operation.includes('fee')||operation.includes('frais')){
+              btc=Math.abs(change); type='frais';
+            }else if((operation.includes('deposit')||operation.includes('transfer in'))&&change>0){
+              // Dépôt BTC — traité comme achat sans prix
+              btc=change; type='achat';
+            }else{skipped++;continue;}
+
+          // ──────────── BINANCE Trade History ────────────
+          // Format: time,base-asset,quote-asset,type,price,quantity,total,fee,fee-currency,...
+          }else if(platform==='binance_trade'){
+            const baseAsset=(cv(row,'base-asset','base asset')||'').toUpperCase();
+            const quoteAsset=(cv(row,'quote-asset','quote asset')||'').toUpperCase();
+            // Filtrer uniquement les paires BTC
+            if(!baseAsset.includes('BTC')&&!quoteAsset.includes('BTC')){skipped++;continue;}
+            const txType=(cv(row,'type','side')||'').toLowerCase();
+            date=(cv(row,'time','date','datetime')||'').slice(0,10);
+            const qty=pf(cv(row,'quantity','qty'));
+            const total=pf(cv(row,'total'));
+            const fee=pf(cv(row,'fee'));
+            const feeCur=(cv(row,'fee-currency','fee currency')||'').toUpperCase();
+            if(txType==='buy'||txType==='achat'){
+              // Achat de BTC contre EUR/USDT
+              btc=baseAsset.includes('BTC')?qty:fee*(feeCur.includes('BTC')?1:0);
+              eur=total; type='achat';
+              if(btc<1e-8){skipped++;continue;}
+            }else if(txType==='sell'||txType==='vente'){
+              btc=baseAsset.includes('BTC')?qty:0;
+              eur=total; type='vente';
+              if(btc<1e-8){skipped++;continue;}
+            }else{skipped++;continue;}
+
           // ──────────── GENERIQUE (autres plateformes) ────────────
           }else{
             // Detecter date
@@ -2848,15 +3223,29 @@ function importTxCSV(){
 // ============================================================
 // WALLETS
 // ============================================================
-// ── BTC unit toggle ──
-let _btcUnit='btc'; // 'btc' | 'sats'
-function setBtcUnit(u){
-  _btcUnit=u;
-  document.getElementById('btc-unit-btc').classList.toggle('active',u==='btc');
-  document.getElementById('btc-unit-sats').classList.toggle('active',u==='sats');
-  const stackBtc=stackFromTx();
-  _updateBtcStackDisplay(stackBtc);
+// ── BTC unit toggle (carte principale) ──
+let _btcUnit='btc';    // carte principale
+let _btcWalletUnit='btc'; // wallets
+
+function setBtcCardUnit(u){
+  _btcUnit=u; D.btcUnit=u; save();
+  const b=document.getElementById('cfg-card-btc');
+  const s=document.getElementById('cfg-card-sats');
+  if(b)b.classList.toggle('active',u==='btc');
+  if(s)s.classList.toggle('active',u==='sats');
+  _updateBtcStackDisplay(stackFromTx());
 }
+function setBtcWalletUnit(u){
+  _btcWalletUnit=u; D.btcWalletUnit=u; save();
+  const b=document.getElementById('cfg-wallet-btc');
+  const s=document.getElementById('cfg-wallet-sats');
+  if(b)b.classList.toggle('active',u==='btc');
+  if(s)s.classList.toggle('active',u==='sats');
+  renderWalletDisplay();
+}
+// Legacy alias — plus utilisé mais conservé pour rétrocompat
+function setBtcUnit(u){setBtcCardUnit(u);}
+function setBtcUnitPref(u){setBtcCardUnit(u);}
 function _updateBtcStackDisplay(stackBtc){
   const el=document.getElementById('c-stack-display');
   if(!el)return;
@@ -2878,31 +3267,23 @@ function toggleBtcTxPanel(){
 }
 
 // ── Tx history menu ──
-function toggleTxHistMenu(btn,e){
-  e.stopPropagation();
-  const menu=btn.nextElementSibling;
-  const wasOpen=menu.classList.contains('open');
-  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
-  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
-  if(!wasOpen){menu.classList.add('open');btn.classList.add('active');}
-}
+function toggleTxHistMenu(btn,e){e.stopPropagation();_openMenu(btn,btn.nextElementSibling);}
 
-// ── fetchBTC alias (was fetchBTC or updateBtcPrice) ──
+
+// ── Shimmer helpers ──
+function addShimmer(ids){ids.forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('shimmer');});}
+function removeShimmer(ids){ids.forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('shimmer');});}
+function highlightUpdate(ids){ids.forEach(id=>{const el=document.getElementById(id);if(!el)return;el.classList.remove('highlight-update');void el.offsetWidth;el.classList.add('highlight-update');});}
+// ── fetchBTC alias ──
 function fetchBTC(){
   const dot=document.getElementById('btc-dot');
   if(dot)dot.className='or-spot-dot';
+  addShimmer(['c-price','c-stack-display','c-valeur','c-pnl','c-perf']);
   updateBtcPrice&&updateBtcPrice();
 }
 
 
-function toggleWalletMenu(btn,e){
-  e.stopPropagation();
-  const menu=btn.nextElementSibling;
-  const wasOpen=menu.classList.contains('open');
-  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
-  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
-  if(!wasOpen){menu.classList.add('open');btn.classList.add('active');}
-}
+function toggleWalletMenu(btn,e){e.stopPropagation();_openMenu(btn,btn.nextElementSibling);}
 
 function toggleWalletInline(wi){
   document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
@@ -2942,7 +3323,7 @@ function renderWalletDisplay(){
           <div class="coffre-sub">${poids.toFixed(1)}% du stack</div>
         </div>
         <div class="coffre-r">
-          <div class="coffre-val" style="color:var(--btc)">${fB8(btc)} ₿</div>
+          <div class="coffre-val" style="color:var(--btc)">${_btcWalletUnit==='sats'?Math.round(btc*1e8).toLocaleString('fr-FR')+' sats':fB8(btc)+' ₿'}</div>
           <div class="coffre-qty">${fE(eur)}</div>
         </div>
         <div class="coffre-menu-wrap">
@@ -2998,6 +3379,8 @@ function renderBourseDisplay(){
   // Carte 1 — total
   const totalEl=document.getElementById('b-total');
   if(totalEl)totalEl.textContent=fE(totPort);
+  const btxtEl=document.getElementById('b-txt');
+  if(btxtEl){const a=_fmtAge(D.bourseFetchDate);btxtEl.textContent=a?'Mis à jour '+a:'Cliquez Actualiser';}
 
   // Carte 3 — KPIs perf
   const perfPctEl=document.getElementById('b-perf-pct');
@@ -3076,14 +3459,7 @@ function renderBourseDisplay(){
 function addCash(){D.cashAccounts.push({id:uid(),name:'Nouveau compte',value:0});save();renderCashEditors();calcAll();}
 function addLivret(){D.livrets.push({id:uid(),name:'Nouveau placement',value:0});save();renderLivretEditors();calcAll();}
 
-function toggleCashMenu(btn,e){
-  e.stopPropagation();
-  const menu=btn.nextElementSibling;
-  const wasOpen=menu.classList.contains('open');
-  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
-  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
-  if(!wasOpen){menu.classList.add('open');btn.classList.add('active');}
-}
+function toggleCashMenu(btn,e){e.stopPropagation();_openMenu(btn,btn.nextElementSibling);}
 function lpDelCash(el){const i=+el.dataset.idx;D.cashAccounts.splice(i,1);save();renderCashEditors();calcAll();}
 function lpDelLivret(el){const i=+el.dataset.idx;D.livrets.splice(i,1);save();renderLivretEditors();calcAll();}
 
@@ -3263,14 +3639,7 @@ function closeTitreForm(){
   _titreFormIdx=null;
 }
 
-function toggleTitreMenu(btn,e){
-  e.stopPropagation();
-  const menu=btn.nextElementSibling;
-  const wasOpen=menu.classList.contains('open');
-  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
-  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
-  if(!wasOpen){menu.classList.add('open');btn.classList.add('active');}
-}
+function toggleTitreMenu(btn,e){e.stopPropagation();_openMenu(btn,btn.nextElementSibling);}
 
 function toggleTitreInline(i, mode){
   // Fermer le menu 3-points
@@ -3355,6 +3724,7 @@ function setTitreSymbol(i,val){
 }
 
 async function fetchBourse(){
+  addShimmer(['b-total','b-perf-pct','b-perf-eur','b-perf-cost']);
   document.getElementById('b-dot').className='dot off';
   document.getElementById('b-txt').textContent='Chargement...';
   let ok=0,fail=0;
@@ -3396,6 +3766,9 @@ async function fetchBourse(){
   }));
 
   save();calcAll();if(typeof renderOrAll==='function')renderOrAll();
+  D.bourseFetchDate=new Date().toISOString();save();
+  removeShimmer(['b-total','b-perf-pct','b-perf-eur']);
+  highlightUpdate(['b-total','b-perf-pct','b-perf-eur']);
   document.getElementById('b-dot').className=ok>0?'dot live':'dot off';
   document.getElementById('b-txt').textContent=ok>0
     ?(ok+' cours mis a jour'+(fail?' — '+fail+' echec'+(failed.length?' ('+failed.join(', ')+')':''):''))
@@ -3557,14 +3930,7 @@ function renderBiensDisplay(){
 }
 
 // Menu contextuel (trois points) pour les biens — mirror de toggleOrCoffreMenu
-function toggleBienMenu(btn,e){
-  e.stopPropagation();
-  const menu=btn.nextElementSibling;
-  const wasOpen=menu.classList.contains('open');
-  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
-  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
-  if(!wasOpen){ menu.classList.add('open'); btn.classList.add('active'); }
-}
+function toggleBienMenu(btn,e){e.stopPropagation();_openMenu(btn,btn.nextElementSibling);}
 
 function renderBiensEditors(preselectBi){
   const sel=document.getElementById('biens-sel');
@@ -3665,7 +4031,7 @@ function renderPretsEditors(){
     <div class="passif-item">
       <div class="ibox-hd" style="margin-bottom:8px">
         <input class="name-inp" value="${esc(p.name)}" style="border-bottom-color:rgba(248,113,113,0.3)" onchange="D.prets[${i}].name=this.value;save()">
-        <button class="del-btn" onclick="D.prets.splice(${i},1);save();renderPretsEditors();calcAll()">×</button>
+        <button class="del-btn" onclick="D.prets.splice(${i},1);save();calcAll()">×</button>
       </div>
       <div class="g2">
         <div class="ef"><label>Montant</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="${p.montant||0}" onchange="D.prets[${i}].montant=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
@@ -3677,14 +4043,14 @@ function renderPretsEditors(){
     </div>`).join(''));
   // p-prets-list is now rendered by calcAll; its visibility is controlled by togglePretsEdit
 }
-function addPret(){D.prets.push({name:'Pret '+(D.prets.length+1),montant:0,restant:0,taux:0,part:100,dateFin:''});save();renderPretsEditors();calcAll();}
+function addPret(){D.prets.push({name:'Prêt '+(D.prets.length+1),montant:0,restant:0,taux:0,part:100,dateFin:'',mensualite:0,jourPrelevement:0,lastAutoDebit:''});save();calcAll();}
 
 function renderCollPretsEditors(){
   setH('collprets-saisie',D.collPrets.map((c,i)=>`
     <div class="passif-item">
       <div class="ibox-hd" style="margin-bottom:8px">
         <input class="name-inp" value="${esc(c.name)}" style="border-bottom-color:rgba(248,113,113,0.3)" onchange="D.collPrets[${i}].name=this.value;save();calcAll()">
-        <button class="del-btn" onclick="D.collPrets.splice(${i},1);save();renderCollPretsEditors();renderCollDisplay();calcAll()">×</button>
+        <button class="del-btn" onclick="D.collPrets.splice(${i},1);save();calcAll()">×</button>
       </div>
       <div class="g2">
         <div class="ef"><label>Emprunte</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="${c.eurBorrowed||0}" onchange="D.collPrets[${i}].eurBorrowed=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
@@ -3694,7 +4060,7 @@ function renderCollPretsEditors(){
       <div class="ef"><label>Note</label><textarea onchange="D.collPrets[${i}].note=this.value;save()">${esc(c.note||'')}</textarea></div>
     </div>`).join(''));
 }
-function addCollPret(){D.collPrets.push({name:'Pret collat. '+(D.collPrets.length+1),eurBorrowed:0,rate:0,dueDate:'',note:'',btcAlloc:0,liqPrice:0});save();renderCollPretsEditors();renderCollDisplay();calcAll();}
+function addCollPret(){D.collPrets.push({name:'Prêt collat. '+(D.collPrets.length+1),eurBorrowed:0,rate:0,dateStart:'',dueDate:'',note:'',btcAlloc:0,liqPrice:0});save();calcAll();}
 
 // ============================================================
 // PARAMS
@@ -3718,7 +4084,11 @@ function openSubPanel(id){
   if(id==='sub-homecard')updateHomecardSel();
   if(id==='sub-hide-amounts'){const tog=document.getElementById('toggle-hide-amounts');if(tog)tog.checked=!!D.hideAmounts;}
   if(id==='sub-fees'){const tog=document.getElementById('toggle-add-fees-pru');if(tog)tog.checked=D.addFeesToPRU===false;}
-  if(id==='sub-goal'){renderGoalSel();}
+  if(id==='sub-goal'||id==='sub-btc'){renderGoalSel();initBtcConfig();
+    const hs=document.getElementById('btc-hist-sub');
+    if(hs)hs.textContent=D.transactions.length+' transaction'+(D.transactions.length>1?'s':'');
+  }
+  if(id==='sub-tx-hist'){renderTxParamsHistory();}
   if(id==='sub-api'){const ak=document.getElementById('e-apikey');if(ak)ak.value=D.apiKey||'';const gak=document.getElementById('e-goldapikey');if(gak)gak.value=D.goldApiKey||'';}
 }
 function closeSubPanel(){
@@ -3762,25 +4132,112 @@ function renderNoteSettings(){
 }
 
 function renderGoalSel(){
-  const goals=[];
-  for(let i=1;i<=50;i++)goals.push(i/10);
-  setH('goal-sel',goals.map(g=>`<button class="goal-btn ${D.btcGoal===g?'active':''}" onclick="D.btcGoal=${g};save();calcAll();renderGoalSel()">${g.toFixed(g===Math.round(g)?0:1)} ₿</button>`).join(''));
+  const cur=D.btcGoal||0.1;
+  const presets=[0.01,0.05,0.1,0.21,0.5,1,2.1,5,10,21];
+  setH('goal-sel',`
+    <div class="ef" style="margin-bottom:12px">
+      <label>Mon objectif</label>
+      <div class="ef-suffix-wrap">
+        <input type="number" inputmode="decimal" step="0.001" min="0.001" value="${cur}"
+          oninput="D.btcGoal=+this.value||0.1;save();calcAll()">
+        <span class="ef-suffix" style="color:var(--btc)">&#x20BF;</span>
+      </div>
+    </div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Pr&eacute;s&eacute;lections</div>
+    <div class="goal-sel-presets">
+      ${presets.map(g=>`<button class="goal-btn ${D.btcGoal===g?'active':''}"
+        onclick="D.btcGoal=${g};save();calcAll();renderGoalSel()">
+        ${g<1?g.toFixed(g<0.1?3:2):g} &#x20BF;
+      </button>`).join('')}
+    </div>`);
 }
 
-function showGoalInParams(){openParams();setTimeout(()=>openSubPanel('sub-goal'),50);}
+function showGoalInParams(){openParams();setTimeout(()=>openSubPanel('sub-btc'),50);}
+
+function renderTxParamsHistory(){
+  const q=(document.getElementById('tx-params-search')?.value||'').toLowerCase();
+  const sort=document.getElementById('tx-params-sort')?.value||'date-desc';
+  const colors={achat:'var(--grn)',vente:'var(--red)',frais:'var(--btc)'};
+  let txs=D.transactions.map((tx,i)=>({...tx,_i:i}));
+  if(q)txs=txs.filter(tx=>{
+    const btcStr=tx.type==='frais'?((tx.sats||0)/1e8).toFixed(8):(tx.btc||0).toString();
+    const eurStr=(tx.eur||0).toString();
+    return (tx.note||'').toLowerCase().includes(q)||(tx.date||'').includes(q)||(tx.type||'').includes(q)||btcStr.includes(q)||eurStr.includes(q);
+  });
+  if(sort==='date-asc')txs.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  else if(sort==='date-desc')txs.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  else if(sort==='btc-desc')txs.sort((a,b)=>(+(b.btc||0))-(+(a.btc||0)));
+  else if(sort==='eur-desc')txs.sort((a,b)=>(+(b.eur||0))-(+(a.eur||0)));
+  const list=document.getElementById('tx-params-list');
+  if(!list)return;
+  if(!txs.length){list.innerHTML='<div class="or-empty">Aucune transaction trouvée.</div>';return;}
+  list.innerHTML=txs.map(tx=>{
+    const c=colors[tx.type]||'#fff';
+    const sign=tx.type==='vente'?'-':'+';
+    const btcStr=tx.type==='frais'?((tx.sats||0)/1e8).toFixed(8)+' ₿':sign+fB8(tx.btc||0)+' ₿';
+    return `<div class="tx-hist-row" style="border-bottom:1px solid rgba(255,255,255,0.06);padding:9px 0">
+      <div class="tx-left">
+        <div class="tx-type-dot" style="background:${c}"></div>
+        <div>
+          <span style="font-weight:600;font-size:12px;color:${c}">${tx.type.charAt(0).toUpperCase()+tx.type.slice(1)}</span>
+          <span class="tx-date"> · ${tx.date||'—'}</span>
+          ${tx.note?`<div style="font-size:11px;color:rgba(255,255,255,0.4);font-style:italic">${esc(tx.note)}</div>`:''}
+        </div>
+      </div>
+      <div class="tx-right">
+        <div style="font-size:13px;font-weight:700;color:${c}">${btcStr}</div>
+        ${tx.eur?`<div class="tx-eur">${fE(tx.eur)}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setBtcUnitPref(u){
+  _btcUnit=u;
+  D.btcUnit=u; save();
+  document.getElementById('btc-unit-btc').classList.toggle('active',u==='btc');
+  document.getElementById('btc-unit-sats').classList.toggle('active',u==='sats');
+  document.getElementById('cfg-unit-btc').classList.toggle('active',u==='btc');
+  document.getElementById('cfg-unit-sats').classList.toggle('active',u==='sats');
+  const stackBtc=stackFromTx();
+  _updateBtcStackDisplay(stackBtc);
+  renderWalletDisplay();
+}
+
+function applyCollsVisibility(){
+  const show=D.showColls!==false; // défaut = visible
+  ['coll-list','coll-total-btc','coll-total-eur','coll-total-emp'].forEach(id=>{
+    const el=document.getElementById(id); if(el)el.closest('.card,.w-sq-grid')&&(el.closest('.card,.w-sq-grid').style.display=show?'':'none');
+  });
+  // Cibler les deux cartes prêts directement par leur contenu parent
+  document.querySelectorAll('#pg-bitcoin .card').forEach(card=>{
+    if(card.querySelector('#coll-list')||card.querySelector('.ct')?.textContent?.includes('Synth'))
+      card.style.display=show?'':'none';
+  });
+  // Toggle du panneau synthèse
+  const synthCard=document.querySelector('#pg-bitcoin .card:has(#coll-total-btc)');
+  if(synthCard)synthCard.style.display=show?'':'none';
+}
+
+function initBtcConfig(){
+  if(D.btcUnit)_btcUnit=D.btcUnit;
+  if(D.btcWalletUnit)_btcWalletUnit=D.btcWalletUnit;
+  const cu=_btcUnit||'btc';
+  const wu=_btcWalletUnit||'btc';
+  const cb=document.getElementById('cfg-card-btc'); if(cb)cb.classList.toggle('active',cu==='btc');
+  const cs=document.getElementById('cfg-card-sats'); if(cs)cs.classList.toggle('active',cu==='sats');
+  const wb=document.getElementById('cfg-wallet-btc'); if(wb)wb.classList.toggle('active',wu==='btc');
+  const ws=document.getElementById('cfg-wallet-sats'); if(ws)ws.classList.toggle('active',wu==='sats');
+  const chk=document.getElementById('cfg-show-colls');
+  if(chk)chk.checked=D.showColls!==false;
+  applyCollsVisibility();
+}
 
 // ---- TOGGLE EDIT PANELS ----
 let _walletEditing=false; // legacy
 
 let _collEditing=false;
-function toggleCollMenu(btn,e){
-  e.stopPropagation();
-  const menu=btn.nextElementSibling;
-  const wasOpen=menu.classList.contains('open');
-  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
-  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
-  if(!wasOpen){menu.classList.add('open');btn.classList.add('active');}
-}
+function toggleCollMenu(btn,e){e.stopPropagation();_openMenu(btn,btn.nextElementSibling);}
 function toggleCollEdit(){} // legacy stub
 function addCollFromBitcoin(){addCollPret();}
 
@@ -3962,11 +4419,14 @@ function renderBiensPassif(){
     const chargesTotal=(b.charges||[]).reduce((s,ch)=>s+(+ch.value||0),0);
     const hasCredit=credit>0||empInit>0;
     let h='<div class="passif-item" id="immo-credit-card-'+bi+'">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-    h+='<div><div class="ct" style="margin-bottom:2px">'+esc(b.name||'Bien')+' 🏢</div>';
-    h+='<div style="font-size:11px;color:rgba(255,255,255,0.35)">'+(b.surface||0)+' m² · '+(b.part||100)+'%</div></div>';
-    h+='<button id="immo-credit-btn-'+bi+'" class="ct-add" onclick="toggleImmoCredit('+bi+')">Modifier</button>';
-    h+='</div>';
+    h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">';
+    h+='<div><div style="font-size:15px;font-weight:700;color:#fff">'+esc(b.name||'Bien')+' 🏢</div>';
+    h+='<div style="font-size:11px;color:rgba(255,255,255,0.4)">'+(b.surface||0)+' m² · '+(b.part||100)+'%</div></div>';
+    h+='<div class="coffre-menu-wrap">';
+    h+='<button class="coffre-menu-btn" onclick="togglePassifItemMenu(this,event)">&#8943;</button>';
+    h+='<div class="coffre-menu">';
+    h+='<button onclick="toggleImmoCredit('+bi+')"><span class="coffre-menu-ic">&#9998;</span>Modifier</button>';h+='<button class="danger" onclick="if(confirm(\'Réinitialiser le crédit de ce bien ?\')) {D.biens['+bi+'].credit=0;D.biens['+bi+'].empruntinitial=0;save();calcAll();}"><span class="coffre-menu-ic">&#10005;</span>Réinitialiser crédit</button>';
+    h+='</div></div></div>';
     if(hasCredit){
       h+='<div class="row" style="padding-top:0"><span class="rl">Reste</span><span class="rv" style="color:var(--red)">'+fE(credit*part)+'</span></div>';
       if(b.mensualite)h+='<div class="row"><span class="rl">Mensualit\u00e9</span><span class="rv">'+fE(b.mensualite)+'/mois</span></div>';
@@ -3996,45 +4456,88 @@ function _renderImmoCredit(bi){
 
 function toggleImmoCredit(bi){
   const row=document.getElementById('immo-credit-row-'+bi);
-  const btn=document.getElementById('immo-credit-btn-'+bi);
   if(!row)return;
   const isOpen=row.style.display==='block';
-  // Fermer tous
-  document.querySelectorAll('[id^="immo-credit-row-"]').forEach(el=>{el.style.display='none';});
-  document.querySelectorAll('[id^="immo-credit-btn-"]').forEach(el=>{el.textContent='Modifier';el.classList.remove('active');});
+  document.querySelectorAll('[id^="immo-credit-row-"]').forEach(el=>el.style.display='none');
+  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
+  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
   if(!isOpen){
     row.style.display='block';
-    if(btn){btn.textContent='Fermer';btn.classList.add('active');}
     _renderImmoCredit(bi);
+    const card=document.getElementById('immo-credit-card-'+bi);
+    if(card)setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
   }
 }
 
 let _cashEditing=false;
 function toggleCashEdit(){} // legacy stub — editors now always visible
 
-let _pretsEditing=false;
-function togglePretsEdit(){
-  _pretsEditing=!_pretsEditing;
-  const panel=document.getElementById('prets-edit-panel');
-  const btn=document.getElementById('prets-edit-btn');
-  if(panel)panel.style.display=_pretsEditing?'block':'none';
-  if(btn)btn.textContent=_pretsEditing?'Valider':'Modifier';
-  const pretsList=document.getElementById('p-prets-list');
-  if(pretsList)pretsList.style.display=_pretsEditing?'none':'block';
-  if(_pretsEditing)renderPretsEditors();
+// ── Passif menu helpers ──
+function togglePassifMenu(btn,e,type){e.stopPropagation();_openMenu(btn,btn.nextElementSibling);}
+function togglePassifItemMenu(btn,e){e.stopPropagation();_openMenu(btn,btn.nextElementSibling);}
+
+function togglePretInline(i){
+  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
+  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
+  const inline=document.getElementById('pret-inline-'+i);
+  if(!inline)return;
+  if(inline.classList.contains('open')){inline.classList.remove('open');return;}
+  inline.classList.add('open');
+  const p=D.prets[i];
+  if(!p)return;
+  inline.innerHTML=`<div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px">
+    <div class="ef"><label>Nom</label><input value="${esc(p.name||'')}" oninput="D.prets[${i}].name=this.value;save();calcAll()"></div>
+    <div class="g2">
+      <div class="ef"><label>Montant initial</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${p.montant||0}" oninput="D.prets[${i}].montant=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
+      <div class="ef"><label>Reste</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${p.restant||0}" oninput="D.prets[${i}].restant=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
+      <div class="ef"><label>Taux</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${p.taux||0}" oninput="D.prets[${i}].taux=+this.value;save()"><span class="ef-suffix">%</span></div></div>
+      <div class="ef"><label>Votre part</label><div class="ef-suffix-wrap"><input type="number" step="any" max="100" value="${p.part||100}" oninput="D.prets[${i}].part=+this.value;save();calcAll()"><span class="ef-suffix">%</span></div></div>
+    </div>
+    <div class="ef"><label>Date de fin</label><input type="date" value="${p.dateFin||''}" onchange="D.prets[${i}].dateFin=this.value;save();calcAll()"></div>
+    <div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:12px 0 8px">Déduction automatique</div>
+    <div class="g2">
+      <div class="ef"><label>Mensualité</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${p.mensualite||0}" oninput="D.prets[${i}].mensualite=+this.value;save()"><span class="ef-suffix">€</span></div><span class="hint">0 = désactivé</span></div>
+      <div class="ef"><label>Jour de prélèvement</label><input type="number" inputmode="numeric" min="1" max="28" value="${p.jourPrelevement||0}" oninput="D.prets[${i}].jourPrelevement=+this.value;save()"><span class="hint">ex: 10 pour le 10 du mois</span></div>
+    </div>
+    ${p.lastAutoDebit?`<div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:8px">Dernier prélèvement appliqué : ${p.lastAutoDebit}</div>`:''}
+    <button class="btn btn-dark" style="width:100%;margin-top:4px" onclick="document.getElementById('pret-inline-${i}').classList.remove('open')">Fermer</button>
+  </div>`;
+  const card=document.getElementById('pret-card-'+i);
+  if(card)setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
 }
 
-let _collPretsEditing=false;
-function toggleCollPretsEdit(){
-  _collPretsEditing=!_collPretsEditing;
-  const panel=document.getElementById('collprets-edit-panel');
-  const btn=document.getElementById('collprets-edit-btn');
-  if(panel)panel.style.display=_collPretsEditing?'block':'none';
-  if(btn)btn.textContent=_collPretsEditing?'Valider':'Modifier';
-  const collsList=document.getElementById('p-colls-list');
-  if(collsList)collsList.style.display=_collPretsEditing?'none':'block';
-  if(_collPretsEditing)renderCollPretsEditors();
+function toggleCollpretInline(i){
+  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
+  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
+  const inline=document.getElementById('collpret-inline-'+i);
+  if(!inline)return;
+  if(inline.classList.contains('open')){inline.classList.remove('open');return;}
+  inline.classList.add('open');
+  const c=D.collPrets[i];
+  if(!c)return;
+  inline.innerHTML=`<div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px">
+    <div class="ef"><label>Nom</label><input value="${esc(c.name||'')}" oninput="D.collPrets[${i}].name=this.value;save();calcAll()"></div>
+    <div class="g2">
+      <div class="ef"><label>Emprunté</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${c.eurBorrowed||0}" oninput="D.collPrets[${i}].eurBorrowed=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
+      <div class="ef"><label>Taux</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${c.rate||0}" oninput="D.collPrets[${i}].rate=+this.value;save()"><span class="ef-suffix">%</span></div></div>
+    </div>
+    <div class="g2">
+      <div class="ef"><label>Date de début</label><input type="date" value="${c.dateStart||''}" onchange="D.collPrets[${i}].dateStart=this.value;save();calcAll()"></div>
+      <div class="ef"><label>Échéance</label><input type="date" value="${c.dueDate||''}" onchange="D.collPrets[${i}].dueDate=this.value;save();calcAll()"></div>
+    </div>
+    <div class="ef"><label>Note</label><textarea oninput="D.collPrets[${i}].note=this.value;save()">${esc(c.note||'')}</textarea></div>
+    <button class="btn btn-dark" style="width:100%;margin-top:4px" onclick="document.getElementById('collpret-inline-${i}').classList.remove('open')">Fermer</button>
+  </div>`;
+  const card=document.getElementById('collpret-card-'+i);
+  if(card)setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
 }
+
+function renderPretsDisplay(){calcAll();} // alias — display rendered by calcAll
+
+let _pretsEditing=false;
+function togglePretsEdit(){} // legacy stub
+let _collPretsEditing=false;
+function toggleCollPretsEdit(){} // legacy stub
 
 // ---- HIDE AMOUNTS ----
 function applyHideAmounts(){
@@ -4369,8 +4872,9 @@ function renderOrSpot(){
   if(v>0&&D.goldSpotDate){
     try{
       const d=new Date(D.goldSpotDate);
+      const age=_fmtAge(D.goldSpotDate);
       const dd=d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'});
-      meta.textContent=(D.goldApiKey?'API GoldAPI.io · ':'Saisi manuellement · ')+dd;
+      meta.textContent=(D.goldApiKey?'API GoldAPI.io · ':'Saisi manuellement · ')+(age||dd);
     }catch(e){meta.textContent='Saisi manuellement';}
   }else{
     meta.textContent='Non défini — cliquez Modifier pour saisir';
@@ -4621,19 +5125,27 @@ function renderOrAll(){
 function toggleCoffreItem(el){ el.classList.toggle('open'); }
 
 // Menu contextuel (trois points)
-function toggleOrCoffreMenu(btn,e){
-  e.stopPropagation();
-  const menu=btn.nextElementSibling;
+function toggleOrCoffreMenu(btn,e){e.stopPropagation();_openMenu(btn,btn.nextElementSibling);}
+// ── Shared coffre-menu open helper (boosts parent card z-index) ──
+function _openMenu(btn,menu){
   const wasOpen=menu.classList.contains('open');
   document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
   document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
-  if(!wasOpen){ menu.classList.add('open'); btn.classList.add('active'); }
+  document.querySelectorAll('.card[data-menu-open]').forEach(c=>{c.style.zIndex='';delete c.dataset.menuOpen;});
+  if(!wasOpen){
+    menu.classList.add('open');
+    btn.classList.add('active');
+    const card=btn.closest('.card');
+    if(card){card.style.zIndex='10';card.dataset.menuOpen='1';}
+  }
 }
 document.addEventListener('click',e=>{
   // Ne fermer le menu que si le clic est en dehors d'un coffre-menu
   if(e.target.closest('.coffre-menu'))return;
   document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
   document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
+  // Reset z-index boost
+  document.querySelectorAll('.card[data-menu-open]').forEach(c=>{c.style.zIndex='';delete c.dataset.menuOpen;});
 });
 
 // ══════════════════════════════════════════════════════
@@ -5984,7 +6496,7 @@ async function fetchBTC(){
   try{
     const r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=eur');
     const d=await r.json();
-    D.btcPrice=d.bitcoin.eur;save();calcAll();checkDeadlines();
+    D.btcPrice=d.bitcoin.eur;D.btcPriceDate=new Date().toISOString();save();calcAll();checkDeadlines();
     const _bd=document.getElementById('btc-dot');if(_bd)_bd.className='or-spot-dot live';
     
   }catch(e){
@@ -6055,46 +6567,42 @@ function setupNotes(){
 // ── Déduction automatique des mensualités ──
 function applyMensualites(){
   const today=new Date();
-  const todayY=today.getFullYear(),todayM=today.getMonth(),todayD=today.getDate();
   let changed=false;
-  D.biens.forEach((b,bi)=>{
-    const mensualite=+(b.mensualite||0);
-    const jour=+(b.jourPrelevement||0);
+
+  function applyToItem(item){
+    const mensualite=+(item.mensualite||0);
+    const jour=+(item.jourPrelevement||0);
     if(mensualite<=0||jour<1||jour>28)return;
-    // Date du dernier prélèvement appliqué (ou date de création si vide)
-    const lastStr=b.lastAutoDebit||'';
+    const lastStr=item.lastAutoDebit||'';
     let lastDate=lastStr?new Date(lastStr):null;
-    // Construire la liste de toutes les dates de prélèvement depuis lastDate jusqu'à aujourd'hui
-    // Point de départ : mois/an du dernier prélèvement appliqué, ou 2 ans en arrière si jamais configuré
-    let cursor;
-    if(lastDate){
-      // Partir du mois suivant le dernier prélèvement appliqué
-      cursor=new Date(lastDate.getFullYear(),lastDate.getMonth()+1,jour);
-    }else{
-      // Jamais appliqué : ne rien déduire, juste enregistrer aujourd'hui comme point de départ
-      // (on ne veut pas déduire des mois passés inconnus)
+    const todayY=today.getFullYear(),todayM=today.getMonth();
+    if(!lastDate){
       const thisPrelev=new Date(todayY,todayM,jour);
-      b.lastAutoDebit=thisPrelev<=today
+      item.lastAutoDebit=thisPrelev<=today
         ?thisPrelev.toISOString().slice(0,10)
         :new Date(todayY,todayM-1,jour).toISOString().slice(0,10);
       changed=true;
       return;
     }
+    let cursor=new Date(lastDate.getFullYear(),lastDate.getMonth()+1,jour);
     let count=0;
     while(cursor<=today){
-      // Ne compter que si la date de prélèvement de ce mois est passée
       if(cursor.getDate()===jour&&cursor<=today)count++;
       cursor=new Date(cursor.getFullYear(),cursor.getMonth()+1,jour);
     }
     if(count>0){
       const deduction=mensualite*count;
-      b.credit=Math.max(0,+(b.credit||0)-deduction);
-      // Dernière date appliquée = dernier prélèvement compté
+      // biens → credit, prets → restant
+      if('credit' in item)item.credit=Math.max(0,+(item.credit||0)-deduction);
+      else if('restant' in item)item.restant=Math.max(0,+(item.restant||0)-deduction);
       const lastApplied=new Date(cursor.getFullYear(),cursor.getMonth()-1,jour);
-      b.lastAutoDebit=lastApplied.toISOString().slice(0,10);
+      item.lastAutoDebit=lastApplied.toISOString().slice(0,10);
       changed=true;
     }
-  });
+  }
+
+  D.biens.forEach(b=>applyToItem(b));
+  D.prets.forEach(p=>applyToItem(p));
   if(changed)save();
 }
 
@@ -6105,10 +6613,10 @@ function initAll(){
   renderCashEditors();
   renderLivretEditors();
   renderBiensEditors();
-  renderPretsEditors();
-  renderCollPretsEditors();
+  // prets/colls now rendered by calcAll
   setupNotes();
   calcAll();
+  initBtcConfig();
 }
 
 installPWA();
