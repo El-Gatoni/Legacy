@@ -697,6 +697,28 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
 .ibox-body{display:none}
 .ibox.open .ibox-body{display:block}
 
+
+/* PWA install banner */
+#pwa-install-banner{
+  display:none;position:fixed;top:0;left:0;right:0;
+  background:linear-gradient(135deg,rgba(99,102,241,0.95) 0%,rgba(139,92,246,0.95) 100%);
+  color:#fff;padding:10px 14px;z-index:9000;
+  display:none;align-items:center;justify-content:space-between;gap:10px;
+  box-shadow:0 4px 16px rgba(0,0,0,0.3);
+  padding-top:calc(10px + env(safe-area-inset-top));
+  font-size:13px;
+}
+#pwa-install-banner.show{display:flex;}
+.pwa-banner-text{flex:1;line-height:1.3;font-weight:500;}
+.pwa-banner-text strong{font-weight:700;display:block;font-size:14px;margin-bottom:1px;}
+.pwa-banner-text span{font-size:11px;opacity:0.85;}
+.pwa-banner-btns{display:flex;gap:6px;flex-shrink:0;}
+.pwa-banner-btn{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);
+  color:#fff;font-weight:600;padding:7px 12px;border-radius:8px;font-size:12px;
+  cursor:pointer;font-family:inherit;}
+.pwa-banner-btn.primary{background:#fff;color:#6366f1;border-color:#fff;}
+.pwa-banner-btn:active{transform:scale(0.95);}
+
 /* HINT */
 .hint{font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px}
 /* ── Shimmer (actualisation API en cours) ── */
@@ -751,17 +773,10 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
   pointer-events:auto;
 }
 
-/* 3. Formulaires inline — accordéon */
-.bien-edit-inline{
-  overflow:hidden;
-  max-height:0;
-  opacity:0;
-  transition:max-height .3s ease, opacity .2s ease;
-}
-.bien-edit-inline.open{
-  max-height:800px;
-  opacity:1;
-}
+/* 3. Formulaires inline */
+.bien-edit-inline{display:none;}
+.bien-edit-inline.open{display:block;animation:inlineFadeIn .2s ease;}
+@keyframes inlineFadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 
 
 
@@ -769,6 +784,17 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
 .tx-sheet-search{-webkit-appearance:none;outline:none;}
 .tx-sheet-search:focus{border-color:rgba(255,255,255,0.3)!important;} */
 .lp-active{outline:2px solid rgba(248,113,113,0.5);outline-offset:-2px;border-radius:14px}
+.passif-item.lp-active{border-radius:14px}
+
+/* Discrete delete X for nested items (units, charges) */
+.unit-del-x{
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.25);
+  color:rgba(248,113,113,0.85);font-size:14px;font-weight:600;
+  cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  padding:0;line-height:1;transition:background .15s,transform .1s;
+}
+.unit-del-x:active{background:rgba(248,113,113,0.25);transform:scale(0.92);}
 .lp-del-btn{
   display:none;position:absolute;top:8px;right:8px;z-index:10;
   width:26px;height:26px;border-radius:50%;
@@ -786,6 +812,18 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 </head>
 <body>
+<!-- PWA Install Banner -->
+<div id="pwa-install-banner">
+  <div class="pwa-banner-text">
+    <strong>Installer Legacy</strong>
+    <span>Acc&egrave;s rapide depuis votre &eacute;cran d&#8217;accueil</span>
+  </div>
+  <div class="pwa-banner-btns">
+    <button class="pwa-banner-btn" onclick="dismissPwaBanner()">Plus tard</button>
+    <button class="pwa-banner-btn primary" onclick="triggerPwaInstall()">Installer</button>
+  </div>
+</div>
+
 <div id="orb1"></div>
 <div id="orb2"></div>
 
@@ -1196,6 +1234,9 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
         <div class="about-acc-divider"></div>
         <div class="about-entry-title">&bull; Sauvegarde JSON</div>
         <div class="about-entry-body">Le cache navigateur peut &ecirc;tre effac&eacute; lors d&#8217;une mise &agrave; jour ou d&#8217;une r&eacute;initialisation de l&#8217;appareil. <strong style="color:#fff">Exportez r&eacute;guli&egrave;rement</strong> vos donn&eacute;es en JSON depuis Param&egrave;tres pour ne rien perdre. Ce fichier permet de restaurer l&#8217;application &agrave; l&#8217;identique sur n&#8217;importe quel appareil.</div>
+        <div class="about-acc-divider"></div>
+        <div class="about-entry-title">&bull; Supprimer une carte</div>
+        <div class="about-entry-body">Deux m&eacute;thodes &eacute;quivalentes sont disponibles pour supprimer un &eacute;l&eacute;ment (bien, wallet, titre, pr&ecirc;t, etc.)&nbsp;:<br><br><strong style="color:#fff">&bull; Menu trois points &#8943;</strong> &mdash; cliquez sur l&#8217;ic&ocirc;ne en haut &agrave; droite de la carte, puis &laquo;&nbsp;Supprimer&nbsp;&raquo;.<br><br><strong style="color:#fff">&bull; Appui long</strong> &mdash; maintenez votre doigt sur la carte pendant ~600&nbsp;ms&nbsp;: une vibration confirme l&#8217;activation, et un bouton &times; rouge appara&icirc;t pour la supprimer.</div>
       </div>
     </div>
 
@@ -1617,7 +1658,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
           </div>
         </div>
       </div>
-      <div class="w-sq-grid" id="coll-list"></div>
+      <div id="coll-list"></div>
     </div>
     <div class="card" style="margin-top:0">
       <div class="ct">Synth&egrave;se des pr&ecirc;ts</div>
@@ -1787,7 +1828,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
         <div class="coffre-menu-wrap" style="display:inline-block">
           <button class="coffre-menu-btn" onclick="togglePassifMenu(this,event,'prets')">&#8943;</button>
           <div class="coffre-menu">
-            <button onclick="addPret();renderPretsDisplay()"><span class="coffre-menu-ic">+</span>Nouveau pr&ecirc;t</button>
+            <button onclick="addPret()"><span class="coffre-menu-ic">+</span>Nouveau pr&ecirc;t</button>
           </div>
         </div>
       </div>
@@ -2542,7 +2583,7 @@ function calcAll(){
     }else if(dueDateStr){
       daysLeft=Math.ceil((new Date(dueDateStr)-today)/86400000);
     }
-    return `<div class="passif-item" id="collpret-card-${i}">
+    return `<div class="passif-item" id="collpret-card-${i}" data-lp-del="lpDelCollpret" data-idx="${i}">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
         <div>
           <div style="font-size:15px;font-weight:700;color:#fff">${esc(c.name||'Prêt')} <span style="color:var(--btc)">₿</span></div>
@@ -2571,9 +2612,10 @@ function calcAll(){
   }).join(''));
 
   // Prêts personnels
-  setH('p-prets-list',D.prets.filter(p=>+(p.montant||0)>0||+(p.restant||0)>0).length===0?'<div class="or-empty">Aucun prêt personnel.</div>':D.prets.filter(p=>+(p.montant||0)>0||+(p.restant||0)>0).map((p,i)=>{
+  // Prêts personnels — afficher tous (même montant=0 pour permettre l'édition d'un nouveau prêt)
+  setH('p-prets-list',D.prets.length===0?'<div class="or-empty">Aucun prêt personnel.</div>':D.prets.map((p,i)=>{
     const remb=p.montant>0?Math.min(100,(1-(+(p.restant||0))/(+(p.montant||0)))*100):0;
-    return `<div class="passif-item" id="pret-card-${i}">
+    return `<div class="passif-item" id="pret-card-${i}" data-lp-del="lpDelPret" data-idx="${i}">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
         <div>
           <div style="font-size:15px;font-weight:700;color:#fff">${esc(p.name||'Prêt')}</div>
@@ -2665,22 +2707,20 @@ function toggleCashInline(i, type){
   const inline=document.getElementById(id);
   if(!inline)return;
   if(inline.classList.contains('open')){inline.classList.remove('open');return;}
-  inline.classList.add('open');
   const arr=type==='cash'?D.cashAccounts:D.livrets;
   const item=arr[i];
   if(!item)return;
-  const onNameChange=type==='cash'
-    ?`D.cashAccounts[${i}].name=this.value;save();renderCashEditors();calcAll()`
-    :`D.livrets[${i}].name=this.value;save();renderLivretEditors();calcAll()`;
-  const onValChange=type==='cash'
-    ?`D.cashAccounts[${i}].value=+this.value;save();calcAll()`
-    :`D.livrets[${i}].value=+this.value;save();calcAll()`;
+  const arrName=type==='cash'?'D.cashAccounts':'D.livrets';
   inline.innerHTML=`
     <div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px">
-      <div class="ef"><label>Nom</label><input value="${esc(item.name||'')}" oninput="${onNameChange}"></div>
-      <div class="ef"><label>Solde</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${item.value||0}" oninput="${onValChange}"><span class="ef-suffix">€</span></div></div>
-      <button class="btn btn-dark" style="width:100%" onclick="document.getElementById('${id}').classList.remove('open')">Fermer</button>
+      <div class="ef"><label>Nom</label><input value="${esc(item.name||'')}" onchange="${arrName}[${i}].name=this.value;save()"></div>
+      <div class="ef"><label>Solde</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${item.value||0}" onchange="${arrName}[${i}].value=+this.value;save()"><span class="ef-suffix">€</span></div></div>
+      <div class="btn-row">
+        <button class="btn btn-sec" onclick="document.getElementById('${id}').classList.remove('open')">Annuler</button>
+        <button class="btn btn-grn" onclick="calcAll();${type==='cash'?'renderCashEditors':'renderLivretEditors'}();">Enregistrer</button>
+      </div>
     </div>`;
+  inline.classList.add('open');
   const card=document.getElementById(type+'-item-'+i);
   if(card)setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
 }
@@ -3291,20 +3331,25 @@ function toggleWalletInline(wi){
   const inline=document.getElementById('wallet-inline-'+wi);
   if(!inline)return;
   if(inline.classList.contains('open')){inline.classList.remove('open');return;}
-  inline.classList.add('open');
   const w=D.wallets[wi];
   inline.innerHTML=`
     <div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px">
-      <div class="ef"><label>Nom</label><input value="${esc(w.name||'')}" oninput="D.wallets[${wi}].name=this.value;save();renderWalletDisplay()"></div>
-      <div class="ef"><label>BTC d&eacute;tenu</label><div class="ef-suffix-wrap"><input type="number" step="0.00000001" inputmode="decimal" value="${w.btcAlloc||0}" oninput="D.wallets[${wi}].btcAlloc=+this.value;save();calcAll()"><span class="ef-suffix" style="color:var(--btc)">₿</span></div></div>
-      <button class="btn btn-dark" style="width:100%" onclick="document.getElementById('wallet-inline-${wi}').classList.remove('open')">Fermer</button>
+      <div class="ef"><label>Nom</label><input value="${esc(w.name||'')}" onchange="D.wallets[${wi}].name=this.value;save()"></div>
+      <div class="ef"><label>BTC d&eacute;tenu</label><div class="ef-suffix-wrap"><input type="number" step="0.00000001" inputmode="decimal" value="${w.btcAlloc||0}" onchange="D.wallets[${wi}].btcAlloc=+this.value;save()"><span class="ef-suffix" style="color:var(--btc)">₿</span></div></div>
+      <div class="btn-row">
+        <button class="btn btn-sec" onclick="document.getElementById('wallet-inline-${wi}').classList.remove('open')">Annuler</button>
+        <button class="btn btn-grn" onclick="calcAll();renderWalletDisplay();">Enregistrer</button>
+      </div>
     </div>`;
   const card=document.getElementById('wallet-item-'+wi);
+  inline.classList.add('open');
   if(card)setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
 }
 
 function addWallet(){D.wallets.push({id:uid(),name:'Wallet '+(D.wallets.length+1),btcAlloc:0});save();renderWalletDisplay();}
 function lpDelWallet(el){const i=+el.dataset.idx;D.wallets.splice(i,1);save();calcAll();}
+function lpDelPret(el){const i=+el.dataset.idx;D.prets.splice(i,1);save();calcAll();}
+function lpDelCollpret(el){const i=+el.dataset.idx;D.collPrets.splice(i,1);save();calcAll();}
 
 function toggleWalletEdit(){} // legacy stub
 
@@ -3348,13 +3393,16 @@ function renderCollDisplay(){
   setH('coll-list',D.collPrets.length===0
     ?'<div class="or-empty" style="font-size:12px">Ajoutez un prêt dans l\'onglet Passif.</div>'
     :D.collPrets.map((c,ci)=>{
-    const eur=(+(c.btcAlloc||0))*(D.btcPrice||0);
-    const ltv=eur>0?(+(c.eurBorrowed||0))/eur*100:0;
+    const btc=+(c.btcAlloc||0);
+    const eur=btc*(D.btcPrice||0);
+    const borrowed=+(c.eurBorrowed||0);
+    const ltv=eur>0?borrowed/eur*100:0;
+    const ltvColor=ltv>80?'var(--red)':ltv>60?'var(--btc)':'var(--grn)';
     return `<div class="coffre-item" style="margin-bottom:8px" id="coll-btc-card-${ci}">
-      <div class="coffre-hdr">
+      <div class="coffre-hdr" style="margin-bottom:10px">
         <div class="coffre-t">
           <div class="coffre-name">${esc(c.name||'Prêt')}</div>
-          <div class="coffre-sub">${fB8(+(c.btcAlloc||0))} ₿ · ${fE(eur)}</div>
+          ${c.rate?`<div class="coffre-sub">Taux ${c.rate}%</div>`:''}
         </div>
         <div class="coffre-menu-wrap">
           <button class="coffre-menu-btn" onclick="_openMenu(this,this.nextElementSibling);event.stopPropagation()">&#8943;</button>
@@ -3364,12 +3412,25 @@ function renderCollDisplay(){
           </div>
         </div>
       </div>
-      <div class="coffre-meta">
-        <div><div class="pm-l">Collat.</div><div class="pm-v" style="color:var(--btc)">${fB8(+(c.btcAlloc||0))} ₿</div></div>
-        <div><div class="pm-l">Emprunt</div><div class="pm-v" style="color:var(--red)">${fE(+(c.eurBorrowed||0))}</div></div>
-        <div><div class="pm-l">LTV</div><div class="pm-v" style="color:${ltv>80?'var(--red)':ltv>60?'var(--btc)':'var(--grn)'}">${ltv.toFixed(1)}%</div></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+        <span style="font-size:12px;color:rgba(255,255,255,0.45)">Collatéral</span>
+        <div style="text-align:right">
+          <span style="font-size:14px;font-weight:700;color:var(--btc)">${fB8(btc)} ₿</span>
+          <span style="font-size:11px;color:rgba(255,255,255,0.35);margin-left:6px">${fE(eur)}</span>
+        </div>
       </div>
-      ${c.liqPrice?`<div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px">Liq. : ${fE(c.liqPrice)}</div>`:''}
+      <div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+        <span style="font-size:12px;color:rgba(255,255,255,0.45)">Emprunt</span>
+        <span style="font-size:14px;font-weight:700;color:var(--red)">${fE(borrowed)}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0${c.liqPrice?';border-bottom:1px solid rgba(255,255,255,0.06)':''}">
+        <span style="font-size:12px;color:rgba(255,255,255,0.45)">LTV</span>
+        <span style="font-size:14px;font-weight:700;color:${ltvColor}">${eur>0?ltv.toFixed(1)+'%':'—'}</span>
+      </div>
+      ${c.liqPrice?`<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0">
+        <span style="font-size:12px;color:rgba(255,255,255,0.45)">Prix liquidation</span>
+        <span style="font-size:14px;font-weight:700;color:var(--red)">${fE(c.liqPrice)}</span>
+      </div>`:''}
       <div class="bien-edit-inline" id="coll-btc-inline-${ci}"></div>
     </div>`;
   }).join(''));
@@ -3384,14 +3445,17 @@ function toggleCollBtcInline(ci){
   inline.classList.add('open');
   const c=D.collPrets[ci];
   inline.innerHTML=`<div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px">
-    <div class="ef"><label>Nom</label><input value="${esc(c.name||'')}" oninput="D.collPrets[${ci}].name=this.value;save();renderCollDisplay()"></div>
+    <div class="ef"><label>Nom</label><input value="${esc(c.name||'')}" onchange="D.collPrets[${ci}].name=this.value;save()"></div>
     <div class="g2">
-      <div class="ef"><label>Collatéral</label><div class="ef-suffix-wrap"><input type="number" step="0.00000001" value="${c.btcAlloc||0}" oninput="D.collPrets[${ci}].btcAlloc=+this.value;save();calcAll()"><span class="ef-suffix" style="color:var(--btc)">₿</span></div></div>
-      <div class="ef"><label>Emprunt</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${c.eurBorrowed||0}" oninput="D.collPrets[${ci}].eurBorrowed=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
-      <div class="ef"><label>Taux</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${c.rate||0}" oninput="D.collPrets[${ci}].rate=+this.value;save()"><span class="ef-suffix">%</span></div></div>
-      <div class="ef"><label>Prix liq.</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${c.liqPrice||0}" oninput="D.collPrets[${ci}].liqPrice=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
+      <div class="ef"><label>Collatéral</label><div class="ef-suffix-wrap"><input type="number" step="0.00000001" value="${c.btcAlloc||0}" onchange="D.collPrets[${ci}].btcAlloc=+this.value;save()"><span class="ef-suffix" style="color:var(--btc)">₿</span></div></div>
+      <div class="ef"><label>Emprunt</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${c.eurBorrowed||0}" onchange="D.collPrets[${ci}].eurBorrowed=+this.value;save()"><span class="ef-suffix">€</span></div></div>
+      <div class="ef"><label>Taux</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${c.rate||0}" onchange="D.collPrets[${ci}].rate=+this.value;save()"><span class="ef-suffix">%</span></div></div>
+      <div class="ef"><label>Prix liq.</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${c.liqPrice||0}" onchange="D.collPrets[${ci}].liqPrice=+this.value;save()"><span class="ef-suffix">€</span></div></div>
     </div>
-    <button class="btn btn-dark" style="width:100%;margin-top:4px" onclick="document.getElementById('coll-btc-inline-${ci}').classList.remove('open')">Fermer</button>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="document.getElementById('coll-btc-inline-${ci}').classList.remove('open')">Annuler</button>
+      <button class="btn btn-grn" onclick="calcAll();renderCollDisplay();">Enregistrer</button>
+    </div>
   </div>`;
   const card=document.getElementById('coll-btc-card-'+ci);
   if(card)setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
@@ -3561,10 +3625,10 @@ function _renderTitreForm(){
     // ── Mode édition infos ──
     card.innerHTML=`
       <div class="ct">Modifier les infos</div>
-      <div class="ef"><label>Nom</label><input value="${esc(t.name||'')}" oninput="D.titres[${_titreFormIdx}].name=this.value;save();renderBourseDisplay()"></div>
+      <div class="ef"><label>Nom</label><input value="${esc(t.name||'')}" onchange="D.titres[${i}].name=this.value;save()"></div>
       <div class="g2">
         <div class="ef"><label>Symbole Yahoo</label><input type="text" value="${esc(t.symbol||'')}" oninput="setTitreSymbol(${_titreFormIdx},this.value)"></div>
-        <div class="ef"><label>Cours</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${t.cours||0}" ${t.useApi?'readonly style="opacity:.4"':''} oninput="D.titres[${_titreFormIdx}].cours=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
+        <div class="ef"><label>Cours</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${t.cours||0}" ${t.useApi?'readonly style="opacity:.4"':''} onchange="D.titres[${_titreFormIdx}].cours=+this.value;save()"><span class="ef-suffix">€</span></div></div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <label class="toggle-wrap" onclick="event.stopPropagation()">
@@ -3684,9 +3748,10 @@ function toggleTitreInline(i, mode){
     inline.dataset.mode='';
     return;
   }
-  inline.classList.add('open');
+  inline.classList.remove('open');
   inline.dataset.mode=mode;
   _renderTitreInline(i, mode);
+  inline.classList.add('open');
   const card=document.getElementById('titre-card-'+i);
   if(card)setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
 }
@@ -3699,10 +3764,10 @@ function _renderTitreInline(i, mode){
   if(mode==='edit'){
     inline.innerHTML=`
       <div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px">
-        <div class="ef"><label>Nom</label><input value="${esc(t.name||'')}" oninput="D.titres[${i}].name=this.value;save();renderBourseDisplay()"></div>
+        <div class="ef"><label>Nom</label><input value="${esc(t.name||'')}" onchange="D.titres[${i}].name=this.value;save()"></div>
         <div class="g2">
           <div class="ef"><label>Symbole Yahoo</label><input type="text" value="${esc(t.symbol||'')}" oninput="setTitreSymbol(${i},this.value)"></div>
-          <div class="ef"><label>Cours</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${t.cours||0}" ${t.useApi?'readonly style="opacity:.4"':''} oninput="D.titres[${i}].cours=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
+          <div class="ef"><label>Cours</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${t.cours||0}" ${t.useApi?'readonly style="opacity:.4"':''} onchange="D.titres[${i}].cours=+this.value;save()"><span class="ef-suffix">€</span></div></div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
           <label class="toggle-wrap" onclick="event.stopPropagation()">
@@ -3711,7 +3776,9 @@ function _renderTitreInline(i, mode){
           </label>
           <span style="font-size:12px;color:rgba(255,255,255,0.5)">Saisie manuelle du cours</span>
         </div>
-        <button class="btn btn-dark" style="width:100%" onclick="document.getElementById('titre-inline-${i}').classList.remove('open')">Fermer</button>
+        <div class="btn-row">
+          <button class="btn btn-sec" style="width:100%" onclick="document.getElementById('titre-inline-${i}').classList.remove('open')">Fermer</button>
+        </div>
       </div>`;
   } else if(mode==='achat'){
     inline.innerHTML=`
@@ -3721,9 +3788,9 @@ function _renderTitreInline(i, mode){
           <div class="ef"><label>PRU</label><div class="ef-suffix-wrap"><input type="number" id="txi-pru-${i}" min="0" step="0.001" value="${t.pru||0}"><span class="ef-suffix">€</span></div></div>
         </div>
         <div class="ef"><label>Date d'achat</label><input type="date" id="txi-date-${i}" value="${new Date().toISOString().slice(0,10)}"></div>
-        <div style="display:flex;gap:8px;margin-top:4px">
-          <button class="btn btn-grn" style="flex:1" onclick="_saveTitreAchatInline(${i})">Valider</button>
-          <button class="btn btn-dark" onclick="document.getElementById('titre-inline-${i}').classList.remove('open')">Annuler</button>
+        <div class="btn-row">
+          <button class="btn btn-sec" onclick="document.getElementById('titre-inline-${i}').classList.remove('open')">Annuler</button>
+          <button class="btn btn-grn" onclick="_saveTitreAchatInline(${i})">Enregistrer</button>
         </div>
       </div>`;
   }
@@ -3813,8 +3880,10 @@ function _reopenActiveInline(){
   if(_activeBienInline===null)return;
   const bi=_activeBienInline;
   const inline=document.getElementById('bien-inline-'+bi);
-  if(inline){inline.classList.add('open');}
-  renderBienInlineEditor(bi);
+  if(inline){
+    renderBienInlineEditor(bi);
+    inline.classList.add('open');
+  }
 }
 
 function renderBiensDisplay(){
@@ -4016,7 +4085,7 @@ function selectBien(val){
               <option value="me" ${a.who==='me'?'selected':''}>Mes appros</option>
               <option value="other" ${a.who==='other'?'selected':''}>Autre</option>
             </select>
-            <button class="del-btn" onclick="D.biens[${bi}].appros.splice(${ai},1);save();selectBien(${bi})">×</button>
+            <button class="unit-del-x" onclick="if(confirm('Supprimer cet approvisionnement ?')){D.biens[${bi}].appros.splice(${ai},1);save();selectBien(${bi})}">×</button>
           </div>
           <div class="ef" style="margin:0"><label>Montant</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="${a.amount||0}" onchange="D.biens[${bi}].appros[${ai}].amount=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
         </div>`).join('')}
@@ -4037,7 +4106,7 @@ function selectBien(val){
         <div class="ibox" style="background:rgba(255,255,255,0.03);margin-bottom:6px">
           <div class="ibox-hd">
             <input class="name-inp" style="font-size:14px" value="${esc(u.name||'')}" placeholder="ex: Appartement T2, Dependance..." onchange="D.biens[${bi}].units[${ui}].name=this.value;save();calcAll()">
-            <button class="del-btn" onclick="D.biens[${bi}].units.splice(${ui},1);save();selectBien(${bi});calcAll()">×</button>
+            <button class="del-btn" style="width:24px;height:24px;font-size:14px;flex-shrink:0" onclick="if(confirm('Supprimer cette unité ?')){D.biens[${bi}].units.splice(${ui},1);save();selectBien(${bi});calcAll()}">×</button>
           </div>
           <div class="g2">
             <div class="ef" style="margin:0"><label>Loyer mensuel</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="${u.loyer||0}" onchange="D.biens[${bi}].units[${ui}].loyer=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
@@ -4074,7 +4143,20 @@ function renderPretsEditors(){
     </div>`).join(''));
   // p-prets-list is now rendered by calcAll; its visibility is controlled by togglePretsEdit
 }
-function addPret(){D.prets.push({name:'Prêt '+(D.prets.length+1),montant:0,restant:0,taux:0,part:100,dateFin:'',mensualite:0,jourPrelevement:0,lastAutoDebit:''});save();calcAll();}
+function addPret(){
+  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
+  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
+  D.prets.push({name:'Prêt '+(D.prets.length+1),montant:0,restant:0,taux:0,part:100,dateFin:'',mensualite:0,jourPrelevement:0,lastAutoDebit:''});
+  save();calcAll();
+  const idx=D.prets.length-1;
+  setTimeout(()=>{
+    const inline=document.getElementById('pret-inline-'+idx);
+    if(inline){_activePretInline=idx;_renderPretInline(idx);inline.classList.add('open');
+      const card=document.getElementById('pret-card-'+idx);
+      if(card)card.scrollIntoView({behavior:'smooth',block:'nearest'});
+    }
+  },50);
+}
 
 function renderCollPretsEditors(){
   setH('collprets-saisie',D.collPrets.map((c,i)=>`
@@ -4091,7 +4173,23 @@ function renderCollPretsEditors(){
       <div class="ef"><label>Note</label><textarea onchange="D.collPrets[${i}].note=this.value;save()">${esc(c.note||'')}</textarea></div>
     </div>`).join(''));
 }
-function addCollPret(){D.collPrets.push({name:'Prêt collat. '+(D.collPrets.length+1),eurBorrowed:0,rate:0,dateStart:'',dueDate:'',note:'',btcAlloc:0,liqPrice:0});save();calcAll();}
+function addCollPret(){
+  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
+  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
+  D.collPrets.push({name:'Prêt collat. '+(D.collPrets.length+1),eurBorrowed:0,rate:0,dateStart:'',dueDate:'',note:'',btcAlloc:0,liqPrice:0});
+  save();calcAll();
+  const idx=D.collPrets.length-1;
+  // N'ouvrir l'inline que si on est sur la page Passif (le DOM Passif est visible)
+  if(_cur===5){
+    setTimeout(()=>{
+      const inline=document.getElementById('collpret-inline-'+idx);
+      if(inline){_activeCollInline=idx;_renderCollpretInline(idx);inline.classList.add('open');
+        const card=document.getElementById('collpret-card-'+idx);
+        if(card)card.scrollIntoView({behavior:'smooth',block:'nearest'});
+      }
+    },50);
+  }
+}
 
 // ============================================================
 // PARAMS
@@ -4170,7 +4268,7 @@ function renderGoalSel(){
       <label>Mon objectif</label>
       <div class="ef-suffix-wrap">
         <input type="number" inputmode="decimal" step="0.001" min="0.001" value="${cur}"
-          oninput="D.btcGoal=+this.value||0.1;save();calcAll()">
+          onchange="D.btcGoal=+this.value||0.1;save()">
         <span class="ef-suffix" style="color:var(--btc)">&#x20BF;</span>
       </div>
     </div>
@@ -4291,10 +4389,10 @@ function toggleBienInline(bi){
   document.querySelectorAll('.bien-edit-inline').forEach(el=>el.classList.remove('open'));
   if(!isOpen){
     _activeBienInline=bi;
-    inline.classList.add('open');
     renderBienInlineEditor(bi);
+    inline.classList.add('open');
     const card=document.getElementById('bien-card-'+bi);
-    if(card)setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+    if(card)setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
   }else{
     _activeBienInline=null;
   }
@@ -4310,7 +4408,7 @@ function renderBienInlineEditor(bi){
   const formId='bien-form-inline-'+bi;
   inline.innerHTML=`<div id="${formId}"></div>
     <div style="display:flex;gap:8px;margin-top:12px">
-      <button class="btn btn-dark" style="flex:1" onclick="toggleBienInline(${bi})">Fermer</button>
+      <button class="btn btn-grn" style="flex:1" onclick="calcAll();toggleBienInline(${bi})">Enregistrer</button>
       <button class="del-btn" style="padding:8px 14px;border-radius:10px" onclick="D.biens.splice(${bi},1);save();renderBiensDisplay();calcAll()">Supprimer</button>
     </div>`;
   // Rendre le formulaire dans le conteneur inline en adaptant selectBien
@@ -4353,7 +4451,7 @@ function buildBienForm(bi){
     // Libellé + bouton supprimer sur une ligne
     h+='<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:8px">';
     h+='<input class="name-inp" style="flex:1;min-width:0" value="'+esc(a.label||'')+'" placeholder="ex: Virement mensuel" onchange="D.biens['+bi+'].appros['+ai+'].label=this.value;save()">';
-    h+='<button class="del-btn" style="flex-shrink:0" onclick="D.biens['+bi+'].appros.splice('+ai+',1);save();selectBienInline('+bi+',\''+fid+'\');calcAll()">&#215;</button>';
+    h+='<button class="unit-del-x" onclick="D.biens['+bi+'].appros.splice('+ai+',1);save();selectBienInline('+bi+',\''+fid+'\');calcAll()" title="Supprimer">&#215;</button>';
     h+='</div>';
     // Type + Montant en grille 2 colonnes
     h+='<div class="g2">';
@@ -4372,9 +4470,9 @@ function buildBienForm(bi){
   h+='<p style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:10px;line-height:1.5">Un logement ou espace lou\u00e9 par unit\u00e9 (appartement, d\u00e9pendance, local...).</p>';
   (b.units||[]).forEach((u,ui)=>{
     h+='<div class="ibox" style="background:rgba(255,255,255,0.03);margin-bottom:10px">';
-    h+='<div class="ibox-hd" style="margin-bottom:10px">';
-    h+='<input class="name-inp" value="'+esc(u.name||'')+'" placeholder="ex: Appartement T2, D\u00e9pendance..." onchange="D.biens['+bi+'].units['+ui+'].name=this.value;save();calcAll()">';
-    h+='<button class="del-btn" onclick="D.biens[\'+bi+\'].units.splice(\'+ui+\',1);save();selectBienInline(\'+bi+\',\\\'\'+fid+\'\\\');calcAll()">&#215;</button>\';'
+    h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">';
+    h+='<input class="name-inp" style="flex:1" value="'+esc(u.name||'')+'" placeholder="ex: Appartement T2, Dépendance..." onchange="D.biens['+bi+'].units['+ui+'].name=this.value;save();calcAll()">';
+    h+='<button class="unit-del-x" onclick="D.biens['+bi+'].units.splice('+ui+',1);save();selectBienInline('+bi+',\''+fid+'\');calcAll()" title="Supprimer cette unité">&#215;</button>';
     h+='</div>';
     h+='<div class="ef" style="margin-bottom:12px"><label>Loyer mensuel</label>';
     h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(u.loyer||0)+'" onchange="D.biens['+bi+'].units['+ui+'].loyer=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">€</span></div></div>';
@@ -4383,10 +4481,10 @@ function buildBienForm(bi){
     (u.rentalCharges||[]).forEach((rc,rci)=>{
       h+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">';
       h+='<div class="g2" style="flex:1;margin:0">';
-      h+='<div class="ef" style="margin:0"><input value="'+esc(rc.name||'')+'" placeholder="ex: Taxe ordures, copropri\u00e9t\u00e9..." onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].name=this.value;save()"></div>';
-      h+='<div class="ef" style="margin:0"><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" style="text-align:right" value="'+(rc.value||0)+'" onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].value=+this.value;save();calcAll()"><span class="ef-suffix">\u20ac</span></div></div>';
+      h+='<div class="ef" style="margin:0"><input value="'+esc(rc.name||'')+'" placeholder="ex: Taxe ordures, copropriété..." onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].name=this.value;save()"></div>';
+      h+='<div class="ef" style="margin:0"><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" style="text-align:right" value="'+(rc.value||0)+'" onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].value=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>';
       h+='</div>';
-      h+='<button class="del-btn" onclick="D.biens['+bi+'].units['+ui+'].rentalCharges.splice('+rci+',1);save();selectBienInline('+bi+',\''+fid+'\');calcAll()">&#215;</button>';
+      h+='<button class="unit-del-x" onclick="D.biens['+bi+'].units['+ui+'].rentalCharges.splice('+rci+',1);save();selectBienInline('+bi+',\''+fid+'\');calcAll()" title="Supprimer cette charge">&#215;</button>';
       h+='</div>';
     });
     h+='<button class="btn-add" style="width:100%;padding:8px" onclick="(D.biens['+bi+'].units['+ui+'].rentalCharges=D.biens['+bi+'].units['+ui+'].rentalCharges||[]).push({name:\'\',value:0});save();selectBienInline('+bi+',\''+fid+'\');calcAll()">+ Charge locative</button>';
@@ -4507,63 +4605,86 @@ function toggleCashEdit(){} // legacy stub — editors now always visible
 function togglePassifMenu(btn,e,type){e.stopPropagation();_openMenu(btn,btn.nextElementSibling);}
 function togglePassifItemMenu(btn,e){e.stopPropagation();_openMenu(btn,btn.nextElementSibling);}
 
-function togglePretInline(i){
-  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
-  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
-  const inline=document.getElementById('pret-inline-'+i);
-  if(!inline)return;
-  if(inline.classList.contains('open')){inline.classList.remove('open');return;}
-  inline.classList.add('open');
-  const p=D.prets[i];
-  if(!p)return;
-  inline.innerHTML=`<div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px">
-    <div class="ef"><label>Nom</label><input value="${esc(p.name||'')}" oninput="D.prets[${i}].name=this.value;save();calcAll()"></div>
-    <div class="g2">
-      <div class="ef"><label>Montant initial</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${p.montant||0}" oninput="D.prets[${i}].montant=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
-      <div class="ef"><label>Reste</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${p.restant||0}" oninput="D.prets[${i}].restant=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
-      <div class="ef"><label>Taux</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${p.taux||0}" oninput="D.prets[${i}].taux=+this.value;save()"><span class="ef-suffix">%</span></div></div>
-      <div class="ef"><label>Votre part</label><div class="ef-suffix-wrap"><input type="number" step="any" max="100" value="${p.part||100}" oninput="D.prets[${i}].part=+this.value;save();calcAll()"><span class="ef-suffix">%</span></div></div>
-    </div>
-    <div class="ef"><label>Date de fin</label><input type="date" value="${p.dateFin||''}" onchange="D.prets[${i}].dateFin=this.value;save();calcAll()"></div>
-    <div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:12px 0 8px">Déduction automatique</div>
-    <div class="g2">
-      <div class="ef"><label>Mensualité</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${p.mensualite||0}" oninput="D.prets[${i}].mensualite=+this.value;save()"><span class="ef-suffix">€</span></div><span class="hint">0 = désactivé</span></div>
-      <div class="ef"><label>Jour de prélèvement</label><input type="number" inputmode="numeric" min="1" max="28" value="${p.jourPrelevement||0}" oninput="D.prets[${i}].jourPrelevement=+this.value;save()"><span class="hint">ex: 10 pour le 10 du mois</span></div>
-    </div>
-    ${p.lastAutoDebit?`<div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:8px">Dernier prélèvement appliqué : ${p.lastAutoDebit}</div>`:''}
-    <button class="btn btn-dark" style="width:100%;margin-top:4px" onclick="document.getElementById('pret-inline-${i}').classList.remove('open')">Fermer</button>
-  </div>`;
-  const card=document.getElementById('pret-card-'+i);
-  if(card)setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
-}
+let _activeCollInline=null;
+let _activePretInline=null;
 
 function toggleCollpretInline(i){
   document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
   document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
   const inline=document.getElementById('collpret-inline-'+i);
   if(!inline)return;
-  if(inline.classList.contains('open')){inline.classList.remove('open');return;}
+  if(inline.classList.contains('open')){inline.classList.remove('open');_activeCollInline=null;return;}
+  _activeCollInline=i;
+  _renderCollpretInline(i);
   inline.classList.add('open');
-  const c=D.collPrets[i];
-  if(!c)return;
-  inline.innerHTML=`<div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px">
-    <div class="ef"><label>Nom</label><input value="${esc(c.name||'')}" oninput="D.collPrets[${i}].name=this.value;save();calcAll()"></div>
-    <div class="g2">
-      <div class="ef"><label>Emprunté</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${c.eurBorrowed||0}" oninput="D.collPrets[${i}].eurBorrowed=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>
-      <div class="ef"><label>Taux</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${c.rate||0}" oninput="D.collPrets[${i}].rate=+this.value;save()"><span class="ef-suffix">%</span></div></div>
-    </div>
-    <div class="g2">
-      <div class="ef"><label>Date de début</label><input type="date" value="${c.dateStart||''}" onchange="D.collPrets[${i}].dateStart=this.value;save();calcAll()"></div>
-      <div class="ef"><label>Échéance</label><input type="date" value="${c.dueDate||''}" onchange="D.collPrets[${i}].dueDate=this.value;save();calcAll()"></div>
-    </div>
-    <div class="ef"><label>Note</label><textarea oninput="D.collPrets[${i}].note=this.value;save()">${esc(c.note||'')}</textarea></div>
-    <button class="btn btn-dark" style="width:100%;margin-top:4px" onclick="document.getElementById('collpret-inline-${i}').classList.remove('open')">Fermer</button>
-  </div>`;
   const card=document.getElementById('collpret-card-'+i);
   if(card)setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
 }
 
-function renderPretsDisplay(){calcAll();} // alias — display rendered by calcAll
+function _renderCollpretInline(i){
+  const inline=document.getElementById('collpret-inline-'+i);
+  if(!inline)return;
+  const c=D.collPrets[i];
+  if(!c)return;
+  inline.innerHTML=`<div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px">
+    <div class="ef"><label>Nom</label><input value="${esc(c.name||'')}" oninput="D.collPrets[${i}].name=this.value;save()"></div>
+    <div class="g2">
+      <div class="ef"><label>Emprunté</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${c.eurBorrowed||0}" oninput="D.collPrets[${i}].eurBorrowed=+this.value;save()"><span class="ef-suffix">€</span></div></div>
+      <div class="ef"><label>Taux</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${c.rate||0}" oninput="D.collPrets[${i}].rate=+this.value;save()"><span class="ef-suffix">%</span></div></div>
+    </div>
+    <div class="g2">
+      <div class="ef"><label>Date de début</label><input type="date" value="${c.dateStart||''}" onchange="D.collPrets[${i}].dateStart=this.value;save()"></div>
+      <div class="ef"><label>Échéance</label><input type="date" value="${c.dueDate||''}" onchange="D.collPrets[${i}].dueDate=this.value;save()"></div>
+    </div>
+    <div class="ef"><label>Note</label><textarea oninput="D.collPrets[${i}].note=this.value;save()">${esc(c.note||'')}</textarea></div>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="document.getElementById('collpret-inline-${i}').classList.remove('open');_activeCollInline=null">Annuler</button>
+      <button class="btn btn-grn" onclick="calcAll();document.getElementById('collpret-inline-${i}').classList.remove('open');_activeCollInline=null">Enregistrer</button>
+    </div>
+  </div>`;
+}
+
+function togglePretInline(i){
+  document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
+  document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
+  const inline=document.getElementById('pret-inline-'+i);
+  if(!inline)return;
+  if(inline.classList.contains('open')){inline.classList.remove('open');_activePretInline=null;return;}
+  _activePretInline=i;
+  _renderPretInline(i);
+  inline.classList.add('open');
+  const card=document.getElementById('pret-card-'+i);
+  if(card)setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
+
+function _renderPretInline(i){
+  const inline=document.getElementById('pret-inline-'+i);
+  if(!inline)return;
+  const p=D.prets[i];
+  if(!p)return;
+  inline.innerHTML=`<div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px">
+    <div class="ef"><label>Nom</label><input value="${esc(p.name||'')}" oninput="D.prets[${i}].name=this.value;save()"></div>
+    <div class="g2">
+      <div class="ef"><label>Montant initial</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${p.montant||0}" oninput="D.prets[${i}].montant=+this.value;save()"><span class="ef-suffix">€</span></div></div>
+      <div class="ef"><label>Reste</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${p.restant||0}" oninput="D.prets[${i}].restant=+this.value;save()"><span class="ef-suffix">€</span></div></div>
+      <div class="ef"><label>Taux</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${p.taux||0}" oninput="D.prets[${i}].taux=+this.value;save()"><span class="ef-suffix">%</span></div></div>
+      <div class="ef"><label>Votre part</label><div class="ef-suffix-wrap"><input type="number" step="any" max="100" value="${p.part||100}" oninput="D.prets[${i}].part=+this.value;save()"><span class="ef-suffix">%</span></div></div>
+    </div>
+    <div class="ef"><label>Date de fin</label><input type="date" value="${p.dateFin||''}" onchange="D.prets[${i}].dateFin=this.value;save()"></div>
+    <div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:12px 0 8px">Déduction automatique</div>
+    <div class="g2">
+      <div class="ef"><label>Mensualité</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${p.mensualite||0}" oninput="D.prets[${i}].mensualite=+this.value;save()"><span class="ef-suffix">€</span></div><span class="hint">0 = désactivé</span></div>
+      <div class="ef"><label>Jour de prélèvement</label><input type="number" inputmode="numeric" min="1" max="28" value="${p.jourPrelevement||0}" oninput="D.prets[${i}].jourPrelevement=+this.value;save()"><span class="hint">ex: 10</span></div>
+    </div>
+    ${p.lastAutoDebit?`<div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:8px">Dernier prélèvement : ${p.lastAutoDebit}</div>`:''}
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="document.getElementById('pret-inline-${i}').classList.remove('open');_activePretInline=null">Annuler</button>
+      <button class="btn btn-grn" onclick="calcAll();document.getElementById('pret-inline-${i}').classList.remove('open');_activePretInline=null">Enregistrer</button>
+    </div>
+  </div>`;
+}
+
+function renderPretsDisplay(){calcAll();}
 
 let _pretsEditing=false;
 function togglePretsEdit(){} // legacy stub
@@ -5171,8 +5292,8 @@ function _openMenu(btn,menu){
   }
 }
 document.addEventListener('click',e=>{
-  // Ne fermer le menu que si le clic est en dehors d'un coffre-menu
-  if(e.target.closest('.coffre-menu'))return;
+  // Fermer les menus sauf si on clique sur le bouton ⋯ lui-même (géré par _openMenu)
+  if(e.target.closest('.coffre-menu-btn'))return;
   document.querySelectorAll('.coffre-menu.open').forEach(m=>m.classList.remove('open'));
   document.querySelectorAll('.coffre-menu-btn.active').forEach(b=>b.classList.remove('active'));
   // Reset z-index boost
@@ -5188,7 +5309,7 @@ document.addEventListener('click',e=>{
   const DURATION=600; // ms
 
   function getItem(el){
-    return el.closest('.coffre-item[data-lp-del], .etc-card[data-lp-del]');
+    return el.closest('.coffre-item[data-lp-del], .etc-card[data-lp-del], .passif-item[data-lp-del]');
   }
 
   function showDelBtn(item){
@@ -6649,6 +6770,56 @@ function initAll(){
   calcAll();
   initBtcConfig();
 }
+
+
+// ── PWA Install Banner ──
+let _deferredPwaPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  _deferredPwaPrompt=e;
+  // Ne pas afficher si déjà rejeté ou installé
+  const dismissed=localStorage.getItem('pwa-banner-dismissed');
+  const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone;
+  if(dismissed||isStandalone)return;
+  const banner=document.getElementById('pwa-install-banner');
+  if(banner)banner.classList.add('show');
+});
+window.addEventListener('appinstalled',()=>{
+  _deferredPwaPrompt=null;
+  const banner=document.getElementById('pwa-install-banner');
+  if(banner)banner.classList.remove('show');
+  localStorage.setItem('pwa-banner-dismissed','installed');
+});
+function dismissPwaBanner(){
+  const banner=document.getElementById('pwa-install-banner');
+  if(banner)banner.classList.remove('show');
+  localStorage.setItem('pwa-banner-dismissed','later');
+}
+async function triggerPwaInstall(){
+  if(!_deferredPwaPrompt){
+    // Fallback iOS — pas de prompt natif, donner instructions
+    alert('Pour installer Legacy sur iOS :\n\n1. Appuyez sur le bouton de partage (carré avec flèche)\n2. Faites défiler et appuyez sur « Sur l\'écran d\'accueil »\n3. Confirmez');
+    return;
+  }
+  _deferredPwaPrompt.prompt();
+  const{outcome}=await _deferredPwaPrompt.userChoice;
+  _deferredPwaPrompt=null;
+  const banner=document.getElementById('pwa-install-banner');
+  if(banner)banner.classList.remove('show');
+  if(outcome==='dismissed')localStorage.setItem('pwa-banner-dismissed','later');
+}
+// iOS Safari : pas de beforeinstallprompt — afficher la bannière manuellement si non installé
+(function(){
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
+  const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone;
+  const dismissed=localStorage.getItem('pwa-banner-dismissed');
+  if(isIOS&&!isStandalone&&!dismissed){
+    setTimeout(()=>{
+      const banner=document.getElementById('pwa-install-banner');
+      if(banner)banner.classList.add('show');
+    },2000);
+  }
+})();
 
 installPWA();
 setDate();
