@@ -959,7 +959,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
           <option value="EUR">EUR €</option>
           <option value="USD">USD $</option>
           <option value="GBP">GBP £</option>
-          <option value="CHF">CHF</option>
+          <option value="CHF">CHF Fr.</option>
           <option value="CAD">CAD $</option>
         </select>
       </div>
@@ -2343,7 +2343,7 @@ let _lastNotif={};
 // ============================================================
 // FORMATTERS
 // ============================================================
-const CURRENCY_SYMBOLS={EUR:'€',USD:'$',GBP:'£',CHF:'CHF ',CAD:'CA$'};
+const CURRENCY_SYMBOLS={EUR:'€',USD:'$',GBP:'£',CHF:'Fr.',CAD:'CA$'};
 const CURRENCY_LOCALES={EUR:'fr-FR',USD:'en-US',GBP:'en-GB',CHF:'de-CH',CAD:'en-CA'};
 function _currency(){return (D&&D.currency)||'EUR';}
 function _curSym(){return CURRENCY_SYMBOLS[_currency()]||_currency();}
@@ -3876,7 +3876,7 @@ I18N.fr={
   'p_tabs_title':`Barre d'onglets`,
   'p_tabs_intro':`Choisissez l'ordre des actifs (1 = premier après Accueil). Cocher pour afficher l'actif.`,
   'p_homecard_title':`Carte Accueil`,
-  'p_homecard_intro':`Choisissez l'actif a afficher dans la deuxieme carte de l'Accueil.`,
+  'p_homecard_intro':`Choisissez la classe d'actif à afficher dans la deuxième carte de l'Accueil.`,
   'p_homecard_label':`Actif affiché`,
   'p_save_title':`Sauvegarde`,
   'p_save_intro':`Vos données sont sauvegardées automatiquement sur l'appareil. Exportez régulièrement pour ne pas les perdre.`,
@@ -4020,7 +4020,7 @@ I18N.fr={
   'hc_immo_best_sale':`Meilleur gain vente`,
   'hc_or_total_val':`Valeur totale`,
   'hc_or_pure_weight':`Poids pur total`,
-  'hc_or_best_perf':`Meilleure perf : <strong>{name}</strong> <span style="color:var(--grn)">{perf}</span>`,
+  'hc_or_best_perf':`Meilleure perf : <strong>{name}</strong> <span style="color:{color}">{perf}</span>`,
   'hc_titre_current_price':`Cours actuel`,
   'hc_titre_pos':`Pos. · {n} titres`,
   'hc_titre_not_found':`Titre non trouvé`,
@@ -4554,7 +4554,7 @@ I18N.en={
   'p_tabs_title':`Tab Bar`,
   'p_tabs_intro':`Choose the order of assets (1 = first after Home). Check the box to display the asset.`,
   'p_homecard_title':`Home Card`,
-  'p_homecard_intro':`Choose which asset to display in the second card on the Home screen.`,
+  'p_homecard_intro':`Choose which asset class to display in the second card on the Home screen.`,
   'p_homecard_label':`Displayed Asset`,
   'p_save_title':`Backup`,
   'p_save_intro':`Your data is automatically saved on your device. Export regularly to ensure you do not lose it.`,
@@ -4698,7 +4698,7 @@ I18N.en={
   'hc_immo_best_sale':`Best sale gain`,
   'hc_or_total_val':`Total value`,
   'hc_or_pure_weight':`Total pure weight`,
-  'hc_or_best_perf':`Best perf: <strong>{name}</strong> <span style="color:var(--grn)">{perf}</span>`,
+  'hc_or_best_perf':`Best perf: <strong>{name}</strong> <span style="color:{color}">{perf}</span>`,
   'hc_titre_current_price':`Current price`,
   'hc_titre_pos':`Pos. · {n} stocks`,
   'hc_titre_not_found':`Stock not found`,
@@ -6736,7 +6736,7 @@ function renderOrCoffre(){
       <div class="coffre-hdr">
         <div class="coffre-t">
           <div class="coffre-name">${esc(pos.nom||t('or_pos_default_name'))}</div>
-          <div class="coffre-sub">${unitLbl.charAt(0).toUpperCase()+unitLbl.slice(1)} · ${t('or_pos_brut_g_purity',{g:(+pos.poidsBrut||0).toLocaleString(_curLocale(),{maximumFractionDigits:4}),p:(+pos.pureteMille||0).toLocaleString(_curLocale(),{maximumFractionDigits:1})})}</div>
+          <div class="coffre-sub">${unitLbl.charAt(0).toUpperCase()+unitLbl.slice(1)} · ${t('or_pos_brut_g_purity',{g:(+pos.poidsBrut||0).toLocaleString(_curLocale(),{maximumFractionDigits:4}),p:(+pos.pureteMille||0).toLocaleString(_curLocale(),{maximumFractionDigits:1})})}${pru>0?' · PRU '+fE2(pru):''}</div>
         </div>
         <div class="coffre-r">
           <div class="coffre-val" style="color:${meltColor}">${fE(melt)}</div>
@@ -6753,10 +6753,9 @@ function renderOrCoffre(){
       </div>
       <div class="coffre-meta">
         <div><div class="pm-l">${t('or_pos_meta_pur')}</div><div class="pm-v">${pur.toLocaleString(_curLocale(),{maximumFractionDigits:3})} g</div></div>
-        <div><div class="pm-l">${qty>1?t('or_pos_meta_pru_per',{unit:unitLbl.slice(0,3)}):t('or_pos_meta_pru')}</div><div class="pm-v">${fE2(pru)}</div></div>
+        <div><div class="pm-l">${t('b_kpi_pnl')}</div><div class="pm-v" style="color:${cost>0?(melt>=cost?'var(--grn)':'var(--red)'):'#fff'}">${cost>0?(melt>=cost?'+':'')+fE(melt-cost):'—'}</div></div>
         <div><div class="pm-l">${t('or_pos_meta_prime')}</div><div class="pm-v">${primeAvg===null?'—':fPct(primeAvg)}</div></div>
       </div>
-      ${cost>0?`<div style="font-size:12px;margin-top:6px;color:${melt>=cost?'var(--grn)':'var(--red)'};font-weight:600">${t('b_pnl_line',{val:(melt>=cost?'+':'')+fE(melt-cost)})}</div>`:''}
       ${txs.length>0?`
       <div class="coffre-toggle" onclick="toggleCoffreItem(this.parentNode)">
         <span>${t('or_pos_history_btn',{n:txs.length})}</span>
@@ -6823,7 +6822,7 @@ function renderOrPapier(){
       <div class="etc-top">
         <div style="min-width:0;flex:1">
           <div class="etc-name">${esc(e.name||t('or_etc_default_name'))}</div>
-          <div class="etc-tkr">${esc(e.ticker||'—')} · ${esc(e.isin||'—')} · TER ${(+e.ter||0).toFixed(2)}%</div>
+          <div class="etc-tkr">${esc(e.ticker||'—')} · ${esc(e.isin||'—')} · TER ${(+e.ter||0).toFixed(2)}%${cost>0?' · PRU '+fE2(+e.pru||0):''}</div>
         </div>
         <div>
           <div class="etc-val">${fE(val)}</div>
@@ -6837,10 +6836,9 @@ function renderOrPapier(){
           </div>
         </div>
       </div>
-      <div class="etc-grid">
-        <div><div class="l">${t('or_etc_grid_pru')}</div><div class="v">${fE2(+e.pru||0)}</div></div>
+      <div class="etc-grid" style="grid-template-columns:1fr 1fr 1fr">
         <div><div class="l">${t('or_etc_grid_cours')}</div><div class="v">${fE2(+e.cours||0)}</div></div>
-        <div><div class="l">${t('or_etc_grid_pv')}</div><div class="v ${pv>=0?'pv-pos':'pv-neg'}">${(pv>=0?'+':'')}${fE(pv)}</div></div>
+        <div><div class="l">${t('or_etc_grid_pv')}</div><div class="v ${pv>=0?'pv-pos':'pv-neg'}">${cost>0?(pv>=0?'+':'')+fE(pv):'—'}</div></div>
         <div><div class="l">${t('or_etc_grid_weight')}</div><div class="v">${weight.toFixed(1)}%</div></div>
       </div>
     </div>`;
@@ -7748,16 +7746,16 @@ function deleteOrEtc(etcId){
 function updateHomecardSel(){
   const sel=document.getElementById('homecard-select');
   if(!sel)return;
-  // Garder les 4 options statiques, retirer les anciennes dynamiques
-  while(sel.options.length>4)sel.remove(4);
-  D.titres.forEach((t,i)=>{
-    const opt=document.createElement('option');
-    opt.value='titre_'+i;
-    opt.textContent='Titre : '+(t.name||t.symbol||'Titre '+(i+1));
-    sel.appendChild(opt);
+  // Apply i18n to static options
+  sel.querySelectorAll('option[data-i18n]').forEach(o=>{
+    const key=o.getAttribute('data-i18n');
+    if(key)o.textContent=t(key);
   });
+  // Sync selected value
   sel.value=D.homeCard||'btc';
-  if(!sel.value){D.homeCard='btc';sel.value='btc';}
+  if(!sel.value||!['btc','bourse','immo','or'].includes(sel.value)){
+    D.homeCard='btc';sel.value='btc';
+  }
 }
 
 // ---- DATE FORMAT DD/MM/YYYY ----
@@ -7980,7 +7978,7 @@ function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,imm
           <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:6px;margin-top:2px">
             ${sqLabel(t('hc_or_pure_weight'))}
             <div style="font-size:14px;font-weight:700;color:#fff">${orPur.toLocaleString(_curLocale(),{maximumFractionDigits:3})} g</div>
-            <div style="font-size:11px;color:var(--tx3);margin-top:2px">${t('hc_or_best_perf',{name:bestName,perf:perfStr})}</div>
+            <div style="font-size:11px;color:var(--tx3);margin-top:2px">${t('hc_or_best_perf',{name:bestName,perf:perfStr,color:bestPerf>=0?'var(--grn)':'var(--red)'})}</div>
           </div>
         </div>
       </div>`;
