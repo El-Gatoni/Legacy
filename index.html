@@ -124,6 +124,9 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .chart-evo-kpi{background:var(--inner);border-radius:10px;padding:7px 9px;min-width:0;overflow:hidden}
 .chart-evo-kpi-l{font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:2px}
 .chart-evo-kpi-v{font-size:13px;font-weight:700;color:#fff;overflow:hidden;word-break:break-word;min-width:0}
+.chart-evo-period-row{display:flex;gap:4px;margin-top:10px;justify-content:center}
+.evo-period-btn{background:transparent;border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.45);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.evo-period-btn.active,.evo-period-btn:hover{background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.3)}
 .chart-evo-legend{display:flex;gap:14px;margin-top:10px}
 .chart-evo-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,0.5)}
 .chart-evo-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
@@ -263,7 +266,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .bien-sq-lbl{font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:2px}
 .bien-sq-val{font-size:13px;font-weight:700;color:#fff;overflow:hidden;word-break:break-word;min-width:0}
 .bien-sq-sep{height:1px;background:rgba(255,255,255,0.07);margin:8px 0}
-.bien-edit-inline{display:none;border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px}
+.bien-edit-inline{display:none;}
 
 /* Titre square cards (2-col grid) */
 .titre-sq-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;min-width:0}
@@ -291,6 +294,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .sec-hd-t{font-size:14px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.05em}
 .ef{display:flex;flex-direction:column;gap:3px;margin-bottom:9px}
 .ef label{font-size:13px;color:rgba(255,255,255,0.55);font-weight:500}
+.ef input[type="date"],.ef input[type="text"],.ef input[type="number"]{height:36px;box-sizing:border-box;}
 .ef input,.ef select,.ef textarea{
   padding:9px 11px;border:1px solid rgba(255,255,255,0.14);
   border-radius:10px;background:rgba(255,255,255,0.06);
@@ -312,7 +316,7 @@ select option{background:#1e1c2e;color:#fff}
 .name-inp{font-weight:700;font-size:16px;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.15);border-radius:0;padding:2px 0;flex:1;font-family:inherit;color:var(--tx)}
 .name-inp:focus{outline:none;border-bottom-color:rgba(255,255,255,0.4)}
 .del-btn{background:none;border:none;cursor:pointer;color:var(--red);font-size:18px;padding:0 4px;line-height:1;flex-shrink:0}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:7px;min-width:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:7px;min-width:0;align-items:end}
 .btn-row{display:flex;gap:7px;margin-top:8px}
 .btn{flex:1;padding:10px;border:none;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
 .btn-dark{background:rgba(255,255,255,0.1);color:#fff}
@@ -676,7 +680,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
 .sub-total .v{font-weight:700;color:#fff}
 
 /* G3 grid */
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;min-width:0}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;min-width:0;align-items:end}
 
 /* IBOX header components v7 */
 .ibox-hd-t{font-size:13px;font-weight:600;color:#fff}
@@ -765,7 +769,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
 
 /* 3. Formulaires inline */
 .bien-edit-inline{display:none;}
-.bien-edit-inline.open{display:block;animation:inlineFadeIn .2s ease;}
+.bien-edit-inline.open{display:block;animation:inlineFadeIn .2s ease;border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px;}
 @keyframes inlineFadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 
 
@@ -947,6 +951,29 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
         </div>
       </div>
       <div class="pmenu-sep"></div>
+      <div class="pmenu-item" style="padding:10px 0">
+        <div class="pmenu-left" style="gap:10px">
+          <div><div class="pmenu-title" data-i18n="p_cfg_currency_title">Devise</div><div class="pmenu-sub" data-i18n="p_cfg_currency_sub">Symbole utilisé dans l'app</div></div>
+        </div>
+        <select id="cfg-currency-sel" onchange="setCurrency(this.value)" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:8px;padding:5px 8px;font-size:13px;font-family:inherit;cursor:pointer">
+          <option value="EUR">EUR €</option>
+          <option value="USD">USD $</option>
+          <option value="GBP">GBP £</option>
+          <option value="CHF">CHF</option>
+          <option value="CAD">CAD $</option>
+        </select>
+      </div>
+      <div class="pmenu-sep"></div>
+      <div class="pmenu-item" style="padding:10px 0">
+        <div class="pmenu-left" style="gap:10px">
+          <div><div class="pmenu-title" data-i18n="p_cfg_area_unit">Unité de surface</div></div>
+        </div>
+        <select id="cfg-area-sel" onchange="setAreaUnit(this.value)" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:8px;padding:5px 8px;font-size:13px;font-family:inherit;cursor:pointer">
+          <option value="m2">m²</option>
+          <option value="ft2">ft²</option>
+        </select>
+      </div>
+      <div class="pmenu-sep"></div>
       <div class="pmenu-item" style="padding:10px 0" onclick="openSubPanel('sub-pin')">
         <div class="pmenu-left" style="gap:10px">
           <div><div class="pmenu-title" data-i18n="p_cfg_pin_title">Code PIN</div><div class="pmenu-sub" id="pin-config-sub" data-i18n="p_cfg_pin_sub">Protéger l&#8217;accès</div></div>
@@ -1056,7 +1083,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     <div class="sub-back" onclick="closeSubPanel()" data-i18n="p_back_to_params">&#8249; Parametres</div>
     <div class="sub-title" data-i18n="p_save_title">Sauvegarde</div>
     <div class="card">
-      <p style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:12px;line-height:1.6" data-i18n="p_save_intro">Vos donnees sont sauvegardees automatiquement dans le navigateur. Exportez regulierement pour ne pas les perdre.</p>
+      <p style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:12px;line-height:1.6" data-i18n="p_save_intro">Vos données sont sauvegardées automatiquement sur l'appareil. Exportez régulièrement pour ne pas les perdre.</p>
       <button class="btn btn-grn" style="margin-bottom:8px" onclick="exportJSON()" data-i18n="p_save_export">Exporter JSON</button>
       <button class="btn btn-sec" onclick="importJSON()" data-i18n="p_save_import">Importer JSON</button>
     </div>
@@ -1266,7 +1293,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
         </div>
         <div class="about-acc-divider"></div>
         <div class="about-entry-title" data-i18n="about_app_private_title">&bull; Suivi de patrimoine priv&eacute;</div>
-        <div class="about-entry-body" data-i18n-html="about_app_private_body_html">Legacy est une application de suivi de patrimoine personnel. Toutes vos donn&eacute;es sont stock&eacute;es <strong style="color:#fff">uniquement dans le cache de votre navigateur</strong>, sur votre appareil. Aucun compte, aucun serveur, aucune publicit&eacute;.</div>
+        <div class="about-entry-body" data-i18n-html="about_app_private_body_html">Legacy est une application de suivi de patrimoine personnel. Toutes vos données sont stockées <strong style="color:#fff">uniquement sur votre appareil</strong>. Aucun compte, aucun serveur, aucune publicité.</div>
         <div class="about-acc-divider"></div>
         <div class="about-entry-title" data-i18n="about_app_push_title">&bull; Notifications push</div>
         <div class="about-entry-body" data-i18n-html="about_app_push_body_html">Les notifications push sont absentes de l&#8217;application. Legacy prot&#232;ge vos donn&#233;es en les conservant <strong style="color:#fff">exclusivement sur votre appareil</strong> &#8212; aucun compte, aucun serveur, aucune transmission externe. Les notifications push en arri&#232;re-plan n&#233;cessitent un serveur externe qui conna&#238;t vos donn&#233;es pour savoir quand vous alerter. Ce fonctionnement est <strong style="color:#fff">incompatible avec la philosophie de Legacy</strong>.</div>
@@ -1275,7 +1302,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
         <div class="about-entry-body" data-i18n-html="about_app_pin_body_html">Le code PIN s&#8217;affiche &agrave; chaque ouverture de l&#8217;application. Il est con&#231;u pour <strong style="color:#fff">prot&#233;ger le contenu de Legacy des regards involontaires</strong> &#8212; par exemple si quelqu'un clique sur l&#8217;ic&#244;ne par m&#233;garde. Disponible en 4 ou 6 chiffres. Il ne chiffre pas vos donn&#233;es et ne remplace pas une protection syst&#232;me.<br><br><strong style="color:#fff">&#9888;&#65039; En cas d&#8217;oubli</strong>, la seule option est de r&#233;initialiser compl&#232;tement l&#8217;application depuis l&#8217;&#233;cran PIN. <strong style="color:#fff">Toutes vos donn&#233;es seront effac&#233;es.</strong> Exportez r&#233;guli&#232;rement votre sauvegarde JSON depuis Param&#232;tres pour pouvoir les restaurer. Activez-le dans <strong style="color:#fff">Param&#232;tres &#8594; Configuration &#8594; Code PIN</strong>.</div>
         <div class="about-acc-divider"></div>
         <div class="about-entry-title" data-i18n="about_app_backup_title">&bull; Sauvegarde JSON</div>
-        <div class="about-entry-body" data-i18n-html="about_app_backup_body_html">Le cache navigateur peut &ecirc;tre effac&eacute; lors d&#8217;une mise &agrave; jour ou d&#8217;une r&eacute;initialisation de l&#8217;appareil. <strong style="color:#fff">Exportez r&eacute;guli&egrave;rement</strong> vos donn&eacute;es en JSON depuis Param&egrave;tres pour ne rien perdre. Ce fichier permet de restaurer l&#8217;application &agrave; l&#8217;identique sur n&#8217;importe quel appareil.<br><br>Une <strong style="color:var(--red)">pastille rouge</strong> appara&icirc;t sur la roue crant&eacute;e &#9881; lorsque des modifications ont &eacute;t&eacute; effectu&eacute;es et que la derni&egrave;re sauvegarde JSON remonte &agrave; plus de 45 jours.</div>
+        <div class="about-entry-body" data-i18n-html="about_app_backup_body_html">Les données locales peuvent être perdues lors d'une réinitialisation de l'appareil. <strong style="color:#fff">Exportez régulièrement</strong> vos données en JSON depuis Paramètres pour ne rien perdre. Ce fichier permet de restaurer l'application à l'identique sur n'importe quel appareil.<br><br>Une <strong style="color:var(--red)">pastille rouge</strong> apparaît sur la roue crantée ⚙ lorsque des modifications ont été effectuées et que la dernière sauvegarde JSON remonte à plus de 45 jours.</div>
         <div class="about-acc-divider"></div>
         <div class="about-entry-title" data-i18n="about_app_delete_title">&bull; Supprimer une carte</div>
         <div class="about-entry-body" data-i18n-html="about_app_delete_body_html">Deux m&eacute;thodes &eacute;quivalentes sont disponibles pour supprimer un &eacute;l&eacute;ment (bien, wallet, titre, pr&ecirc;t, etc.)&nbsp;:<br><br><strong style="color:#fff">&bull; Menu trois points &#8943;</strong> &mdash; cliquez sur l&#8217;ic&ocirc;ne en haut &agrave; droite de la carte, puis &laquo;&nbsp;Supprimer&nbsp;&raquo;.<br><br><strong style="color:#fff">&bull; Appui long</strong> &mdash; maintenez votre doigt sur la carte pendant ~600&nbsp;ms&nbsp;: une vibration confirme l&#8217;activation, et un bouton &times; rouge appara&icirc;t pour la supprimer.</div>
@@ -1572,8 +1599,15 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
       </div>
       <div class="chart-evo-kpis" id="evo-kpis">
         <div class="chart-evo-kpi"><div class="chart-evo-kpi-l" data-i18n="home_evo_var">Variation</div><div class="chart-evo-kpi-v" id="evo-var">--</div></div>
-        <div class="chart-evo-kpi"><div class="chart-evo-kpi-l" data-i18n="home_evo_period">Progression</div><div class="chart-evo-kpi-v" id="evo-pct">--</div></div>
+        <div class="chart-evo-kpi"><div class="chart-evo-kpi-l" data-i18n="home_evo_perf">Perf.</div><div class="chart-evo-kpi-v" id="evo-pct">--</div></div>
         <div class="chart-evo-kpi"><div class="chart-evo-kpi-l" data-i18n="home_evo_avg">Moy. mensuelle</div><div class="chart-evo-kpi-v" id="evo-avg">--</div></div>
+      </div>
+      <div class="chart-evo-period-row" id="evo-period-row">
+        <button class="evo-period-btn" onclick="evoPeriod('1m',this)" data-i18n="home_evo_1m">1M</button>
+        <button class="evo-period-btn" onclick="evoPeriod('6m',this)" data-i18n="home_evo_6m">6M</button>
+        <button class="evo-period-btn" onclick="evoPeriod('ytd',this)" data-i18n="home_evo_ytd">YTD</button>
+        <button class="evo-period-btn" onclick="evoPeriod('1y',this)" data-i18n="home_evo_1y">1A</button>
+        <button class="evo-period-btn active" onclick="evoPeriod('max',this)" data-i18n="home_evo_max">Max</button>
       </div>
       <div class="chart-evo-legend" id="evo-legend">
         <div class="chart-evo-legend-item"><div class="chart-evo-dot" style="background:var(--grn)"></div><span data-i18n="home_evo_legend_net">Patrimoine net</span></div>
@@ -1837,7 +1871,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
   <!-- PAGE 4: CASH -->
   <div class="page" id="pg-cash">
     <div class="hdr">
-      <div><h1 data-i18n-html="cash_h1">Cash <span style="color:#4fc3f7">€</span></h1></div>
+      <div><h1 data-i18n="cash_h1">Cash</h1></div>
       <div class="gear-btn" onclick="openParams()">
         <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       </div>
@@ -1958,7 +1992,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
         <div class="or-spot-txt">
           <div class="or-spot-lbl" data-i18n="or_spot_label">Prix spot or</div>
           <div class="or-spot-val">
-            <span id="or-spot-display">-- €/g</span>
+            <span id="or-spot-display">-- <span id="or-spot-unit"></span></span>
             <input type="number" step="0.01" min="0" id="or-spot-input" style="display:none">
           </div>
           <div class="or-spot-meta" id="or-spot-meta" data-i18n="or_spot_undefined">Non défini</div>
@@ -2123,6 +2157,10 @@ const EMPTY={
   apiKey:'',
   note:'',
   notePages:{accueil:true,bitcoin:false,bourse:false,immo:false,cash:false,passif:false,or:false},
+  currency:'EUR',
+  areaUnit:'m2',
+  fxRates:{},
+  fxRatesDate:'',
   btcGoal:1,
   hideAmounts:false,
   homeCard:'btc',
@@ -2171,7 +2209,11 @@ let D=(()=>{
       if(!p.btcPrice)p.btcPrice=0;
       if(!p.apiKey)p.apiKey='';
       if(!p.note)p.note=t('goal_default_note');
-      if(!p.notePages)p.notePages={accueil:true,bitcoin:false,bourse:false,immo:false,cash:false,passif:false,or:false}; if(!p.notePages.cash)p.notePages.cash=false; if(p.notePages.or===undefined)p.notePages.or=false;
+      if(!p.notePages)p.notePages={accueil:true,bitcoin:false,bourse:false,immo:false,cash:false,passif:false,or:false};
+      if(!p.currency)p.currency='EUR';
+      if(!p.fxRates)p.fxRates={};
+      if(!p.fxRatesDate===undefined)p.fxRatesDate='';
+      if(!p.areaUnit)p.areaUnit='m2'; if(!p.notePages.cash)p.notePages.cash=false; if(p.notePages.or===undefined)p.notePages.or=false;
       if(!p.btcGoal)p.btcGoal=0.1;
       if(!p.lang){
         // Détecter la langue du navigateur au premier lancement
@@ -2213,18 +2255,28 @@ let D=(()=>{
 // ═══  OR PRESETS — Pièces & Lingots  ═══════════════════════════
 // ═══════════════════════════════════════════════════════════════
 const OR_PRESETS_PIECES=[
+  // Europe
   {nom:'20 Francs Napoléon',poids:6.4516,purete:900,typePreset:'piece'},
   {nom:'Demi-Napoléon (10 Francs)',poids:3.2258,purete:900,typePreset:'piece'},
   {nom:'20 Francs Suisse (Vreneli)',poids:6.4516,purete:900,typePreset:'piece'},
+  {nom:'20 Marks Allemands',poids:7.9650,purete:900,typePreset:'piece'},
   {nom:'Souverain Britannique',poids:7.9881,purete:917,typePreset:'piece'},
+  {nom:'Philharmonique 1 once',poids:31.1035,purete:999.9,typePreset:'piece'},
+  {nom:'Philharmonique 1/2 once',poids:15.55175,purete:999.9,typePreset:'piece'},
+  {nom:'Philharmonique 1/4 once',poids:7.77588,purete:999.9,typePreset:'piece'},
+  // Amériques
   {nom:'Krugerrand 1 once',poids:33.930,purete:916.7,typePreset:'piece'},
   {nom:'Krugerrand 1/2 once',poids:16.965,purete:916.7,typePreset:'piece'},
   {nom:'Krugerrand 1/4 once',poids:8.4825,purete:916.7,typePreset:'piece'},
   {nom:'Maple Leaf 1 once',poids:31.1035,purete:999.9,typePreset:'piece'},
   {nom:'Maple Leaf 1/2 once',poids:15.55175,purete:999.9,typePreset:'piece'},
   {nom:'American Gold Eagle 1 once',poids:33.930,purete:916.7,typePreset:'piece'},
-  {nom:'Philharmonique 1 once',poids:31.1035,purete:999.9,typePreset:'piece'},
-  {nom:'Philharmonique 1/2 once',poids:15.55175,purete:999.9,typePreset:'piece'}
+  {nom:'American Buffalo 1 once',poids:31.1035,purete:999.9,typePreset:'piece'},
+  // Asie-Pacifique
+  {nom:'Kangaroo / Nugget 1 once',poids:31.1035,purete:999.9,typePreset:'piece'},
+  {nom:'Kangaroo / Nugget 1/2 once',poids:15.55175,purete:999.9,typePreset:'piece'},
+  {nom:'Panda Chinois 30 g',poids:30,purete:999.9,typePreset:'piece'},
+  {nom:'Panda Chinois 15 g',poids:15,purete:999.9,typePreset:'piece'},
 ];
 const OR_PRESETS_LINGOTS=[
   {nom:'Lingot 1 kg',poids:1000,purete:999.9,typePreset:'lingot'},
@@ -2239,15 +2291,21 @@ const OR_PRESETS_LINGOTS=[
 
 // ETC Or papier
 const OR_PRESETS_ETC=[
-  {name:'iShares Physical Gold ETC',ticker:'SGLN',isin:'IE00B4ND3602',ter:0.12},
-  {name:'Amundi Physical Gold ETC',ticker:'GLDA',isin:'FR0013416716',ter:0.12},
-  {name:'Xtrackers IE Physical Gold ETC',ticker:'XGDU',isin:'DE000A2T0VU5',ter:0.11},
-  {name:'Invesco Physical Gold A',ticker:'SGLD',isin:'IE00B579F325',ter:0.12},
-  {name:'WisdomTree Core Physical Gold',ticker:'WGLD',isin:'JE00BN2CJ301',ter:0.12},
-  {name:'iShares Diversified Commodity Swap',ticker:'EXXY',isin:'DE000A0H0728',ter:0.46},
-  {name:'WisdomTree Physical Swiss Gold',ticker:'SGBS',isin:'JE00B588CD74',ter:0.15},
-  {name:'Xetra-Gold',ticker:'4GLD',isin:'DE000A0S9GB0',ter:0.00},
-  {name:'EUWAX Gold II',ticker:'EWG2',isin:'DE000EWG2LD7',ter:0.00}
+  // Europe-listed (EUR)
+  {name:'iShares Physical Gold ETC',ticker:'SGLN.L',isin:'IE00B4ND3602',ter:0.12},
+  {name:'Xtrackers Physical Gold ETC',ticker:'XGDU.DE',isin:'DE000A2T0VU5',ter:0.11},
+  {name:'Invesco Physical Gold ETC',ticker:'SGLD.L',isin:'IE00B579F325',ter:0.12},
+  {name:'WisdomTree Core Physical Gold',ticker:'WGLD.L',isin:'JE00BN2CJ301',ter:0.12},
+  {name:'WisdomTree Physical Swiss Gold',ticker:'ZGLD.SW',isin:'JE00B588CD74',ter:0.15},
+  {name:'Xetra-Gold',ticker:'4GLD.DE',isin:'DE000A0S9GB0',ter:0.00},
+  // US-listed (USD)
+  {name:'SPDR Gold Shares',ticker:'GLD',isin:'US78463V1070',ter:0.40},
+  {name:'iShares Gold Trust',ticker:'IAU',isin:'US4642851053',ter:0.25},
+  {name:'SPDR Gold MiniShares',ticker:'GLDM',isin:'US78468R4007',ter:0.10},
+  {name:'VanEck Merk Gold Trust',ticker:'OUNZ',isin:'US59156R1086',ter:0.25},
+  // UK-listed (GBP)
+  {name:'iShares Physical Gold ETC (GBP)',ticker:'IGLN.L',isin:'IE00B4ND3602',ter:0.12},
+  {name:'WisdomTree Physical Gold (GBP)',ticker:'PHGP.L',isin:'JE00B1VS3770',ter:0.39},
 ];
 
 // ═══════════════════════════════════════════════════════════════
@@ -2285,8 +2343,13 @@ let _lastNotif={};
 // ============================================================
 // FORMATTERS
 // ============================================================
-const fE=v=>new Intl.NumberFormat(_locale(),{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(v||0);
-const fE2=v=>new Intl.NumberFormat(_locale(),{style:'currency',currency:'EUR',minimumFractionDigits:2,maximumFractionDigits:2}).format(v||0);
+const CURRENCY_SYMBOLS={EUR:'€',USD:'$',GBP:'£',CHF:'CHF ',CAD:'CA$'};
+const CURRENCY_LOCALES={EUR:'fr-FR',USD:'en-US',GBP:'en-GB',CHF:'de-CH',CAD:'en-CA'};
+function _currency(){return (D&&D.currency)||'EUR';}
+function _curSym(){return CURRENCY_SYMBOLS[_currency()]||_currency();}
+function _curLocale(){return D&&D.lang==='en'?'en-GB':CURRENCY_LOCALES[_currency()]||'fr-FR';}
+const fE=v=>new Intl.NumberFormat(_curLocale(),{style:'currency',currency:_currency(),maximumFractionDigits:0}).format(v||0);
+const fE2=v=>new Intl.NumberFormat(_curLocale(),{style:'currency',currency:_currency(),minimumFractionDigits:2,maximumFractionDigits:2}).format(v||0);
 const fB8=v=>{const n=+v||0;const s=n.toFixed(8).replace(/\.?0+$/,'');return s;};
 const fB5=v=>{const n=+v||0;const s=n.toFixed(8).replace(/\.?0+$/,'');return s;};
 const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -2368,9 +2431,9 @@ function animateNetVal(end){
     // easeOutQuart
     const ease=1-Math.pow(1-progress,4);
     const val=Math.floor(ease*end);
-    el.textContent=val.toLocaleString(_locale())+'\u00a0€';
+    el.textContent=val.toLocaleString(_curLocale())+'\u00a0€';
     if(progress<1)requestAnimationFrame(step);
-    else el.textContent=end.toLocaleString(_locale())+'\u00a0€';
+    else el.textContent=end.toLocaleString(_curLocale())+'\u00a0€';
   };
   requestAnimationFrame(step);
 }
@@ -2486,6 +2549,7 @@ function renderAllocChart(){
   }
 }
 let _evoView='net';
+let _evoPeriod='max';
 
 // ============================================================
 // MAIN CALC — only updates display elements, never re-renders editors
@@ -2774,9 +2838,11 @@ function toggleCashInline(i, type){
   if(!item)return;
   const arrName=type==='cash'?'D.cashAccounts':'D.livrets';
   inline.innerHTML=`
-    <div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px">
-      <div class="ef"><label>${t('cash_field_name')}</label><input value="${esc(item.name||'')}" onchange="${arrName}[${i}].name=this.value;save()"></div>
-      <div class="ef"><label>${t('cash_field_balance')}</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${item.value||0}" onchange="${arrName}[${i}].value=+this.value;save()"><span class="ef-suffix">€</span></div></div>
+    <div>
+      <div class="g2">
+        <div class="ef"><label>${t('cash_field_name')}</label><input value="${esc(item.name||'')}" onchange="${arrName}[${i}].name=this.value;save()"></div>
+        <div class="ef"><label>${t('cash_field_balance')}</label><div class="ef-suffix-wrap"><input type="number" step="0.01" inputmode="decimal" value="${item.value||0}" onchange="${arrName}[${i}].value=+this.value;save()"><span class="ef-suffix">${_curSym()}</span></div></div>
+      </div>
       <div class="btn-row">
         <button class="btn btn-sec" onclick="document.getElementById('${id}').classList.remove('open')">${t('common_cancel')}</button>
         <button class="btn btn-grn" onclick="calcAll();${type==='cash'?'renderCashEditors':'renderLivretEditors'}();">${t('common_save')}</button>
@@ -2824,15 +2890,15 @@ function openTxForm(type, editIdx){
     ${type==='frais'?`
       <div class="g2">
         <div class="ef"><label>${t('btc_tx_field_satoshis')}</label><input type="number" inputmode="numeric" id="tx-sats" placeholder="0" value="${tx?tx.sats||0:''}"></div>
-        <div class="ef"><label>${t('btc_tx_field_date')}</label><input type="date" id="tx-date" value="${tx?tx.date||'':''}"></div>
+        <div class="ef"><label>${t('btc_tx_field_date')}</label><input type="date" id="tx-date" style="height:36px;box-sizing:border-box" value="${tx?tx.date||'':''}"></div>
       </div>
       <div style="font-size:11px;color:var(--tx3);margin-bottom:10px">${t('btc_tx_sats_preview',{n:`<span id="tx-sats-preview">${tx?((tx.sats||0)/1e8).toFixed(8):'0.00000000'}</span>`})}</div>
       <div class="ef"><label>${t('btc_tx_field_note')}</label><textarea id="tx-note" placeholder="${t('btc_tx_field_note_placeholder')}">${tx?esc(tx.note||''):''}</textarea></div>
     `:`
       <div class="g2">
-        <div class="ef"><label>${t('btc_tx_field_amount_btc')}</label><input type="number" inputmode="decimal" step="0.00000001" id="tx-btc" placeholder="0.00000000" value="${tx?tx.btc||'':''}" oninput="updateTxPreview()"></div>
-        <div class="ef"><label>${t('btc_tx_field_amount_eur')}</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" id="tx-eur" placeholder="0" value="${tx?tx.eur||'':''}" oninput="updateTxPreview()"><span class="ef-suffix">€</span></div></div>
-        <div class="ef"><label>${t('btc_tx_field_date')}</label><input type="date" id="tx-date" value="${tx?tx.date||'':''}"></div>
+        <div class="ef"><label>${t('btc_tx_field_amount_btc')}</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="0.00000001" id="tx-btc" placeholder="0.00000000" value="${tx?tx.btc||'':''}" oninput="updateTxPreview()"><span class="ef-suffix" style="color:var(--btc)">₿</span></div>
+        <div class="ef"><label>${t('btc_tx_field_amount_eur')}</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" id="tx-eur" placeholder="0" value="${tx?tx.eur||'':''}" oninput="updateTxPreview()"><span class="ef-suffix">${_curSym()}</span></div></div>
+        <div class="ef"><label>${t('btc_tx_field_date')}</label><input type="date" id="tx-date" style="height:36px;box-sizing:border-box" value="${tx?tx.date||'':''}"></div>
         <div class="ef"><label>${t('btc_tx_field_unit_price')}</label><input type="number" id="tx-pu" placeholder="${t('btc_tx_field_unit_price_placeholder')}" readonly style="opacity:.6"></div>
       </div>
       <div class="ef"><label>${t('btc_tx_field_note')}</label><textarea id="tx-note" placeholder="${t('btc_tx_field_note_placeholder')}">${tx?esc(tx.note||''):''}</textarea></div>
@@ -3426,7 +3492,7 @@ I18N.fr={
   'cash_field_name':`Nom`,
   'cash_field_balance':`Solde`,
   'cash_note_placeholder':`Notes Cash €...`,
-  'cash_h1':`Cash <span style="color:#4fc3f7">€</span>`,
+  'cash_h1':`Cash`,
   'passif_h1':`Passif ⚖️`,
   'passif_my_total':`Mon Passif`,
   'passif_immo_title':`Crédits immobiliers`,
@@ -3577,7 +3643,7 @@ I18N.fr={
   'or_form_storage':`Stockage / an`,
   'or_form_insurance':`Assurance / an`,
   'or_form_annual_cost_estimated':`Coût annuel estimé`,
-  'or_form_per_year':`{n} € / an`,
+  'or_form_per_year':`{n} {sym} / an`,
   'or_form_info_title':`Informations complémentaires`,
   'or_form_storage_location':`Lieu de stockage`,
   'or_form_storage_placeholder':`Coffre banque, domicile…`,
@@ -3626,11 +3692,17 @@ I18N.fr={
   'b_form_titre_name_placeholder':`ex: Amundi MSCI World`,
   'b_form_symbol':`Symbole Yahoo Finance`,
   'b_form_symbol_short':`Symbole Yahoo`,
-  'b_form_symbol_placeholder':`ex: CW8 ou CW8.PA`,
+  'b_form_symbol_placeholder':`ex: AAPL, MC.PA, NESN.SW`,
   'b_form_purchase_date':`Date d'achat`,
   'b_form_btn_add':`Ajouter`,
   'b_manual_price':`Saisie manuelle du cours`,
   'b_etf_cat_world':`Monde`,
+  'b_etf_cat_actions':`Actions`,
+  'b_etf_cat_gafam':`Tech / GAFAM`,
+  'b_etf_cat_world_fr':`World (EUR)`,
+  'b_etf_cat_sp500_usd':`S\u0026P 500 (USD)`,
+  'b_etf_cat_sp500_eur':`S\u0026P 500 (EUR)`,
+  'b_etf_cat_other_etf':`Autres ETF`,
   'b_etf_cat_sp500':`S&P 500`,
   'b_etf_cat_europe':`Europe`,
   'b_etf_cat_emerging':`Émergents`,
@@ -3776,7 +3848,7 @@ I18N.fr={
   'p_menu_btc_sub':`Objectif, affichage, prêts`,
   'p_menu_about_title':`A propos`,
   'p_menu_about_sub':`Informations`,
-  'p_footer_storage':`Stockage local — aucun serveur`,
+  'p_footer_storage':`Données locales — aucun serveur`,
   'p_cfg_title':`Configuration`,
   'p_cfg_pin_title':`Code PIN`,
   'p_cfg_pin_sub':`Protéger l'accès`,
@@ -3807,7 +3879,7 @@ I18N.fr={
   'p_homecard_intro':`Choisissez l'actif a afficher dans la deuxieme carte de l'Accueil.`,
   'p_homecard_label':`Actif affiché`,
   'p_save_title':`Sauvegarde`,
-  'p_save_intro':`Vos donnees sont sauvegardees automatiquement dans le navigateur. Exportez regulierement pour ne pas les perdre.`,
+  'p_save_intro':`Vos données sont sauvegardées automatiquement sur l'appareil. Exportez régulièrement pour ne pas les perdre.`,
   'p_save_export':`Exporter JSON`,
   'p_save_import':`Importer JSON`,
   'p_notes_title':`Affichage des Notes`,
@@ -3819,12 +3891,12 @@ I18N.fr={
   'p_api_finnhub_title':`Finnhub (cours boursiers)`,
   'p_api_finnhub_label':`Clé API Finnhub`,
   'p_api_finnhub_placeholder':`Laissez vide = Yahoo Finance`,
-  'p_api_finnhub_hint':`Format symboles Euronext Paris : WPEA.PA, PAEEM.PA`,
+  'p_api_finnhub_hint':`Format Yahoo Finance : AAPL, MC.PA, NESN.SW, BP.L`,
   'p_api_finnhub_intro_html':`L'API par défaut est celle de Yahoo Finance. Vous avez la possibilité d'ajouter une clé API Finnhub pour obtenir les prix des titres boursiers. Créez un compte gratuit sur <a href="https://finnhub.io" target="_blank" style="color:var(--gold);text-decoration:underline">finnhub.io</a>.`,
   'p_api_gold_title':`GoldApi.io (prix spot de l'or)`,
   'p_api_gold_label':`Clé API GoldApi.io`,
   'p_api_gold_placeholder':`Laissez vide = saisie manuelle`,
-  'p_api_gold_hint':`Prix récupéré en euros par gramme (XAU/EUR)`,
+  'p_api_gold_hint':`Prix récupéré en {cur} par gramme`,
   'p_api_gold_test_btn':`Tester la connexion`,
   'p_api_gold_intro_html':`Sans clé API, saisissez manuellement le prix spot dans l'onglet Or. Créez un compte gratuit (100 requêtes/mois) sur <a href="https://goldapi.io" target="_blank" style="color:var(--gold);text-decoration:underline">goldapi.io</a>.`,
   'p_btc_title_html':`Configuration Bitcoin <span style="color:var(--btc)">₿</span>`,
@@ -3869,13 +3941,13 @@ I18N.fr={
   'about_app_install_title':`• Installer l'application`,
   'about_app_install_body_html':`<span style="color:#fff;font-weight:600">Android :</span> ouvrez Chrome, appuyez sur le menu &#8942; puis <em>Ajouter à l'écran d'accueil</em>.<br><span style="color:#fff;font-weight:600">iPhone / iPad :</span> ouvrez Safari, appuyez sur le bouton Partager puis <em>Sur l'écran d'accueil</em>.`,
   'about_app_private_title':`• Suivi de patrimoine privé`,
-  'about_app_private_body_html':`Legacy est une application de suivi de patrimoine personnel. Toutes vos données sont stockées <strong style="color:#fff">uniquement dans le cache de votre navigateur</strong>, sur votre appareil. Aucun compte, aucun serveur, aucune publicité.`,
+  'about_app_private_body_html':`Legacy est une application de suivi de patrimoine personnel. Toutes vos données sont stockées <strong style="color:#fff">uniquement sur votre appareil</strong>. Aucun compte, aucun serveur, aucune publicité.`,
   'about_app_push_title':`• Notifications push`,
-  'about_app_push_body_html':`Les notifications push sont absentes de l'application. Legacy protège vos données en les conservant <strong style="color:#fff">exclusivement sur votre appareil</strong> — aucun compte, aucun serveur, aucune transmission externe. Les notifications push en arrière-plan nécessitent un serveur externe qui connaît vos données pour savoir quand vous alerter. Ce fonctionnement est <strong style="color:#fff">incompatible avec la philosophie de Legacy</strong>.`,
+  'about_app_push_body_html':`Les notifications push ne sont pas disponibles. Legacy conserve vos données <strong style="color:#fff">exclusivement sur votre appareil</strong> — aucun compte, aucun serveur, aucune transmission externe. Les notifications push nécessitent un serveur externe qui connaît vos données, ce qui est <strong style="color:#fff">incompatible avec la philosophie de Legacy</strong>.`,
   'about_app_pin_title':`• Code PIN`,
   'about_app_pin_body_html':`Le code PIN s'affiche à chaque ouverture de l'application. Il est conçu pour <strong style="color:#fff">protéger le contenu de Legacy des regards involontaires</strong> — par exemple si quelqu'un clique sur l'icône par mégarde. Disponible en 4 ou 6 chiffres. Il ne chiffre pas vos données et ne remplace pas une protection système.<br><br><strong style="color:#fff">⚠️ En cas d'oubli</strong>, la seule option est de réinitialiser complètement l'application depuis l'écran PIN. <strong style="color:#fff">Toutes vos données seront effacées.</strong> Exportez régulièrement votre sauvegarde JSON depuis Paramètres pour pouvoir les restaurer. Activez-le dans <strong style="color:#fff">Paramètres → Configuration → Code PIN</strong>.`,
   'about_app_backup_title':`• Sauvegarde JSON`,
-  'about_app_backup_body_html':`Le cache navigateur peut être effacé lors d'une mise à jour ou d'une réinitialisation de l'appareil. <strong style="color:#fff">Exportez régulièrement</strong> vos données en JSON depuis Paramètres pour ne rien perdre. Ce fichier permet de restaurer l'application à l'identique sur n'importe quel appareil.<br><br>Une <strong style="color:var(--red)">pastille rouge</strong> apparaît sur la roue crantée ⚙ lorsque des modifications ont été effectuées et que la dernière sauvegarde JSON remonte à plus de 45 jours.`,
+  'about_app_backup_body_html':`Les données locales peuvent être perdues lors d'une réinitialisation de l'appareil. <strong style="color:#fff">Exportez régulièrement</strong> vos données en JSON depuis Paramètres pour ne rien perdre. Ce fichier permet de restaurer l'application à l'identique sur n'importe quel appareil.<br><br>Une <strong style="color:var(--red)">pastille rouge</strong> apparaît sur la roue crantée ⚙ lorsque des modifications ont été effectuées et que la dernière sauvegarde JSON remonte à plus de 45 jours.`,
   'about_app_delete_title':`• Supprimer une carte`,
   'about_app_delete_body_html':`Deux méthodes équivalentes sont disponibles pour supprimer un élément (bien, wallet, titre, prêt, etc.) :<br><br><strong style="color:#fff">• Menu trois points ⋯</strong> — cliquez sur l'icône en haut à droite de la carte, puis « Supprimer ».<br><br><strong style="color:#fff">• Appui long</strong> — maintenez votre doigt sur la carte pendant ~600 ms : une vibration confirme l'activation, et un bouton × rouge apparaît pour la supprimer.`,
   'about_home_title':`Accueil`,
@@ -3987,6 +4059,29 @@ Rendez-vous dans Paramètres → A propos pour découvrir toutes les fonctionnal
   'p_txhist_deleted_one':`Transaction supprimée`,
   'p_txhist_deleted_all':`Historique effacé`,
   'p_txhist_empty':`Aucune transaction`,
+  'b_pnl_line':`P/L : {val}`,
+  'b_update_position':`Mise à jour position`,
+  'b_update_qty':`Titres détenus`,
+  'b_update_pru':`PRU actuel`,
+  'b_achat_update_qty':`Quantité achetée`,
+  'b_achat_update_price':`Prix d'achat unitaire`,
+  'b_new_pru_preview':`Nouveau PRU estimé`,
+  'b_vente_qty':`Quantité vendue`,
+  'b_update_saved':`Position mise à jour`,
+  'b_menu_update_position':`Mettre à jour la position`,
+  'home_evo_perf':`Perf.`,
+  'home_evo_1m':`1M`,
+  'home_evo_6m':`6M`,
+  'home_evo_ytd':`YTD`,
+  'home_evo_1y':`1A`,
+  'home_evo_max':`Max`,
+  'home_evo_no_data_period':`Données insuffisantes pour cette période`,
+  'p_cfg_currency_title':`Devise`,
+  'p_cfg_currency_sub':`Symbole utilisé dans l'app`,
+  'b_form_symbol_hint':`Symbole complet (ex: AAPL, MC.PA, NESN.SW)`,
+  'p_cfg_area_unit':`Unité de surface`,
+  'p_cfg_area_m2':`Mètres carrés (m²)`,
+  'p_cfg_area_ft2':`Pieds carrés (ft²)`,
 };
 I18N.en={
   'common_save':`Save`,
@@ -4022,7 +4117,7 @@ I18N.en={
   'home_evo_net':`Net`,
   'home_evo_brut':`Gross`,
   'home_evo_both':`Both`,
-  'home_evo_period':`Period`,
+  'home_evo_period':`Perf.`,
   'home_evo_var':`Change`,
   'home_evo_avg':`Average`,
   'home_alloc':`Allocation`,
@@ -4075,7 +4170,7 @@ I18N.en={
   'cash_field_name':`Name`,
   'cash_field_balance':`Balance`,
   'cash_note_placeholder':`Cash notes €...`,
-  'cash_h1':`Cash <span style="color:#4fc3f7">€</span>`,
+  'cash_h1':`Cash`,
   'passif_h1':`Liabilities ⚖️`,
   'passif_my_total':`My Liabilities`,
   'passif_immo_title':`Mortgages`,
@@ -4226,7 +4321,7 @@ I18N.en={
   'or_form_storage':`Storage / year`,
   'or_form_insurance':`Insurance / year`,
   'or_form_annual_cost_estimated':`Estimated annual cost`,
-  'or_form_per_year':`{n} € / year`,
+  'or_form_per_year':`{n} {sym} / year`,
   'or_form_info_title':`Additional information`,
   'or_form_storage_location':`Storage location`,
   'or_form_storage_placeholder':`Bank vault, home...`,
@@ -4275,11 +4370,17 @@ I18N.en={
   'b_form_titre_name_placeholder':`e.g. Amundi MSCI World`,
   'b_form_symbol':`Yahoo Finance symbol`,
   'b_form_symbol_short':`Yahoo symbol`,
-  'b_form_symbol_placeholder':`e.g. CW8 or CW8.PA`,
+  'b_form_symbol_placeholder':`e.g. AAPL, MC.PA, NESN.SW`,
   'b_form_purchase_date':`Purchase date`,
   'b_form_btn_add':`Add`,
   'b_manual_price':`Manual price input`,
   'b_etf_cat_world':`World`,
+  'b_etf_cat_actions':`Stocks`,
+  'b_etf_cat_gafam':`Tech / GAFAM`,
+  'b_etf_cat_world_fr':`World (EUR)`,
+  'b_etf_cat_sp500_usd':`S\u0026P 500 (USD)`,
+  'b_etf_cat_sp500_eur':`S\u0026P 500 (EUR)`,
+  'b_etf_cat_other_etf':`Other ETFs`,
   'b_etf_cat_sp500':`S&P 500`,
   'b_etf_cat_europe':`Europe`,
   'b_etf_cat_emerging':`Emerging`,
@@ -4425,7 +4526,7 @@ I18N.en={
   'p_menu_btc_sub':`Target, display, loans`,
   'p_menu_about_title':`About`,
   'p_menu_about_sub':`Information`,
-  'p_footer_storage':`Local storage — no server`,
+  'p_footer_storage':`Local data — no server`,
   'p_cfg_title':`Configuration`,
   'p_cfg_pin_title':`PIN Code`,
   'p_cfg_pin_sub':`Protect access`,
@@ -4456,7 +4557,7 @@ I18N.en={
   'p_homecard_intro':`Choose which asset to display in the second card on the Home screen.`,
   'p_homecard_label':`Displayed Asset`,
   'p_save_title':`Backup`,
-  'p_save_intro':`Your data is automatically saved in your browser. Export regularly to ensure you do not lose it.`,
+  'p_save_intro':`Your data is automatically saved on your device. Export regularly to ensure you do not lose it.`,
   'p_save_export':`Export JSON`,
   'p_save_import':`Import JSON`,
   'p_notes_title':`Display Notes`,
@@ -4468,12 +4569,12 @@ I18N.en={
   'p_api_finnhub_title':`Finnhub (Stock Prices)`,
   'p_api_finnhub_label':`Finnhub API Key`,
   'p_api_finnhub_placeholder':`Leave Blank = Yahoo Finance`,
-  'p_api_finnhub_hint':`Euronext Paris symbol format: WPEA.PA, PAEEM.PA`,
+  'p_api_finnhub_hint':`Yahoo Finance format: AAPL, MC.PA, NESN.SW, BP.L`,
   'p_api_finnhub_intro_html':`The default API is Yahoo Finance. You can add a Finnhub API key to retrieve stock prices. Create a free account at <a href="https://finnhub.io" target="_blank" style="color:var(--gold);text-decoration:underline">finnhub.io</a>.`,
   'p_api_gold_title':`GoldApi.io (Gold Spot Price)`,
   'p_api_gold_label':`GoldApi.io API Key`,
   'p_api_gold_placeholder':`Leave blank = Manual entry`,
-  'p_api_gold_hint':`Price retrieved in euros per gram (XAU/EUR)`,
+  'p_api_gold_hint':`Price retrieved in {cur} per gram`,
   'p_api_gold_test_btn':`Test Connection`,
   'p_api_gold_intro_html':`Without an API key, you must manually enter the spot price in the Gold tab. Create a free account (100 requests/month) at <a href="https://goldapi.io" target="_blank" style="color:var(--gold);text-decoration:underline">goldapi.io</a>.`,
   'p_btc_title_html':`Bitcoin Configuration <span style="color:var(--btc)">₿</span>`,
@@ -4518,13 +4619,13 @@ I18N.en={
   'about_app_install_title':`• Install the app`,
   'about_app_install_body_html':`<span style="color:#fff;font-weight:600">Android:</span> Open Chrome → tap the ⋮ menu → <em>Add to home screen</em>.<br><span style="color:#fff;font-weight:600">iPhone/iPad:</span> Open Safari → tap the Share button → <em>Add to Home Screen</em>.`,
   'about_app_private_title':`• Private Wealth Tracker`,
-  'about_app_private_body_html':`Legacy is a personal wealth tracking app. All your data is stored <strong style="color:#fff">only in your browser's local cache</strong> on your device. No account. No server. No ads.`,
+  'about_app_private_body_html':`Legacy is a personal wealth tracking app. All your data is stored <strong style="color:#fff">directly on your device</strong>. No account. No server. No ads.`,
   'about_app_push_title':`• Push Notifications`,
-  'about_app_push_body_html':`Push notifications are not supported. Legacy keeps all your data strictly <strong style="color:#fff">on your device</strong> — with no account or external server. Since push notifications in the background require a server to know when to alert you, they are <strong style="color:#fff">incompatible with Legacy's privacy philosophy</strong>.`,
+  'about_app_push_body_html':`Push notifications are not available. Legacy keeps all your data <strong style="color:#fff">strictly on your device</strong> — no account, no server, no external transmission. Push notifications require an external server, which is <strong style="color:#fff">incompatible with Legacy's privacy philosophy</strong>.`,
   'about_app_pin_title':`• PIN Code`,
   'about_app_pin_body_html':`A PIN code is requested every time the app is opened. It protects your data from unwanted glances (e.g. if someone accidentally taps the app icon). Available in 4 or 6 digits. <strong style="color:#fff">Important:</strong> The PIN does not encrypt your data and is not a substitute for your device's security.<br><br><strong style="color:#fff">⚠️ If you forget your PIN</strong>, the only solution is to fully reset the app from the PIN screen. <strong style="color:#fff">This will delete all your data.</strong> Make sure to regularly export your JSON backup from the Settings. You can enable the PIN under <strong style="color:#fff">Settings → Configuration → PIN Code</strong>.`,
   'about_app_backup_title':`• JSON Backup`,
-  'about_app_backup_body_html':`Browser cache can be cleared during app or device updates. <strong style="color:#fff">Export your data regularly</strong> as a JSON file to avoid any loss. This file lets you restore the app identically on any device.<br><br>A <strong style="color:var(--red)">red badge</strong> appears on the gear icon ⚙ when modifications have been made and your last JSON backup is older than 45 days.`,
+  'about_app_backup_body_html':`Local data can be lost when resetting your device. <strong style="color:#fff">Export your data regularly</strong> as a JSON file to avoid any loss. This file lets you restore the app identically on any device.<br><br>A <strong style="color:var(--red)">red badge</strong> appears on the gear icon ⚙ when modifications have been made and your last JSON backup is older than 45 days.`,
   'about_app_delete_title':`• Deleting an item`,
   'about_app_delete_body_html':`You can delete any item (asset, wallet, stock, loan, etc.) using one of these two methods:<br><br><strong style="color:#fff">• Tap the three-dot menu ⋯</strong> in the top right of the card, then choose Delete.<br><br><strong style="color:#fff">• Long press</strong> the card (~600 ms): a vibration confirms it, and a red × button appears to delete the item.`,
   'about_home_title':`Home`,
@@ -4636,6 +4737,29 @@ Go to Settings → About to discover all the app's features.`,
   'p_txhist_deleted_one':`Transaction deleted`,
   'p_txhist_deleted_all':`History cleared`,
   'p_txhist_empty':`No transactions`,
+  'b_pnl_line':`P&L: {val}`,
+  'b_update_position':`Update position`,
+  'b_update_qty':`Shares held`,
+  'b_update_pru':`Avg cost`,
+  'b_achat_update_qty':`Shares bought`,
+  'b_achat_update_price':`Purchase price per share`,
+  'b_new_pru_preview':`New avg cost (estimated)`,
+  'b_vente_qty':`Shares sold`,
+  'b_update_saved':`Position updated`,
+  'b_menu_update_position':`Update position`,
+  'home_evo_perf':`Perf.`,
+  'home_evo_1m':`1M`,
+  'home_evo_6m':`6M`,
+  'home_evo_ytd':`YTD`,
+  'home_evo_1y':`1Y`,
+  'home_evo_max':`Max`,
+  'home_evo_no_data_period':`Not enough data for this period`,
+  'p_cfg_currency_title':`Currency`,
+  'p_cfg_currency_sub':`Symbol used across the app`,
+  'b_form_symbol_hint':`Full symbol (e.g. AAPL, MC.PA, NESN.SW)`,
+  'p_cfg_area_unit':`Area unit`,
+  'p_cfg_area_m2':`Square metres (m²)`,
+  'p_cfg_area_ft2':`Square feet (ft²)`,
 };
 
 function t(key,vars){
@@ -4647,7 +4771,36 @@ function t(key,vars){
   return s;
 }
 function _locale(){return (D&&D.lang==='en')?'en-GB':'fr-FR';}
-function _currency(){return 'EUR';} // Toujours EUR pour cette app
+function setCurrency(cur){
+  const valid=['EUR','USD','GBP','CHF','CAD'];
+  if(!valid.includes(cur))return;
+  D.currency=cur;save();
+  // Re-render everything affected by currency
+  const sel=document.getElementById('cfg-currency-sel');
+  if(sel)sel.value=cur;
+  calcAll();
+  if(typeof renderOrAll==='function')renderOrAll();
+  if(typeof renderBourseDisplay==='function')renderBourseDisplay();
+  if(typeof renderBiensDisplay==='function')renderBiensDisplay();
+  if(typeof renderCashEditors==='function')renderCashEditors();
+  if(typeof renderLivretEditors==='function')renderLivretEditors();
+  if(typeof renderBiensPassif==='function')renderBiensPassif();
+  if(typeof renderOrSpot==='function')renderOrSpot();
+  // Update gold API hint
+  const hint=document.getElementById('gold-api-hint');
+  if(hint)hint.textContent=t('p_api_gold_hint',{cur:D.currency||'EUR'});
+}
+function _areaUnit(){return (D&&D.areaUnit)||'m2';}
+function _areaSym(){return _areaUnit()==='ft2'?'ft²':'m²';}
+function _areaConv(m2){return _areaUnit()==='ft2'?+(m2*10.764).toFixed(1):+m2;}
+function _areaToM2(val){return _areaUnit()==='ft2'?+(val/10.764).toFixed(2):+val;}
+function setAreaUnit(unit){
+  D.areaUnit=unit;save();
+  if(typeof renderBiensDisplay==='function')renderBiensDisplay();
+  if(typeof renderBiensPassif==='function')renderBiensPassif();
+  const asel=document.getElementById('cfg-area-sel');
+  if(asel)asel.value=unit;
+}
 function setLang(lang){
   if(lang!=='fr'&&lang!=='en')return;
   D.lang=lang;save();
@@ -4778,7 +4931,7 @@ function _updateBtcStackDisplay(stackBtc){
   const el=document.getElementById('c-stack-display');
   if(!el)return;
   if(_btcUnit==='sats'){
-    el.textContent=Math.round(stackBtc*1e8).toLocaleString(_locale())+' sats';
+    el.textContent=Math.round(stackBtc*1e8).toLocaleString(_curLocale())+' sats';
   } else {
     el.textContent=fB8(stackBtc)+' ₿';
   }
@@ -4813,9 +4966,11 @@ function toggleWalletInline(wi){
   if(inline.classList.contains('open')){inline.classList.remove('open');return;}
   const w=D.wallets[wi];
   inline.innerHTML=`
-    <div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px">
-      <div class="ef"><label>${t('cash_field_name')}</label><input value="${esc(w.name||'')}" onchange="D.wallets[${wi}].name=this.value;save()"></div>
-      <div class="ef"><label>${t('btc_wallet_field_btc')}</label><div class="ef-suffix-wrap"><input type="number" step="0.00000001" inputmode="decimal" value="${w.btcAlloc||0}" onchange="D.wallets[${wi}].btcAlloc=+this.value;save()"><span class="ef-suffix" style="color:var(--btc)">₿</span></div></div>
+    <div>
+      <div class="g2">
+        <div class="ef"><label>${t('cash_field_name')}</label><input value="${esc(w.name||'')}" onchange="D.wallets[${wi}].name=this.value;save()"></div>
+        <div class="ef"><label>${t('btc_wallet_field_btc')}</label><div class="ef-suffix-wrap"><input type="number" step="0.00000001" inputmode="decimal" value="${w.btcAlloc||0}" onchange="D.wallets[${wi}].btcAlloc=+this.value;save()"><span class="ef-suffix" style="color:var(--btc)">₿</span></div></div>
+      </div>
       <div class="btn-row">
         <button class="btn btn-sec" onclick="document.getElementById('wallet-inline-${wi}').classList.remove('open')">${t('common_cancel')}</button>
         <button class="btn btn-grn" onclick="calcAll();renderWalletDisplay();">${t('common_save')}</button>
@@ -4851,7 +5006,7 @@ function renderWalletDisplay(){
           <div class="coffre-sub">${poids.toFixed(1)}${t('btc_stack_share')}</div>
         </div>
         <div class="coffre-r">
-          <div class="coffre-val" style="color:var(--btc)">${_btcWalletUnit==='sats'?Math.round(btc*1e8).toLocaleString(_locale())+' sats':fB8(btc)+' ₿'}</div>
+          <div class="coffre-val" style="color:var(--btc)">${_btcWalletUnit==='sats'?Math.round(btc*1e8).toLocaleString(_curLocale())+' sats':fB8(btc)+' ₿'}</div>
           <div class="coffre-qty">${fE(eur)}</div>
         </div>
         <div class="coffre-menu-wrap">
@@ -4927,14 +5082,16 @@ function toggleCollBtcInline(ci){
   if(inline.classList.contains('open')){inline.classList.remove('open');return;}
   inline.classList.add('open');
   const c=D.collPrets[ci];
-  inline.innerHTML=`<div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px">
-    <div class="ef"><label>${t('cash_field_name')}</label><input value="${esc(c.name||'')}" onchange="D.collPrets[${ci}].name=this.value;save()"></div>
+  inline.innerHTML=`<div>
+    <div class="g2">
+      <div class="ef"><label>${t('cash_field_name')}</label><input value="${esc(c.name||'')}" onchange="D.collPrets[${ci}].name=this.value;save()"></div>
+      <div class="ef"><label>${t('btc_coll_form_rate')}</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${c.rate||0}" onchange="D.collPrets[${ci}].rate=+this.value;save()"><span class="ef-suffix">%</span></div></div>
+    </div>
     <div class="g2">
       <div class="ef"><label>${t('btc_coll_form_collateral')}</label><div class="ef-suffix-wrap"><input type="number" step="0.00000001" value="${c.btcAlloc||0}" onchange="D.collPrets[${ci}].btcAlloc=+this.value;save()"><span class="ef-suffix" style="color:var(--btc)">₿</span></div></div>
-      <div class="ef"><label>${t('btc_coll_form_borrowed')}</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${c.eurBorrowed||0}" onchange="D.collPrets[${ci}].eurBorrowed=+this.value;save()"><span class="ef-suffix">€</span></div></div>
-      <div class="ef"><label>${t('btc_coll_form_rate')}</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${c.rate||0}" onchange="D.collPrets[${ci}].rate=+this.value;save()"><span class="ef-suffix">%</span></div></div>
-      <div class="ef"><label>${t('btc_coll_form_liq_price')}</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${c.liqPrice||0}" onchange="D.collPrets[${ci}].liqPrice=+this.value;save()"><span class="ef-suffix">€</span></div></div>
+      <div class="ef"><label>${t('btc_coll_form_borrowed')}</label><div class="ef-suffix-wrap"><input type="number" step="0.01" inputmode="decimal" value="${c.eurBorrowed||0}" onchange="D.collPrets[${ci}].eurBorrowed=+this.value;save()"><span class="ef-suffix">${_curSym()}</span></div></div>
     </div>
+    <div class="ef"><label>${t('btc_coll_form_liq_price')}</label><div class="ef-suffix-wrap"><input type="number" step="0.01" inputmode="decimal" value="${c.liqPrice||0}" onchange="D.collPrets[${ci}].liqPrice=+this.value;save()"><span class="ef-suffix">${_curSym()}</span></div></div>
     <div class="btn-row">
       <button class="btn btn-sec" onclick="document.getElementById('coll-btc-inline-${ci}').classList.remove('open')">${t('common_cancel')}</button>
       <button class="btn btn-grn" onclick="calcAll();renderCollDisplay();">${t('common_save')}</button>
@@ -4992,28 +5149,29 @@ function renderBourseDisplay(){
     const poids=totPort>0?val/totPort*100:0;
     const txs=t.txs||[];
     const valColor=cost>0?(val>=cost?'var(--grn)':'var(--red)'):'#fff';
+    const pruSub=cost>0?` &middot; PRU ${fE2(+t.pru||0)}`:'';
     return `<div class="coffre-item" id="titre-card-${i}" data-lp-del="lpDelTitre" data-idx="${i}">
-      <div class="coffre-hdr">
+      <div class="coffre-hdr" style="margin-bottom:8px">
         <div class="coffre-t">
           <div class="coffre-name">${esc(t.name||tr('b_titre_default_name'))}</div>
-          <div class="coffre-sub">${esc(t.symbol||'—')} &middot; ${poids.toFixed(1)}${tr('b_portfolio_share')} &middot; <span style="color:${t.useApi?'var(--grn)':'rgba(255,255,255,0.35)'}">${t.useApi?tr('b_auto'):tr('b_manual')}</span></div>
+          <div class="coffre-sub">${esc(t.symbol||'—')} &middot; ${(+t.qty||0).toLocaleString(_curLocale())} ${(+t.qty||0)>1?tr('b_count_titres'):tr('b_count_titre')}${pruSub} &middot; <span style="color:${t.useApi?'var(--grn)':'rgba(255,255,255,0.35)'}">${t.useApi?tr('b_auto'):tr('b_manual')}</span></div>
         </div>
         <div class="coffre-r">
           <div class="coffre-val" style="color:${valColor}">${fE(val)}</div>
-          <div class="coffre-qty">${(+t.qty||0).toLocaleString(_locale())} ${(+t.qty||0)>1?tr('b_count_titres'):tr('b_count_titre')}</div>
+          <div class="coffre-qty" style="color:${poids>0?'rgba(255,255,255,0.45)':'var(--tx3)'}">${poids.toFixed(1)}${tr('b_portfolio_share')}</div>
         </div>
         <div class="coffre-menu-wrap">
           <button class="coffre-menu-btn" onclick="toggleTitreMenu(this,event)">&#8943;</button>
           <div class="coffre-menu">
-            <button onclick="toggleTitreInline(${i},'achat')"><span class="coffre-menu-ic">+</span>${tr('b_menu_add_purchase')}</button>
+            <button onclick="toggleTitreInline(${i},'achat')"><span class="coffre-menu-ic">&#9998;</span>${tr('b_menu_update_position')}</button>
             <button onclick="toggleTitreInline(${i},'edit')"><span class="coffre-menu-ic">&#9998;</span>${tr('b_menu_edit_info')}</button>
             <button class="danger" onclick="deleteTitreFromMenu(${i})"><span class="coffre-menu-ic">&#10005;</span>${tr('b_menu_delete_titre')}</button>
           </div>
         </div>
       </div>
-      <div class="coffre-meta">
+      <div class="coffre-meta" style="padding-top:8px">
         <div><div class="pm-l">${tr('b_grid_cours')}</div><div class="pm-v">${fE2(+t.cours||0)}</div></div>
-        <div><div class="pm-l">${tr('b_grid_pru')}</div><div class="pm-v">${fE2(+t.pru||0)}</div></div>
+        <div><div class="pm-l">${tr('b_kpi_pnl')}</div><div class="pm-v" style="color:${pnl===0?'#fff':pnl>=0?'var(--grn)':'var(--red)'}">${cost>0?(pnl>=0?'+':'')+fE(pnl):'—'}</div></div>
         <div><div class="pm-l">${tr('b_grid_perf')}</div><div class="pm-v" style="color:${pnlPct===null?'#fff':pnlPct>=0?'var(--grn)':'var(--red)'}">${pnlPct!==null?(pnlPct>=0?'+':'')+pnlPct.toFixed(2)+'%':'—'}</div></div>
       </div>
       ${txs.length>0?`
@@ -5028,7 +5186,7 @@ function renderBourseDisplay(){
           return `<div class="coffre-tx-row">
             <div class="coffre-tx-date">${dateStr}</div>
             <div class="coffre-tx-body">
-              <div class="tx-q" style="color:#fff">${(+tx.qty||0).toLocaleString(_locale())} ${(+tx.qty||0)>1?tr('b_count_titres'):tr('b_count_titre')}</div>
+              <div class="tx-q" style="color:#fff">${(+tx.qty||0).toLocaleString(_curLocale())} ${(+tx.qty||0)>1?tr('b_count_titres'):tr('b_count_titre')}</div>
               <div class="tx-spot">${tr('b_tx_pru_line',{value:fE2(+tx.pru||0)})}</div>
             </div>
             <div class="coffre-tx-right">
@@ -5051,31 +5209,62 @@ function lpDelLivret(el){const i=+el.dataset.idx;D.livrets.splice(i,1);save();re
 // ── Presets ETF populaires ──
 const ETF_PRESETS=[
   {cat:'Monde',items:[
-    {name:'Amundi MSCI World',symbol:'CW8',ter:'0,38%',desc:'MSCI World — 1 500 actions, 23 pays'},
-    {name:'iShares MSCI World Swap PEA',symbol:'WPEA',ter:'0,20%',desc:'MSCI World synthétique PEA'},
-    {name:'Lyxor MSCI World',symbol:'EWLD',ter:'0,30%',desc:'MSCI World — réplication synthétique'},
+    {name:'iShares Core MSCI World',symbol:'IWDA.AS',ter:'0.20%',desc:'MSCI World — 1,500 stocks, physical'},
+    {name:'Vanguard FTSE All-World',symbol:'VWCE.DE',ter:'0.22%',desc:'FTSE All-World — 3,700 stocks, physical'},
+    {name:'Amundi MSCI World',symbol:'CW8.PA',ter:'0.38%',desc:'MSCI World — synthetic'},
+    {name:'Vanguard Total World (USD)',symbol:'VT',ter:'0.07%',desc:'FTSE All-World — USD, 9,500 stocks'},
   ]},
   {cat:'S&P 500',items:[
-    {name:'BNP Paribas Easy S&P 500',symbol:'ESE',ter:'0,15%',desc:'S&P 500 — 500 grandes cap. US (PEA)'},
-    {name:'Amundi S&P 500 II',symbol:'500',ter:'0,15%',desc:'S&P 500 synthétique PEA'},
-    {name:'iShares Core S&P 500',symbol:'CSPX',ter:'0,07%',desc:'S&P 500 — réplication physique CTO'},
+    {name:'Vanguard S&P 500 ETF (USD)',symbol:'VOO',ter:'0.03%',desc:'S&P 500 — 500 US large cap, physical'},
+    {name:'iShares Core S&P 500 (USD)',symbol:'IVV',ter:'0.03%',desc:'S&P 500 — physical, USD'},
+    {name:'SPDR S&P 500 (USD)',symbol:'SPY',ter:'0.09%',desc:'S&P 500 — oldest ETF, most liquid'},
+    {name:'iShares Core S&P 500 (EUR)',symbol:'CSPX.L',ter:'0.07%',desc:'S&P 500 — physical, EUR-hedged'},
+    {name:'Amundi S&P 500 (EUR)',symbol:'500.PA',ter:'0.15%',desc:'S&P 500 — synthetic, EUR'},
   ]},
   {cat:'Europe',items:[
-    {name:'Lyxor STOXX Europe 600',symbol:'MSE',ter:'0,07%',desc:'STOXX 600 — 600 entreprises européennes'},
-    {name:'Amundi CAC 40',symbol:'CAC',ter:'0,25%',desc:'CAC 40 — 40 grandes cap. françaises'},
-    {name:'iShares EURO STOXX 50',symbol:'C50',ter:'0,10%',desc:'Euro Stoxx 50 — grandes cap. zone euro'},
+    {name:'iShares EURO STOXX 50',symbol:'EUE.PA',ter:'0.10%',desc:'Euro Stoxx 50 — 50 eurozone large cap'},
+    {name:'Vanguard FTSE Europe (USD)',symbol:'VGK',ter:'0.08%',desc:'FTSE Europe — 1,300 stocks, USD'},
+    {name:'iShares STOXX Europe 600',symbol:'EXSA.DE',ter:'0.20%',desc:'STOXX 600 — 600 European stocks'},
   ]},
   {cat:'Émergents',items:[
-    {name:'Amundi MSCI Emerging Markets',symbol:'AEEM',ter:'0,20%',desc:'Marchés émergents — Asie, Latam, EMEA'},
-    {name:'Lyxor MSCI Emerging Markets',symbol:'LEM',ter:'0,14%',desc:'Émergents synthétique PEA'},
+    {name:'iShares MSCI Emerging Markets',symbol:'EIMI.L',ter:'0.18%',desc:'MSCI EM — 3,000 stocks, physical'},
+    {name:'Vanguard FTSE Emerging (USD)',symbol:'VWO',ter:'0.08%',desc:'FTSE EM — 5,000 stocks, USD'},
+    {name:'Amundi MSCI Emerging Markets',symbol:'AEEM.PA',ter:'0.20%',desc:'MSCI EM — synthetic, EUR'},
   ]},
   {cat:'Nasdaq / Tech',items:[
-    {name:'Lyxor Nasdaq 100',symbol:'PUST',ter:'0,22%',desc:'Nasdaq 100 — 100 grandes cap. tech US (PEA)'},
-    {name:'iShares Nasdaq 100',symbol:'SXRV',ter:'0,33%',desc:'Nasdaq 100 — réplication physique CTO'},
+    {name:'Invesco QQQ (USD)',symbol:'QQQ',ter:'0.20%',desc:'Nasdaq 100 — 100 US tech large cap'},
+    {name:'iShares Nasdaq 100 (EUR)',symbol:'CNDX.L',ter:'0.33%',desc:'Nasdaq 100 — physical, EUR'},
+    {name:'iShares Nasdaq 100 (USD)',symbol:'SXRV.DE',ter:'0.33%',desc:'Nasdaq 100 — physical, USD'},
   ]},
   {cat:'Autres',items:[
-    {name:'iShares Core MSCI World (CTO)',symbol:'IWDA',ter:'0,20%',desc:'MSCI World — réplication physique CTO'},
-    {name:'Vanguard FTSE All-World',symbol:'VWCE',ter:'0,22%',desc:'FTSE All-World — 3 700 titres CTO'},
+    {name:'Vanguard Total Stock Market (USD)',symbol:'VTI',ter:'0.03%',desc:'US Total Market — 4,000 stocks'},
+    {name:'iShares MSCI ACWI (USD)',symbol:'ACWI',ter:'0.32%',desc:'MSCI ACWI — All Country World, USD'},
+    {name:'iShares MSCI World Small Cap',symbol:'IUSN.DE',ter:'0.35%',desc:'MSCI World Small Cap — 3,500 stocks'},
+    {name:'Vanguard Real Estate (USD)',symbol:'VNQ',ter:'0.12%',desc:'US REITs — real estate investment trusts'},
+  ]},
+  {cat:'Actions',items:[
+    // Tech / GAFAM
+    {name:'Apple',symbol:'AAPL',ter:'—',desc:'iPhone, Mac, Services — Nasdaq'},
+    {name:'Microsoft',symbol:'MSFT',ter:'—',desc:'Cloud Azure, Office, AI — Nasdaq'},
+    {name:'Alphabet (Google)',symbol:'GOOGL',ter:'—',desc:'Search, YouTube, Cloud — Nasdaq'},
+    {name:'Amazon',symbol:'AMZN',ter:'—',desc:'E-commerce, AWS Cloud — Nasdaq'},
+    {name:'Meta',symbol:'META',ter:'—',desc:'Facebook, Instagram, WhatsApp — Nasdaq'},
+    {name:'NVIDIA',symbol:'NVDA',ter:'—',desc:'GPU, IA, Data Centers — Nasdaq'},
+    {name:'Tesla',symbol:'TSLA',ter:'—',desc:'Electric vehicles, Energy — Nasdaq'},
+    {name:'Netflix',symbol:'NFLX',ter:'—',desc:'Streaming — Nasdaq'},
+    // Finance
+    {name:'Berkshire Hathaway B',symbol:'BRK-B',ter:'—',desc:'Warren Buffett holding — NYSE'},
+    {name:'JPMorgan Chase',symbol:'JPM',ter:'—',desc:'Largest US bank — NYSE'},
+    {name:'Visa',symbol:'V',ter:'—',desc:'Global payments network — NYSE'},
+    // Consommation
+    {name:'Johnson & Johnson',symbol:'JNJ',ter:'—',desc:'Healthcare, pharma, consumer — NYSE'},
+    {name:'Procter & Gamble',symbol:'PG',ter:'—',desc:'Consumer goods — NYSE'},
+    {name:'LVMH',symbol:'MC.PA',ter:'—',desc:'Luxury goods — Euronext Paris'},
+    {name:'Nestlé',symbol:'NESN.SW',ter:'—',desc:'Food & beverages — SIX Swiss'},
+    // Énergie & Industrie
+    {name:'ExxonMobil',symbol:'XOM',ter:'—',desc:'Oil & gas major — NYSE'},
+    {name:'ASML',symbol:'ASML.AS',ter:'—',desc:'Semiconductor equipment — Euronext Amsterdam'},
+    {name:'SAP',symbol:'SAP.DE',ter:'—',desc:'Enterprise software — Xetra Frankfurt'},
   ]},
 ];
 
@@ -5111,7 +5300,7 @@ function _renderTitreForm(){
     const sel=_etfPresetSel&&_etfPresetSel.symbol===e.symbol;
     return `<div class="preset-row${sel?' selected':''}" onclick="_selectEtfPreset(${_etfPresetCat},${ei})">
       <div><div class="preset-row-t">${esc(e.name)}</div><div class="preset-row-sub">${esc(e.desc)}</div></div>
-      <div class="preset-row-r">TER ${e.ter}</div>
+      <div class="preset-row-r" style="font-family:monospace;color:rgba(255,255,255,0.6)">${e.symbol}</div>
     </div>`;
   }).join('');
 
@@ -5125,20 +5314,30 @@ function _renderTitreForm(){
     <div class="manual-divider"><div class="manual-divider-line"></div><div class="manual-divider-txt">${t('or_preset_or_manual')}</div><div class="manual-divider-line"></div></div>
     <div class="ef"><label>${t('b_form_titre_name')}</label><input id="nt-name" value="${_etfPresetSel?_etfPresetSel.name:''}" placeholder="${t('b_form_titre_name_placeholder')}"></div>
     <div class="g2">
-      <div class="ef"><label>${t('b_form_symbol')}</label><input id="nt-sym" value="${_etfPresetSel?_etfPresetSel.symbol:''}" placeholder="${t('b_form_symbol_placeholder')}"></div>
-      <div class="ef"><label>${t('or_form_field_qty')}</label><input type="number" id="nt-qty" min="0" step="any" value="0"></div>
+      <div class="ef"><label>${t('b_form_symbol')}</label><div class="ef-suffix-wrap"><input id="nt-sym" value="${_etfPresetSel?_etfPresetSel.symbol:''}" placeholder="${t('b_form_symbol_placeholder')}" style="text-transform:uppercase"><span class="ef-suffix" style="font-size:10px">Yx</span></div></div>
+      <div class="ef"><label>${t('or_form_field_qty')}</label><div class="ef-suffix-wrap"><input type="number" id="nt-qty" min="0" step="any" value="0"><span class="ef-suffix">×</span></div></div>
     </div>
-    <div class="ef"><label>${t('or_form_etc_pru')}</label><div class="ef-suffix-wrap"><input type="number" id="nt-pru" min="0" step="0.001" value="0"><span class="ef-suffix">€</span></div></div>
-    <div class="ef"><label>${t('b_form_purchase_date')}</label><input type="date" id="nt-date" value="${new Date().toISOString().slice(0,10)}"></div>
-    <div style="display:flex;gap:8px;margin-top:4px">
-      <button class="btn btn-grn" style="flex:1" onclick="_saveNewTitre()">${t('b_form_btn_add')}</button>
+    <div class="g2">
+      <div class="ef"><label>${t('or_form_etc_pru')}</label><div class="ef-suffix-wrap"><input type="number" id="nt-pru" min="0" step="0.001" value="0"><span class="ef-suffix">${_curSym()}</span></div></div>
+      <div class="ef"><label>${t('b_form_purchase_date')}</label><input type="date" id="nt-date" style="height:36px;box-sizing:border-box" value="${new Date().toISOString().slice(0,10)}"></div>
+    </div>
+    <div class="btn-row">
       <button class="btn btn-dark" onclick="closeTitreForm()">${t('common_cancel')}</button>
+      <button class="btn btn-grn" style="flex:1" onclick="_saveNewTitre()">${t('b_form_btn_add')}</button>
     </div>`;
 }
 
 
 function _etfCatLabel(cat){
-  const map={'Monde':'b_etf_cat_world','S&P 500':'b_etf_cat_sp500','Europe':'b_etf_cat_europe','Émergents':'b_etf_cat_emerging','Nasdaq / Tech':'b_etf_cat_nasdaq','Autres':'b_etf_cat_other'};
+  const map={
+    'Monde':'b_etf_cat_world',
+    'S&P 500':'b_etf_cat_sp500',
+    'Europe':'b_etf_cat_europe',
+    'Émergents':'b_etf_cat_emerging',
+    'Nasdaq / Tech':'b_etf_cat_nasdaq',
+    'Autres':'b_etf_cat_other',
+    'Actions':'b_etf_cat_actions',
+  };
   return map[cat]?t(map[cat]):cat;
 }
 function _setEtfCat(ci){_etfPresetCat=ci;_etfPresetSel=null;_renderTitreForm();}
@@ -5196,11 +5395,11 @@ function _renderTitreInline(i, mode){
   if(!tit)return;
   if(mode==='edit'){
     inline.innerHTML=`
-      <div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px">
+      <div>
         <div class="ef"><label>${t('cash_field_name')}</label><input value="${esc(tit.name||'')}" onchange="D.titres[${i}].name=this.value;save()"></div>
         <div class="g2">
-          <div class="ef"><label>${t('b_form_symbol')}</label><input type="text" value="${esc(tit.symbol||'')}" onchange="setTitreSymbol(${i},this.value);_renderTitreInline(${i},'edit')"></div>
-          <div class="ef"><label>${t('or_etc_grid_cours')}</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${tit.cours||0}" ${tit.useApi?'readonly style="opacity:.4"':''} onchange="D.titres[${i}].cours=+this.value;save()"><span class="ef-suffix">€</span></div></div>
+          <div class="ef"><label>${t('b_form_symbol')}</label><div class="ef-suffix-wrap"><input type="text" value="${esc(tit.symbol||'')}" onchange="setTitreSymbol(${i},this.value);_renderTitreInline(${i},'edit')"><span class="ef-suffix" style="font-size:10px">Yx</span></div></div>
+          <div class="ef"><label>${t('or_etc_grid_cours')}</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${tit.cours||0}" ${tit.useApi?'readonly style="opacity:.4"':''} onchange="D.titres[${i}].cours=+this.value;save()"><span class="ef-suffix">${_curSym()}</span></div></div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
           <label class="toggle-wrap" onclick="event.stopPropagation()">
@@ -5214,44 +5413,143 @@ function _renderTitreInline(i, mode){
         </div>
       </div>`;
   } else if(mode==='achat'){
+    const curQty=+(tit.qty||0);
+    const curPru=+(tit.pru||0);
     inline.innerHTML=`
-      <div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px">
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">${t('b_update_position')}</div>
         <div class="g2">
-          <div class="ef"><label>${t('or_form_field_qty')}</label><input type="number" id="txi-qty-${i}" min="0" step="any" value="0"></div>
-          <div class="ef"><label>${t('or_form_etc_pru')}</label><div class="ef-suffix-wrap"><input type="number" id="txi-pru-${i}" min="0" step="0.001" value="${tit.pru||0}"><span class="ef-suffix">€</span></div></div>
+          <div class="ef">
+            <label>${t('b_update_qty')}</label>
+            <div class="ef-suffix-wrap">
+              <input type="number" id="txi-cur-qty-${i}" min="0" step="any" value="${curQty}" oninput="_previewNewPru(${i})">
+              <span class="ef-suffix" style="font-size:10px">${tit.symbol||'×'}</span>
+            </div>
+          </div>
+          <div class="ef">
+            <label>${t('b_update_pru')}</label>
+            <div class="ef-suffix-wrap">
+              <input type="number" id="txi-cur-pru-${i}" min="0" step="0.001" value="${curPru}" oninput="_previewNewPru(${i})">
+              <span class="ef-suffix">${_curSym()}</span>
+            </div>
+          </div>
         </div>
-        <div class="ef"><label>${t('b_form_purchase_date')}</label><input type="date" id="txi-date-${i}" value="${new Date().toISOString().slice(0,10)}"></div>
+        <div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;border-top:1px solid var(--bdr);padding-top:10px">+ ${t('b_achat_update_qty')}</div>
+        <div class="g2">
+          <div class="ef">
+            <label>${t('b_achat_update_qty')}</label>
+            <div class="ef-suffix-wrap">
+              <input type="number" id="txi-qty-${i}" min="0" step="any" value="0" oninput="_previewNewPru(${i})">
+              <span class="ef-suffix" style="font-size:10px">${tit.symbol||'×'}</span>
+            </div>
+          </div>
+          <div class="ef">
+            <label>${t('b_achat_update_price')}</label>
+            <div class="ef-suffix-wrap">
+              <input type="number" id="txi-pru-${i}" min="0" step="0.001" value="0" oninput="_previewNewPru(${i})">
+              <span class="ef-suffix">${_curSym()}</span>
+            </div>
+          </div>
+        </div>
+        <div id="txi-preview-${i}" style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;min-height:16px"></div>
+        <div class="ef">
+          <label>${t('b_form_purchase_date')}</label>
+          <input type="date" id="txi-date-${i}" style="height:36px;box-sizing:border-box" value="${new Date().toISOString().slice(0,10)}">
+        </div>
         <div class="btn-row">
           <button class="btn btn-sec" onclick="document.getElementById('titre-inline-${i}').classList.remove('open')">${t('common_cancel')}</button>
-          <button class="btn btn-grn" onclick="_saveTitreAchatInline(${i})">${t('common_save')}</button>
+          <button class="btn btn-grn" onclick="_saveTitreUpdate(${i})">${t('common_save')}</button>
         </div>
       </div>`;
   }
 }
 
-function _saveTitreAchatInline(i){
-  const qty=+(document.getElementById('txi-qty-'+i)||{value:0}).value;
-  const pru=+(document.getElementById('txi-pru-'+i)||{value:0}).value;
+function _saveTitreAchatInline(i){_saveTitreUpdate(i);}
+function _previewNewPru(i){
+  const curQty=+(document.getElementById('txi-cur-qty-'+i)||{value:0}).value||0;
+  const curPru=+(document.getElementById('txi-cur-pru-'+i)||{value:0}).value||0;
+  const addQty=+(document.getElementById('txi-qty-'+i)||{value:0}).value||0;
+  const addPru=+(document.getElementById('txi-pru-'+i)||{value:0}).value||0;
+  const prev=document.getElementById('txi-preview-'+i);
+  if(!prev)return;
+  if(addQty<=0){prev.textContent='';return;}
+  const totalQty=curQty+addQty;
+  const totalCost=curQty*curPru+addQty*addPru;
+  const newPru=totalQty>0?totalCost/totalQty:0;
+  prev.innerHTML=`${t('b_new_pru_preview')}: <strong style="color:#fff">${fE2(newPru)}</strong> · ${totalQty.toLocaleString(_curLocale())} ${totalQty>1?t('b_count_titres'):t('b_count_titre')}`;
+}
+function _saveTitreUpdate(i){
+  const curQty=+(document.getElementById('txi-cur-qty-'+i)||{value:0}).value||0;
+  const curPru=+(document.getElementById('txi-cur-pru-'+i)||{value:0}).value||0;
+  const addQty=+(document.getElementById('txi-qty-'+i)||{value:0}).value||0;
+  const addPru=+(document.getElementById('txi-pru-'+i)||{value:0}).value||0;
   const date=(document.getElementById('txi-date-'+i)||{value:''}).value||new Date().toISOString().slice(0,10);
-  if(qty<=0){showToast(t('b_toast_qty_invalid'));return;}
-  if(!D.titres[i].txs)D.titres[i].txs=[];
-  D.titres[i].txs.push({id:uid(),date,qty,pru});
-  const allTxs=D.titres[i].txs;
-  const totalQty=allTxs.reduce((a,t)=>a+(+t.qty||0),0);
-  const totalCost=allTxs.reduce((a,t)=>a+(+t.qty||0)*(+t.pru||0),0);
+  // Update: weighted PRU from current + new purchase
+  const totalQty=curQty+addQty;
+  const totalCost=curQty*curPru+addQty*addPru;
   D.titres[i].qty=totalQty;
   D.titres[i].pru=totalQty>0?totalCost/totalQty:0;
-  // Fermer l'inline avant le re-render (sinon il reste ouvert vide)
+  // Record in txs history if new purchase
+  if(addQty>0){
+    if(!D.titres[i].txs)D.titres[i].txs=[];
+    D.titres[i].txs.push({id:uid(),date,qty:addQty,pru:addPru});
+  }
   const inline=document.getElementById('titre-inline-'+i);
   if(inline){inline.classList.remove('open');inline.dataset.mode='';}
   save();renderBourseDisplay();calcAll();
+  showToast(t('b_update_saved'));
 }
 function setTitreSymbol(i,val){
-  let s=val.trim().toUpperCase();
-  // Ajoute .PA automatiquement si Yahoo Finance (pas de clé API) et pas de suffixe
-  if(!D.apiKey&&s&&!s.includes('.')&&!s.includes(':'))s+='.PA';
-  D.titres[i].symbol=s;
+  D.titres[i].symbol=val.trim().toUpperCase();
   save();
+}
+
+// ============================================================
+// FX RATES — Frankfurter.app (BCE, gratuit, sans clé)
+// ============================================================
+async function fetchFxRates(){
+  // Ne refetch pas si les taux ont été mis à jour aujourd'hui
+  const today=new Date().toISOString().slice(0,10);
+  if(D.fxRatesDate===today&&D.fxRates&&Object.keys(D.fxRates).length>0)return;
+  // Cooldown : ne pas réessayer si échec récent (< 1h)
+  const lastTry=parseInt(sessionStorage.getItem('fxLastTry')||'0');
+  if(Date.now()-lastTry<3600000)return;
+  sessionStorage.setItem('fxLastTry',Date.now());
+  const base=_currency();
+  const others=['EUR','USD','GBP','CHF','CAD'].filter(c=>c!==base).join(',');
+  const url='https://api.frankfurter.app/latest?from='+base+'&to='+others;
+  try{
+    const fetchPromise=fetch(url);
+    const timeoutPromise=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
+    const res=await Promise.race([fetchPromise,timeoutPromise]);
+    const data=await res.json();
+    D.fxRates=data.rates||{};
+    D.fxRates[base]=1;
+    D.fxRatesDate=today;
+    sessionStorage.removeItem('fxLastTry');
+    save();
+  }catch(e){
+    // Silencieux — l'app fonctionne sans taux FX (prix bruts utilisés)
+  }
+}
+// Convertit un montant de 'fromCur' vers D.currency
+// fromCur: code ISO (USD, EUR, GBP, CHF, CAD, GBX = pence sterling)
+function fxConvert(amount,fromCur){
+  if(!amount||!fromCur)return +amount||0;
+  const cur=_currency();
+  // GBX = pence sterling (Yahoo Finance retourne parfois GBX pour LSE)
+  if(fromCur==='GBX'){fromCur='GBP';amount=amount/100;}
+  if(fromCur===cur)return +amount;
+  const rates=D.fxRates||{};
+  // rates sont: X unités de [autre devise] par 1 [devise de base D.currency]
+  // Pour convertir fromCur → cur:
+  // Si cur=EUR et rates={USD:1.08}: 1 EUR = 1.08 USD → 1 USD = 1/1.08 EUR
+  if(rates[fromCur]){
+    return amount/rates[fromCur];  // fromCur → base currency
+  }
+  // Fallback: pas de taux disponible, retourne le montant brut avec warning
+  console.warn('No FX rate for',fromCur,'→',cur,'. Using raw value.');
+  return +amount;
 }
 
 async function fetchBourse(){
@@ -5261,23 +5559,35 @@ async function fetchBourse(){
   let ok=0,fail=0;
   const failed=[];
 
+  // Fetch FX rates before fetching prices (once per day, cached)
+  await fetchFxRates();
+
+  // Returns {price, currency} — price already converted to D.currency
   async function fetchPrice(t){
     if(!t.symbol||!t.useApi)return null;
     const ctrl=new AbortController();
     const timeout=setTimeout(()=>ctrl.abort(),10000);
     try{
       if(D.apiKey&&D.apiKey.trim()!==''){
+        // Finnhub doesn't return currency in /quote — store raw price
         const res=await fetch('https://finnhub.io/api/v1/quote?symbol='+encodeURIComponent(t.symbol)+'&token='+D.apiKey.trim(),{signal:ctrl.signal});
         const data=await res.json();
         clearTimeout(timeout);
-        return data.c||null;
+        return data.c>0?{price:data.c,currency:null}:null;
       }else{
         const yfUrl='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(t.symbol)+'?interval=1d&range=1d';
         const res=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(yfUrl),{signal:ctrl.signal});
         const w=await res.json();
         clearTimeout(timeout);
         const d=JSON.parse(w.contents);
-        return d?.chart?.result?.[0]?.meta?.regularMarketPrice||null;
+        const meta=d?.chart?.result?.[0]?.meta;
+        if(!meta)return null;
+        const rawPrice=meta.regularMarketPrice;
+        const rawCur=(meta.currency||'').toUpperCase();
+        if(!rawPrice||rawPrice<=0)return null;
+        // Convert from market currency to user's currency
+        const converted=rawCur&&rawCur!==_currency()?fxConvert(rawPrice,rawCur):rawPrice;
+        return {price:converted,currency:rawCur};
       }
     }catch(e){clearTimeout(timeout);throw e;}
   }
@@ -5285,8 +5595,8 @@ async function fetchBourse(){
   await Promise.all(D.titres.map(async(t,i)=>{
     if(!t.symbol||!t.useApi)return;
     try{
-      const price=await fetchPrice(t);
-      if(price&&price>0){D.titres[i].cours=price;ok++;}
+      const result=await fetchPrice(t);
+      if(result&&result.price>0){D.titres[i].cours=result.price;if(result.currency)D.titres[i].sourceCurrency=result.currency;ok++;}
       else{fail++;failed.push(t.symbol);}
     }catch(e){fail++;failed.push(t.symbol);}
   }));
@@ -5296,8 +5606,8 @@ async function fetchBourse(){
     if(!e.name||!e.ticker||e.useApi===false)return;
     try{
       // Use ticker as symbol for API (Finnhub or Yahoo)
-      const price=await fetchPrice({symbol:e.ticker,useApi:true});
-      if(price&&price>0){D.orPapier[i].cours=price;ok++;}
+      const result=await fetchPrice({symbol:e.ticker,useApi:true});
+      if(result&&result.price>0){D.orPapier[i].cours=result.price;ok++;}
       else{fail++;failed.push(e.ticker);}
     }catch(err){fail++;failed.push(e.ticker);}
   }));
@@ -5400,7 +5710,7 @@ function renderBiensDisplay(){
     // Sous-ligne : prix/m² · surface · détention
     const prixM2=+(b.prixm2||0);
     const bienSubLine=[
-      prixM2>0?(prixM2.toLocaleString(_locale(),{maximumFractionDigits:0})+' \u20ac/m\u00b2'):null,
+      prixM2>0?(prixM2.toLocaleString(_curLocale(),{maximumFractionDigits:0})+' \u20ac/m\u00b2'):null,
       (b.surface||0)+' m\u00b2',
       b.part&&+b.part!==100?b.part+t('immo_share_ownership'):null
     ].filter(Boolean).join(' \u00b7 ');
@@ -5529,6 +5839,12 @@ function openParams(){
   document.querySelectorAll('.sub-panel').forEach(p=>p.style.display='none');
   updateParamsMenu();
   if(typeof updateLangToggle==='function')updateLangToggle();
+  const _csel=document.getElementById('cfg-currency-sel');
+  if(_csel)_csel.value=D.currency||'EUR';
+  const csel=document.getElementById('cfg-currency-sel');
+  if(csel)csel.value=D.currency||'EUR';
+  const asel=document.getElementById('cfg-area-sel');
+  if(asel)asel.value=D.areaUnit||'m2';
   // pas de push historique pour le panneau params
 }
 function closeParams(){document.getElementById('params-panel').classList.remove('open');}
@@ -5768,14 +6084,14 @@ function buildBienForm(bi){
   h+='<input value="'+esc(b.name||'')+'" placeholder="'+t('immo_form_name_placeholder')+'" onchange="D.biens['+bi+'].name=this.value;save();renderBiensDisplay()"></div>';
   h+='<div class="g2">';
   h+='<div class="ef"><label>'+t('immo_form_surface')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.surface||0)+'" onchange="D.biens['+bi+'].surface=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">m²</span></div></div>';
-  h+='<div class="ef"><label>'+t('immo_form_price_m2')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.prixm2||0)+'" onchange="D.biens['+bi+'].prixm2=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">€/m²</span></div></div>';
+  h+='<div class="ef"><label>'+t('immo_form_price_m2')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.prixm2||0)+'" onchange="D.biens['+bi+'].prixm2=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">${_curSym()}/${_areaSym()}</span></div></div>';
   h+='</div>';
 
   // ── Prix d'achat initial + Solde compte bancaire ──
   h+='<div class="ef"><label>'+t('immo_form_purchase_price')+' <span class="hint" style="display:inline;font-size:11px">'+t('immo_form_purchase_price_hint')+'</span></label>';
-  h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.prixAchat||0)+'" onchange="D.biens['+bi+'].prixAchat=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>';
+  h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.prixAchat||0)+'" onchange="D.biens['+bi+'].prixAchat=+this.value;save();calcAll()"><span class="ef-suffix">${_curSym()}</span></div></div>';
   h+='<div class="ef"><label>'+t('immo_form_bank_account')+'</label>';
-  h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.bankAccount||0)+'" onchange="D.biens['+bi+'].bankAccount=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>';
+  h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.bankAccount||0)+'" onchange="D.biens['+bi+'].bankAccount=+this.value;save();calcAll()"><span class="ef-suffix">${_curSym()}</span></div></div>';
 
   // ── Approvisionnements ──
   h+='<div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 8px">'+t('immo_form_appro_title')+'</div>';
@@ -5794,7 +6110,7 @@ function buildBienForm(bi){
     h+='<option value="me"'+(a.who==='me'?' selected':'')+'>'+t('immo_form_appro_type_me')+'</option>';
     h+='<option value="other"'+(a.who==='other'?' selected':'')+'>'+t('immo_form_appro_type_other')+'</option></select></div>';
     h+='<div class="ef" style="margin:0"><label>'+t('immo_form_appro_amount')+'</label>';
-    h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(a.amount||0)+'" onchange="D.biens['+bi+'].appros['+ai+'].amount=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>';
+    h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(a.amount||0)+'" onchange="D.biens['+bi+'].appros['+ai+'].amount=+this.value;save();calcAll()"><span class="ef-suffix">${_curSym()}</span></div></div>';
     h+='</div></div>';
   });
   h+='<button class="btn-add" style="width:100%;padding:10px;margin-bottom:4px" onclick="(D.biens['+bi+'].appros=D.biens['+bi+'].appros||[]).push({label:\'\',who:\'me\',amount:0});save();selectBienInline('+bi+',\''+fid+'\');calcAll()">'+t('immo_form_appro_add')+'</button>';
@@ -5809,14 +6125,14 @@ function buildBienForm(bi){
     h+='<button class="unit-del-x" onclick="D.biens['+bi+'].units.splice('+ui+',1);save();selectBienInline('+bi+',\''+fid+'\');calcAll()" title="'+t('immo_form_unit_delete_title')+'">&#215;</button>';
     h+='</div>';
     h+='<div class="ef" style="margin-bottom:12px"><label>'+t('immo_form_unit_rent_monthly')+'</label>';
-    h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(u.loyer||0)+'" onchange="D.biens['+bi+'].units['+ui+'].loyer=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">€</span></div></div>';
+    h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(u.loyer||0)+'" onchange="D.biens['+bi+'].units['+ui+'].loyer=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">${_curSym()}</span></div></div>';
     // Charges locatives — chaque ligne occupe toute la largeur
     h+='<div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">'+t('immo_form_unit_rental_charges_title')+'</div>';
     (u.rentalCharges||[]).forEach((rc,rci)=>{
       h+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">';
       h+='<div class="g2" style="flex:1;margin:0">';
-      h+='<div class="ef" style="margin:0"><input value="'+esc(rc.name||'')+'" placeholder="'+t('immo_form_unit_charge_name_placeholder')+'" onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].name=this.value;save()"></div>';
-      h+='<div class="ef" style="margin:0"><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" style="text-align:right" value="'+(rc.value||0)+'" onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].value=+this.value;save();calcAll()"><span class="ef-suffix">€</span></div></div>';
+      h+='<div class="ef" style="margin:0"><input style="height:36px;box-sizing:border-box" value="'+esc(rc.name||'')+'" placeholder="'+t('immo_form_unit_charge_name_placeholder')+'" onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].name=this.value;save()"></div>';
+      h+='<div class="ef" style="margin:0"><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" style="text-align:right" value="'+(rc.value||0)+'" onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].value=+this.value;save();calcAll()"><span class="ef-suffix">${_curSym()}</span></div></div>';
       h+='</div>';
       h+='<button class="unit-del-x" onclick="D.biens['+bi+'].units['+ui+'].rentalCharges.splice('+rci+',1);save();selectBienInline('+bi+',\''+fid+'\');calcAll()" title="'+t('immo_form_unit_charge_delete_title')+'">&#215;</button>';
       h+='</div>';
@@ -5839,19 +6155,20 @@ function buildImmoCredit(bi){
   h+='<p style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:12px;line-height:1.5">';
   h+=t('passif_immo_credit_intro',{name:'<strong style="color:rgba(255,255,255,0.7)">'+esc(b.name||t('passif_property_default_name'))+'</strong>'})+'</p>';
   // Crédit — Emprunt initial pleine largeur
-  h+='<div class="ef"><label>'+t('passif_immo_initial_loan')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.empruntinitial||0)+'" onchange="D.biens['+bi+'].empruntinitial=+this.value;save()"><span class="ef-suffix">\u20ac</span></div></div>';
+  h+='<div class="ef"><label>'+t('passif_immo_initial_loan')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="0.01" value="'+(b.empruntinitial||0)+'" onchange="D.biens['+bi+'].empruntinitial=+this.value;save()"><span class="ef-suffix">\u20ac</span></div></div>';
   h+='<div class="g2">';
-  h+='<div class="ef"><label>'+t('passif_immo_remaining')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.credit||0)+'" onchange="D.biens['+bi+'].credit=+this.value;save();calcAll()"><span class="ef-suffix">\u20ac</span></div></div>';
+  h+='<div class="ef"><label>'+t('passif_immo_remaining')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="0.01" value="'+(b.credit||0)+'" onchange="D.biens['+bi+'].credit=+this.value;save();calcAll()"><span class="ef-suffix">\u20ac</span></div></div>';
   h+='<div class="ef"><label>'+t('passif_immo_rate_annual')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="0.01" value="'+(b.tauxPret||0)+'" onchange="D.biens['+bi+'].tauxPret=+this.value;save()"><span class="ef-suffix">%</span></div></div>';
-  h+='<div class="ef"><label>'+t('passif_immo_end_date')+'</label><input type="date" value="'+(b.dateFinPret||'')+'" onchange="D.biens['+bi+'].dateFinPret=this.value;save()"></div>';
+  h+='<div class="ef"><label>'+t('passif_immo_end_date')+'</label><input type="date" value="'+(b.dateFinPret||'')+'" style="height:36px;box-sizing:border-box" onchange="D.biens['+bi+'].dateFinPret=this.value;save()"></div>';
   h+='<div class="ef"><label>'+t('passif_immo_ownership')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" max="100" value="'+(b.part||100)+'" onchange="D.biens['+bi+'].part=+this.value;save()"><span class="ef-suffix">%</span></div></div>';
   h+='</div>';
   // Mensualité automatique
   h+='<div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 8px">'+t('passif_form_auto_deduction')+'</div>';
   h+='<div class="g2">';
-  h+='<div class="ef"><label>'+t('passif_form_monthly')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.mensualite||0)+'" onchange="D.biens['+bi+'].mensualite=+this.value;save()"><span class="ef-suffix">\u20ac</span></div><span class="hint">'+t('passif_form_disabled_hint')+'</span></div>';
-  h+='<div class="ef"><label>'+t('passif_form_debit_day')+'</label><input type="number" inputmode="numeric" min="1" max="28" step="1" value="'+(b.jourPrelevement||0)+'" onchange="D.biens['+bi+'].jourPrelevement=+this.value;save()"><span class="hint">'+t('passif_form_day_hint_long')+'</span></div>';
+  h+='<div class="ef"><label>'+t('passif_form_monthly')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="0.01" value="'+(b.mensualite||0)+'" onchange="D.biens['+bi+'].mensualite=+this.value;save()"><span class="ef-suffix">'+_curSym()+'</span></div></div>';
+  h+='<div class="ef"><label>'+t('passif_form_debit_day')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="numeric" min="1" max="28" step="1" style="height:36px;box-sizing:border-box" value="'+(b.jourPrelevement||0)+'" onchange="D.biens['+bi+'].jourPrelevement=+this.value;save()"><span class="ef-suffix">j</span></div></div>';
   h+='</div>';
+  h+='<span class="hint" style="display:block;margin-top:4px">'+t('passif_form_disabled_hint')+'</span>';
   if(b.lastAutoDebit)h+='<div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:10px">'+t('passif_form_last_debit_applied',{date:b.lastAutoDebit})+'</div>';
   // Frais d’acquisition
   h+='<div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 8px">'+t('passif_acq_fees')+'</div>';
@@ -5860,13 +6177,17 @@ function buildImmoCredit(bi){
   (b.charges||[]).forEach((ch,ci)=>{
     h+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">';
     h+='<div class="g2" style="flex:1;margin:0">';
-    h+='<div class="ef" style="margin:0"><input value="'+esc(ch.name||'')+'" placeholder="'+t('passif_immo_charge_placeholder')+'" onchange="D.biens['+bi+'].charges['+ci+'].name=this.value;save()"></div>';
+    h+='<div class="ef" style="margin:0"><input style="height:36px;box-sizing:border-box" value="'+esc(ch.name||'')+'" placeholder="'+t('passif_immo_charge_placeholder')+'" onchange="D.biens['+bi+'].charges['+ci+'].name=this.value;save()"></div>';
     h+='<div class="ef" style="margin:0"><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" style="text-align:right" value="'+(ch.value||0)+'" onchange="D.biens['+bi+'].charges['+ci+'].value=+this.value;save()"><span class="ef-suffix">\u20ac</span></div></div>';
     h+='</div>';
     h+='<button class="unit-del-x" onclick="D.biens['+bi+'].charges.splice('+ci+',1);save();_renderImmoCredit('+bi+');calcAll()" title="'+t('passif_immo_delete_charge')+'">&#215;</button>';
     h+='</div>';
   });
   h+='<button class="btn-add" style="width:100%;padding:10px;margin-top:4px" onclick="(D.biens['+bi+'].charges=D.biens['+bi+'].charges||[]).push({name:\'\',value:0});save();_renderImmoCredit('+bi+')">'+t('passif_immo_add_fee')+'</button>';
+  h+='<div class="btn-row" style="margin-top:14px">';
+  h+='<button class="btn btn-sec" onclick="toggleImmoCredit('+bi+')">'+t('common_cancel')+'</button>';
+  h+='<button class="btn btn-grn" onclick="calcAll();renderBiensPassif();">'+t('common_save')+'</button>';
+  h+='</div>';
 
   return h;
 }
@@ -5887,7 +6208,7 @@ function renderBiensPassif(){
     let h='<div class="passif-item" id="immo-credit-card-'+bi+'">';
     h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">';
     h+='<div><div style="font-size:15px;font-weight:700;color:#fff">'+esc(b.name||t('passif_property_default_name'))+' 🏢</div>';
-    h+='<div style="font-size:11px;color:rgba(255,255,255,0.4)">'+(b.surface||0)+' m² · '+(b.part||100)+'%</div></div>';
+    h+='<div style="font-size:11px;color:rgba(255,255,255,0.4)">'+_areaConv(b.surface||0)+' '+_areaSym()+' · '+(b.part||100)+'%</div></div>';
     h+='<div class="coffre-menu-wrap">';
     h+='<button class="coffre-menu-btn" onclick="togglePassifItemMenu(this,event)">&#8943;</button>';
     h+='<div class="coffre-menu">';
@@ -5963,15 +6284,15 @@ function _renderCollpretInline(i){
   if(!inline)return;
   const c=D.collPrets[i];
   if(!c)return;
-  inline.innerHTML=`<div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px">
+  inline.innerHTML=`<div>
     <div class="ef"><label>${t('passif_form_name')}</label><input value="${esc(c.name||'')}" oninput="D.collPrets[${i}].name=this.value;save()"></div>
     <div class="g2">
-      <div class="ef"><label>${t('passif_form_borrowed_amount')}</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${c.eurBorrowed||0}" oninput="D.collPrets[${i}].eurBorrowed=+this.value;save()"><span class="ef-suffix">€</span></div></div>
+      <div class="ef"><label>${t('passif_form_borrowed_amount')}</label><div class="ef-suffix-wrap"><input type="number" step="0.01" inputmode="decimal" value="${c.eurBorrowed||0}" oninput="D.collPrets[${i}].eurBorrowed=+this.value;save()"><span class="ef-suffix">${_curSym()}</span></div></div>
       <div class="ef"><label>${t('passif_form_rate')}</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${c.rate||0}" oninput="D.collPrets[${i}].rate=+this.value;save()"><span class="ef-suffix">%</span></div></div>
     </div>
     <div class="g2">
-      <div class="ef"><label>${t('passif_form_start_date')}</label><input type="date" value="${c.dateStart||''}" onchange="D.collPrets[${i}].dateStart=this.value;save()"></div>
-      <div class="ef"><label>${t('passif_form_due_date')}</label><input type="date" value="${c.dueDate||''}" onchange="D.collPrets[${i}].dueDate=this.value;save()"></div>
+      <div class="ef"><label>${t('passif_form_start_date')}</label><input type="date" style="height:36px;box-sizing:border-box" value="${c.dateStart||''}" onchange="D.collPrets[${i}].dateStart=this.value;save()"></div>
+      <div class="ef"><label>${t('passif_form_due_date')}</label><input type="date" style="height:36px;box-sizing:border-box" value="${c.dueDate||''}" onchange="D.collPrets[${i}].dueDate=this.value;save()"></div>
     </div>
     <div class="ef"><label>${t('passif_form_note')}</label><textarea oninput="D.collPrets[${i}].note=this.value;save()">${esc(c.note||'')}</textarea></div>
     <div class="btn-row">
@@ -5999,20 +6320,21 @@ function _renderPretInline(i){
   if(!inline)return;
   const p=D.prets[i];
   if(!p)return;
-  inline.innerHTML=`<div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:10px;padding-top:12px">
+  inline.innerHTML=`<div>
     <div class="ef"><label>${t('passif_form_name')}</label><input value="${esc(p.name||'')}" oninput="D.prets[${i}].name=this.value;save()"></div>
     <div class="g2">
-      <div class="ef"><label>${t('passif_form_initial')}</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${p.montant||0}" oninput="D.prets[${i}].montant=+this.value;save()"><span class="ef-suffix">€</span></div></div>
-      <div class="ef"><label>${t('passif_form_remaining')}</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${p.restant||0}" oninput="D.prets[${i}].restant=+this.value;save()"><span class="ef-suffix">€</span></div></div>
+      <div class="ef"><label>${t('passif_form_initial')}</label><div class="ef-suffix-wrap"><input type="number" step="0.01" inputmode="decimal" value="${p.montant||0}" oninput="D.prets[${i}].montant=+this.value;save()"><span class="ef-suffix">${_curSym()}</span></div></div>
+      <div class="ef"><label>${t('passif_form_remaining')}</label><div class="ef-suffix-wrap"><input type="number" step="0.01" inputmode="decimal" value="${p.restant||0}" oninput="D.prets[${i}].restant=+this.value;save()"><span class="ef-suffix">${_curSym()}</span></div></div>
       <div class="ef"><label>${t('passif_form_rate')}</label><div class="ef-suffix-wrap"><input type="number" step="0.01" value="${p.taux||0}" oninput="D.prets[${i}].taux=+this.value;save()"><span class="ef-suffix">%</span></div></div>
       <div class="ef"><label>${t('passif_form_your_share')}</label><div class="ef-suffix-wrap"><input type="number" step="any" max="100" value="${p.part||100}" oninput="D.prets[${i}].part=+this.value;save()"><span class="ef-suffix">%</span></div></div>
     </div>
-    <div class="ef"><label>${t('passif_form_end_date')}</label><input type="date" value="${p.dateFin||''}" onchange="D.prets[${i}].dateFin=this.value;save()"></div>
+    <div class="ef"><label>${t('passif_form_end_date')}</label><input type="date" style="height:36px;box-sizing:border-box" value="${p.dateFin||''}" onchange="D.prets[${i}].dateFin=this.value;save()"></div>
     <div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:12px 0 8px">${t('passif_form_auto_deduction')}</div>
     <div class="g2">
-      <div class="ef"><label>${t('passif_form_monthly')}</label><div class="ef-suffix-wrap"><input type="number" step="any" value="${p.mensualite||0}" oninput="D.prets[${i}].mensualite=+this.value;save()"><span class="ef-suffix">€</span></div><span class="hint">${t('passif_form_disabled_hint')}</span></div>
-      <div class="ef"><label>${t('passif_form_debit_day')}</label><input type="number" inputmode="numeric" min="1" max="28" value="${p.jourPrelevement||0}" oninput="D.prets[${i}].jourPrelevement=+this.value;save()"><span class="hint">${t('passif_form_day_hint')}</span></div>
+      <div class="ef"><label>${t('passif_form_monthly')}</label><div class="ef-suffix-wrap"><input type="number" step="0.01" inputmode="decimal" value="${p.mensualite||0}" oninput="D.prets[${i}].mensualite=+this.value;save()"><span class="ef-suffix">${_curSym()}</span></div></div>
+      <div class="ef"><label>${t('passif_form_debit_day')}</label><div class="ef-suffix-wrap"><input type="number" inputmode="numeric" min="1" max="28" value="${p.jourPrelevement||0}" oninput="D.prets[${i}].jourPrelevement=+this.value;save()"><span class="ef-suffix">j</span></div></div>
     </div>
+    <span class="hint" style="display:block;margin-top:4px">${t('passif_form_disabled_hint')}</span>
     ${p.lastAutoDebit?`<div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:8px">${t('passif_form_last_debit',{date:p.lastAutoDebit})}</div>`:''}
     <div class="btn-row">
       <button class="btn btn-sec" onclick="document.getElementById('pret-inline-${i}').classList.remove('open');_activePretInline=null">${t('common_cancel')}</button>
@@ -6177,9 +6499,9 @@ let _orCurrentView='physique';  // 'physique' | 'papier'
 let _orSpotEditing=false;
 
 // ── Helpers ──
-const fG=v=>(+v||0).toLocaleString(_locale(),{maximumFractionDigits:3})+' g';
-const fG4=v=>(+v||0).toLocaleString(_locale(),{minimumFractionDigits:2,maximumFractionDigits:4})+' g';
-const fEg=v=>(+v||0).toLocaleString(_locale(),{minimumFractionDigits:2,maximumFractionDigits:2})+' €/g';
+const fG=v=>(+v||0).toLocaleString(_curLocale(),{maximumFractionDigits:3})+' g';
+const fG4=v=>(+v||0).toLocaleString(_curLocale(),{minimumFractionDigits:2,maximumFractionDigits:4})+' g';
+const fEg=v=>(+v||0).toLocaleString(_curLocale(),{minimumFractionDigits:2,maximumFractionDigits:2})+' '+_curSym()+'/g';
 const fPct=v=>((+v||0)>=0?'+':'')+(+v||0).toFixed(1)+' %';
 // Poids d'or pur d'une position (g par unité × quantité totale de toutes les tx de cette position)
 function orPureWeight(pos){
@@ -6355,7 +6677,7 @@ function renderOrSpot(){
   const dot=document.getElementById('or-spot-dot');
   if(!disp||!meta)return;
   const v=+D.goldSpot||0;
-  disp.textContent=v>0?fEg(v):'-- €/g';
+  disp.textContent=v>0?fEg(v):'-- '+_curSym()+'/g';
   if(dot)dot.classList.toggle('live',v>0);
   if(v>0&&D.goldSpotDate){
     try{
@@ -6414,11 +6736,11 @@ function renderOrCoffre(){
       <div class="coffre-hdr">
         <div class="coffre-t">
           <div class="coffre-name">${esc(pos.nom||t('or_pos_default_name'))}</div>
-          <div class="coffre-sub">${unitLbl.charAt(0).toUpperCase()+unitLbl.slice(1)} · ${t('or_pos_brut_g_purity',{g:(+pos.poidsBrut||0).toLocaleString(_locale(),{maximumFractionDigits:4}),p:(+pos.pureteMille||0).toLocaleString(_locale(),{maximumFractionDigits:1})})}</div>
+          <div class="coffre-sub">${unitLbl.charAt(0).toUpperCase()+unitLbl.slice(1)} · ${t('or_pos_brut_g_purity',{g:(+pos.poidsBrut||0).toLocaleString(_curLocale(),{maximumFractionDigits:4}),p:(+pos.pureteMille||0).toLocaleString(_curLocale(),{maximumFractionDigits:1})})}</div>
         </div>
         <div class="coffre-r">
           <div class="coffre-val" style="color:${meltColor}">${fE(melt)}</div>
-          <div class="coffre-qty">${qty.toLocaleString(_locale())} ${qty>1?unitLblPlural:unitLbl}</div>
+          <div class="coffre-qty">${qty.toLocaleString(_curLocale())} ${qty>1?unitLblPlural:unitLbl}</div>
         </div>
         <div class="coffre-menu-wrap">
           <button class="coffre-menu-btn" onclick="toggleOrCoffreMenu(this,event)">⋯</button>
@@ -6430,10 +6752,11 @@ function renderOrCoffre(){
         </div>
       </div>
       <div class="coffre-meta">
-        <div><div class="pm-l">${t('or_pos_meta_pur')}</div><div class="pm-v">${pur.toLocaleString(_locale(),{maximumFractionDigits:3})} g</div></div>
+        <div><div class="pm-l">${t('or_pos_meta_pur')}</div><div class="pm-v">${pur.toLocaleString(_curLocale(),{maximumFractionDigits:3})} g</div></div>
         <div><div class="pm-l">${qty>1?t('or_pos_meta_pru_per',{unit:unitLbl.slice(0,3)}):t('or_pos_meta_pru')}</div><div class="pm-v">${fE2(pru)}</div></div>
         <div><div class="pm-l">${t('or_pos_meta_prime')}</div><div class="pm-v">${primeAvg===null?'—':fPct(primeAvg)}</div></div>
       </div>
+      ${cost>0?`<div style="font-size:12px;margin-top:6px;color:${melt>=cost?'var(--grn)':'var(--red)'};font-weight:600">${t('b_pnl_line',{val:(melt>=cost?'+':'')+fE(melt-cost)})}</div>`:''}
       ${txs.length>0?`
       <div class="coffre-toggle" onclick="toggleCoffreItem(this.parentNode)">
         <span>${t('or_pos_history_btn',{n:txs.length})}</span>
@@ -6452,7 +6775,7 @@ function renderOrCoffre(){
           return `<div class="coffre-tx-row">
             <div class="coffre-tx-date">${dateStr}</div>
             <div class="coffre-tx-body">
-              <div class="tx-q">${(+tx.quantite||0).toLocaleString(_locale())} ${(+tx.quantite||0)>1?unitLblPlural:unitLbl} · ${fE(+tx.prixTotal||0)}</div>
+              <div class="tx-q">${(+tx.quantite||0).toLocaleString(_curLocale())} ${(+tx.quantite||0)>1?unitLblPlural:unitLbl} · ${fE(+tx.prixTotal||0)}</div>
               ${spot>0?`<div class="tx-spot">${t('or_pos_tx_spot_at_purchase',{value:fEg(spot)})}</div>`:`<div class="tx-spot" style="font-style:italic">${t('or_pos_tx_no_spot')}</div>`}
             </div>
             <div class="coffre-tx-right">
@@ -6504,7 +6827,7 @@ function renderOrPapier(){
         </div>
         <div>
           <div class="etc-val">${fE(val)}</div>
-          <div class="etc-qty">${(+e.qty||0).toLocaleString(_locale())} ${(+e.qty||0)>1?t('or_etc_count_shares'):t('or_etc_count_share')}</div>
+          <div class="etc-qty">${(+e.qty||0).toLocaleString(_curLocale())} ${(+e.qty||0)>1?t('or_etc_count_shares'):t('or_etc_count_share')}</div>
         </div>
         <div class="coffre-menu-wrap">
           <button class="coffre-menu-btn" onclick="toggleOrCoffreMenu(this,event)">⋯</button>
@@ -6802,7 +7125,7 @@ function renderOrPhysForm(){
 </div>
 
 <div class="preset-list" id="or-phys-preset-list">
-${OR_PRESETS_PIECES.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPreset(${i},false,this)"><div><div class="preset-row-t">${esc(p.nom)}</div><div class="preset-row-sub">${p.poids.toLocaleString(_locale(),{maximumFractionDigits:4})} g · ${p.purete}‰</div></div><div class="preset-row-r">${(p.poids*p.purete/1000).toLocaleString(_locale(),{maximumFractionDigits:2})} g</div></div>`).join('')}
+${OR_PRESETS_PIECES.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPreset(${i},false,this)"><div><div class="preset-row-t">${esc(p.nom)}</div><div class="preset-row-sub">${p.poids.toLocaleString(_curLocale(),{maximumFractionDigits:4})} g · ${p.purete}‰</div></div><div class="preset-row-r">${(p.poids*p.purete/1000).toLocaleString(_curLocale(),{maximumFractionDigits:2})} g</div></div>`).join('')}
 </div>
 </div>
 
@@ -6821,17 +7144,17 @@ ${OR_PRESETS_PIECES.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPre
 <div class="g2">
 <div class="ef">
 <label>${t('or_form_field_qty')}</label>
-<input type="number" id="or-phys-qty" value="1" min="1" step="1" oninput="updateOrPhysCalcul()">
+<div class="ef-suffix-wrap"><input type="number" id="or-phys-qty" value="1" min="1" step="1" oninput="updateOrPhysCalcul()"><span class="ef-suffix">×</span></div>
 </div>
 <div class="ef">
-<label>${t('or_form_field_total_price')}</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-prix" placeholder="0,00" step="0.01" min="0"><span class="ef-suffix">€</span></div>
+<label>${t('or_form_field_total_price')}</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-prix" placeholder="0,00" step="0.01" min="0"><span class="ef-suffix">${_curSym()}</span></div>
 </div>
 </div>
 
 <div class="g2">
 <div class="ef">
 <label>${t('or_form_field_brut_g')}</label>
-<input type="number" id="or-phys-poids" placeholder="0" step="0.0001" min="0" oninput="updateOrPhysCalcul()">
+<div class="ef-suffix-wrap"><input type="number" id="or-phys-poids" placeholder="0" step="0.0001" min="0" oninput="updateOrPhysCalcul()"><span class="ef-suffix">g</span></div>
 </div>
 <div class="ef">
 <label>${t('or_form_field_purity')}</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-purete" placeholder="900" step="0.1" min="0" max="1000" oninput="updateOrPhysCalcul()"><span class="ef-suffix">‰</span></div>
@@ -6846,7 +7169,7 @@ ${OR_PRESETS_PIECES.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPre
 <div class="g2">
 <div class="ef">
 <label>${t('or_form_field_acq_date')}</label>
-<input type="date" id="or-phys-date" value="${new Date().toISOString().slice(0,10)}">
+<input type="date" id="or-phys-date" style="height:36px;width:100%;box-sizing:border-box" value="${new Date().toISOString().slice(0,10)}">
 </div>
 <div class="ef">
 <label>${t('or_form_field_spot_at_purchase')}</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-spot" placeholder="0" step="0.01" min="0" value="${D.goldSpot||''}" oninput="updateOrPhysPrime()"><span class="ef-suffix">€/g</span></div>
@@ -6883,15 +7206,15 @@ ${OR_PRESETS_PIECES.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPre
 <div class="ibox-body">
 <div class="g2">
 <div class="ef">
-<label>${t('or_form_storage')}</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-cost-stock" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()"><span class="ef-suffix">€</span></div>
+<label>${t('or_form_storage')}</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-cost-stock" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()"><span class="ef-suffix">${_curSym()}</span></div>
 </div>
 <div class="ef">
-<label>${t('or_form_insurance')}</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-cost-assurance" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()"><span class="ef-suffix">€</span></div>
+<label>${t('or_form_insurance')}</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-cost-assurance" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()"><span class="ef-suffix">${_curSym()}</span></div>
 </div>
 </div>
 <div class="sub-total">
 <span class="l">${t('or_form_annual_cost_estimated')}</span>
-<span class="v" id="or-phys-cost-total">${t('or_form_per_year',{n:0})}</span>
+<span class="v" id="or-phys-cost-total">${t('or_form_per_year',{sym:_curSym(),n:0})}</span>
 </div>
 </div>
 </div>
@@ -6929,7 +7252,7 @@ ${OR_PRESETS_PIECES.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPre
 <div class="g2">
 <div class="ef">
 <label>${t('or_form_field_brut_g')}</label>
-<input type="number" id="or-phys-poids" value="${pos.poidsBrut||''}" step="0.0001" min="0" oninput="updateOrPhysCalcul()">
+<div class="ef-suffix-wrap"><input type="number" id="or-phys-poids" value="${pos.poidsBrut||''}" step="0.0001" min="0" oninput="updateOrPhysCalcul()"><span class="ef-suffix">g</span></div>
 </div>
 <div class="ef">
 <label>${t('or_form_field_purity')}</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-purete" value="${pos.pureteMille||''}" step="0.1" min="0" max="1000" oninput="updateOrPhysCalcul()"><span class="ef-suffix">‰</span></div>
@@ -6952,15 +7275,15 @@ ${OR_PRESETS_PIECES.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPre
 <div class="ibox-body">
 <div class="g2">
 <div class="ef">
-<label>${t('or_form_storage')}</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-cost-stock" value="${pos.coutStockage||''}" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()"><span class="ef-suffix">€</span></div>
+<label>${t('or_form_storage')}</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-cost-stock" value="${pos.coutStockage||''}" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()"><span class="ef-suffix">${_curSym()}</span></div>
 </div>
 <div class="ef">
-<label>${t('or_form_insurance')}</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-cost-assurance" value="${pos.coutAssurance||''}" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()"><span class="ef-suffix">€</span></div>
+<label>${t('or_form_insurance')}</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-cost-assurance" value="${pos.coutAssurance||''}" placeholder="0" step="0.01" min="0" oninput="updateOrPhysCostTotal()"><span class="ef-suffix">${_curSym()}</span></div>
 </div>
 </div>
 <div class="sub-total">
 <span class="l">${t('or_form_annual_cost_estimated')}</span>
-<span class="v" id="or-phys-cost-total">${t('or_form_per_year',{n:((pos.coutStockage||0)+(pos.coutAssurance||0)+(pos.coutAutres||0)).toLocaleString(_locale())})}</span>
+<span class="v" id="or-phys-cost-total">${t('or_form_per_year',{sym:_curSym(),n:((pos.coutStockage||0)+(pos.coutAssurance||0)+(pos.coutAutres||0)).toLocaleString(_curLocale())})}</span>
 </div>
 </div>
 </div>
@@ -6992,23 +7315,23 @@ ${OR_PRESETS_PIECES.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPre
 
 <div style="padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;margin-bottom:12px">
 <div style="font-weight:600;color:#fff;font-size:14px">${esc(pos.nom)}</div>
-<div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px">${pos.poidsBrut.toLocaleString(_locale(),{maximumFractionDigits:4})} g brut · ${pos.pureteMille}‰</div>
+<div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px">${pos.poidsBrut.toLocaleString(_curLocale(),{maximumFractionDigits:4})} g brut · ${pos.pureteMille}‰</div>
 </div>
 
 <div class="g2">
 <div class="ef">
 <label>${t('or_form_field_qty')}</label>
-<input type="number" id="or-phys-qty" value="1" min="1" step="1">
+<div class="ef-suffix-wrap"><input type="number" id="or-phys-qty" value="1" min="1" step="1"><span class="ef-suffix">×</span></div>
 </div>
 <div class="ef">
-<label>${t('or_form_field_total_price')}</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-prix" placeholder="0,00" step="0.01" min="0"><span class="ef-suffix">€</span></div>
+<label>${t('or_form_field_total_price')}</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-prix" placeholder="0,00" step="0.01" min="0"><span class="ef-suffix">${_curSym()}</span></div>
 </div>
 </div>
 
 <div class="g2">
 <div class="ef">
 <label>${t('or_form_field_acq_date')}</label>
-<input type="date" id="or-phys-date" value="${new Date().toISOString().slice(0,10)}">
+<input type="date" id="or-phys-date" style="height:36px;width:100%;box-sizing:border-box" value="${new Date().toISOString().slice(0,10)}">
 </div>
 <div class="ef">
 <label>${t('or_form_field_spot_at_purchase')}</label><div class="ef-suffix-wrap"><input type="number" id="or-phys-spot" placeholder="0" step="0.01" min="0" value="${D.goldSpot||''}"><span class="ef-suffix">€/g</span></div>
@@ -7050,7 +7373,7 @@ function switchOrPhysPresetTab(tab,ev){
   if(!list)return;
   const presets=tab==='pieces'?OR_PRESETS_PIECES:OR_PRESETS_LINGOTS;
   const isLingot=tab==='lingots';
-  list.innerHTML=presets.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPreset(${i},${isLingot},this)"><div><div class="preset-row-t">${esc(p.nom)}</div><div class="preset-row-sub">${p.poids.toLocaleString(_locale(),{maximumFractionDigits:4})} g · ${p.purete}‰</div></div><div class="preset-row-r">${(p.poids*p.purete/1000).toLocaleString(_locale(),{maximumFractionDigits:2})} g</div></div>`).join('');
+  list.innerHTML=presets.map((p,i)=>`<div class="preset-row" onclick="selectOrPhysPreset(${i},${isLingot},this)"><div><div class="preset-row-t">${esc(p.nom)}</div><div class="preset-row-sub">${p.poids.toLocaleString(_curLocale(),{maximumFractionDigits:4})} g · ${p.purete}‰</div></div><div class="preset-row-r">${(p.poids*p.purete/1000).toLocaleString(_curLocale(),{maximumFractionDigits:2})} g</div></div>`).join('');
   if(ev&&ev.target){
     document.querySelectorAll('#pg-or .preset-tabs button').forEach(b=>b.classList.remove('active'));
     ev.target.classList.add('active');
@@ -7085,9 +7408,9 @@ function updateOrPhysCalcul(){
   const pureUnit=poids*purete/1000;
   const pureTotal=pureUnit*qty;
   if(qtyEl){
-    display.textContent=pureUnit.toLocaleString(_locale(),{maximumFractionDigits:4})+' g · '+pureTotal.toLocaleString(_locale(),{maximumFractionDigits:3})+' g';
+    display.textContent=pureUnit.toLocaleString(_curLocale(),{maximumFractionDigits:4})+' g · '+pureTotal.toLocaleString(_curLocale(),{maximumFractionDigits:3})+' g';
   } else {
-    display.textContent=pureUnit.toLocaleString(_locale(),{maximumFractionDigits:4})+' g';
+    display.textContent=pureUnit.toLocaleString(_curLocale(),{maximumFractionDigits:4})+' g';
   }
   updateOrPhysPrime();
 }
@@ -7124,7 +7447,7 @@ function updateOrPhysCostTotal(){
   if(!total)return;
   const stock=+((stockEl&&stockEl.value)||0);
   const assurance=+((assuranceEl&&assuranceEl.value)||0);
-  total.textContent=t('or_form_per_year',{n:(stock+assurance).toLocaleString(_locale())});
+  total.textContent=t('or_form_per_year',{sym:_curSym(),n:(stock+assurance).toLocaleString(_curLocale())});
 }
 
 function addOrPhysFrais(){
@@ -7145,7 +7468,7 @@ function updateOrPhysFraisTotal(){
   const totalBox=document.getElementById('or-phys-frais-total');
   const totalVal=document.getElementById('or-phys-frais-total-val');
   if(totalBox&&totalVal){
-    if(total>0){totalBox.style.display='flex';totalVal.textContent=total.toLocaleString(_locale())+' €';}
+    if(total>0){totalBox.style.display='flex';totalVal.textContent=total.toLocaleString(_curLocale())+' €';}
     else totalBox.style.display='none';
   }
 }
@@ -7334,10 +7657,10 @@ ${OR_PRESETS_ETC.map((p,i)=>`<div class="preset-row" onclick="selectOrPapPreset(
 <input type="number" id="or-pap-qty" value="${+(etc?.qty||0)||''}" placeholder="0" step="0.01" min="0">
 </div>
 <div class="ef">
-<label>${t('or_form_etc_pru')}</label><div class="ef-suffix-wrap"><input type="number" id="or-pap-pru" value="${+(etc?.pru||0)||''}" placeholder="0" step="0.01" min="0"><span class="ef-suffix">€</span></div>
+<label>${t('or_form_etc_pru')}</label><div class="ef-suffix-wrap"><input type="number" id="or-pap-pru" value="${+(etc?.pru||0)||''}" placeholder="0" step="0.01" min="0"><span class="ef-suffix">${_curSym()}</span></div>
 </div>
 <div class="ef">
-<label>${t('or_form_etc_cours')}</label><div class="ef-suffix-wrap"><input type="number" id="or-pap-cours" value="${+(etc?.cours||0)||''}" placeholder="0" step="0.01" min="0"><span class="ef-suffix">€</span></div>
+<label>${t('or_form_etc_cours')}</label><div class="ef-suffix-wrap"><input type="number" id="or-pap-cours" value="${+(etc?.cours||0)||''}" placeholder="0" step="0.01" min="0"><span class="ef-suffix">${_curSym()}</span></div>
 </div>
 </div>
 
@@ -7347,7 +7670,7 @@ ${OR_PRESETS_ETC.map((p,i)=>`<div class="preset-row" onclick="selectOrPapPreset(
 </div>
 <div class="ef">
 <label>${t('or_form_etc_purchase_date')}</label>
-<input type="date" id="or-pap-date" value="${etc?.date||new Date().toISOString().split('T')[0]}">
+<input type="date" id="or-pap-date" style="height:36px;box-sizing:border-box" value="${etc?.date||new Date().toISOString().split('T')[0]}">
 </div>
 </div>
 
@@ -7571,7 +7894,7 @@ function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,imm
           <div style="border-top:1px solid rgba(245,158,11,0.15);padding-top:6px">
             ${sqLabel(t('hc_btc_my_stack'),'rgba(245,158,11,0.65)')}
             <div style="font-size:14px;font-weight:700;color:var(--btc)" id="sq-btc-stack">${fB8(stackBtc)}</div>
-            <div style="font-size:11px;color:rgba(245,158,11,0.45)" id="sq-btc-sats">${Math.round(stackBtc*1e8).toLocaleString(_locale())} sats</div>
+            <div style="font-size:11px;color:rgba(245,158,11,0.45)" id="sq-btc-sats">${Math.round(stackBtc*1e8).toLocaleString(_curLocale())} sats</div>
           </div>
         </div>
       </div>`;
@@ -7656,7 +7979,7 @@ function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,imm
           </div>
           <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:6px;margin-top:2px">
             ${sqLabel(t('hc_or_pure_weight'))}
-            <div style="font-size:14px;font-weight:700;color:#fff">${orPur.toLocaleString(_locale(),{maximumFractionDigits:3})} g</div>
+            <div style="font-size:14px;font-weight:700;color:#fff">${orPur.toLocaleString(_curLocale(),{maximumFractionDigits:3})} g</div>
             <div style="font-size:11px;color:var(--tx3);margin-top:2px">${t('hc_or_best_perf',{name:bestName,perf:perfStr})}</div>
           </div>
         </div>
@@ -8142,6 +8465,8 @@ function initAll(){
   setupNotes();
   calcAll();
   initBtcConfig();
+  // Fetch FX rates on startup (silently, once per day)
+  fetchFxRates().catch(()=>{});
 }
 
 
@@ -8232,38 +8557,71 @@ function savePatrimonySnapshot(net,brut){
   if(idx>=0)D.patrimonyHistory[idx]=snap;
   else D.patrimonyHistory.push(snap);
   // Garder 24 mois max
-  if(D.patrimonyHistory.length>24)D.patrimonyHistory=D.patrimonyHistory.slice(-24);
+  if(D.patrimonyHistory.length>60)D.patrimonyHistory=D.patrimonyHistory.slice(-60);
 }
 
+function _filterHistByPeriod(hist){
+  if(!hist.length||_evoPeriod==='max')return hist;
+  const now=new Date();
+  const nowYM=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  let cutoff;
+  if(_evoPeriod==='1m'){
+    const d=new Date(now);d.setMonth(d.getMonth()-1);
+    cutoff=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  }else if(_evoPeriod==='6m'){
+    const d=new Date(now);d.setMonth(d.getMonth()-6);
+    cutoff=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  }else if(_evoPeriod==='ytd'){
+    cutoff=now.getFullYear()+'-01';
+  }else if(_evoPeriod==='1y'){
+    const d=new Date(now);d.setFullYear(d.getFullYear()-1);
+    cutoff=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  }
+  return hist.filter(p=>p.month>=cutoff);
+}
+function evoPeriod(period,btn){
+  _evoPeriod=period;
+  document.querySelectorAll('.evo-period-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderEvoChart();
+}
 function renderEvoChart(){
-  const hist=D.patrimonyHistory||[];
+  const allHist=D.patrimonyHistory||[];
+  const hist=_filterHistByPeriod(allHist);
   const canvas=document.getElementById('evoChart');
   if(!canvas)return;
 
+  const months_fr=['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+  const months_en=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const monthNames=D.lang==='en'?months_en:months_fr;
+
   const labels=hist.map(p=>{
     const[y,m]=p.month.split('-');
-    const months=['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
-    return months[+m-1]+(hist.length>12?' '+y.slice(2):'');
+    return monthNames[+m-1]+(hist.length>12?' '+y.slice(2):'');
   });
   const netData=hist.map(p=>p.net);
   const brutData=hist.map(p=>p.brut);
 
-  // KPIs
+  // KPIs — based on filtered period
+  const varEl=document.getElementById('evo-var');
+  const pctEl=document.getElementById('evo-pct');
+  const avgEl=document.getElementById('evo-avg');
   if(hist.length>=2){
     const first=netData[0],last=netData[netData.length-1];
     const diff=last-first;
-    const pct=(diff/first*100);
+    const pct=first!==0?diff/Math.abs(first)*100:0;
     const avg=diff/(hist.length-1);
-    const varEl=document.getElementById('evo-var');
-    const pctEl=document.getElementById('evo-pct');
-    const avgEl=document.getElementById('evo-avg');
     if(varEl)varEl.innerHTML=`<span style="color:${diff>=0?'var(--grn)':'var(--red)'}">${diff>=0?'+':''}${fE(diff)}</span>`;
     if(pctEl)pctEl.innerHTML=`<span style="color:${pct>=0?'var(--grn)':'var(--red)'}">${pct>=0?'+':''}${pct.toFixed(1)}%</span>`;
     if(avgEl)avgEl.innerHTML=`<span style="color:${avg>=0?'var(--grn)':'var(--red)'}">${avg>=0?'+':''}${fE(avg)}</span>`;
+  }else{
+    const na=hist.length===0&&allHist.length>0?t('home_evo_no_data_period'):'--';
+    if(varEl)varEl.textContent=na;
+    if(pctEl)pctEl.textContent=na;
+    if(avgEl)avgEl.textContent=na;
   }
 
-  if(hist.length===0){
-    // Pas encore de données
+  if(allHist.length===0){
     const ctx2=canvas.getContext('2d');
     ctx2.clearRect(0,0,canvas.width,canvas.height);
     ctx2.fillStyle='rgba(255,255,255,0.2)';
