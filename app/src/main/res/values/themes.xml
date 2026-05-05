@@ -2,7 +2,8 @@
 <resources>
     <style name="Theme.Legacy" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">#0f0d1e</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">#0f0d1e</item>
+        <item name="android:navigationBarColor">#0f0d1e</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>
