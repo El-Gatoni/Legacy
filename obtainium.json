@@ -1,0 +1,10 @@
+{
+  "app": {
+    "id": "io.github.elgatoni.legacy",
+    "url": "https://github.com/El-Gatoni/Legacy",
+    "author": "El-Gatoni",
+    "name": "Legacy",
+    "preferredApkIndex": 0,
+    "additionalSettings": "{\"includePrereleases\":false,\"fallbackToOlderReleases\":true,\"filterReleaseTitlesByRegEx\":\"\",\"verifyLatestTag\":false,\"apkFilterRegEx\":\"Legacy-.*\\.apk\"}"
+  }
+}

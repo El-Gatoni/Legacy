@@ -1,0 +1,36 @@
+# F-Droid metadata — submit this file as a PR to:
+# https://gitlab.com/fdroid/fdroiddata/-/tree/master/metadata
+#
+# Replace <FIRST_TAG> with your first git tag once you create it (e.g. v1.0.0).
+
+Categories:
+  - Money
+
+License: GPL-3.0-only
+
+AuthorName: El-Gatoni
+SourceCode: https://github.com/El-Gatoni/Legacy
+IssueTracker: https://github.com/El-Gatoni/Legacy/issues
+
+AutoName: Legacy
+
+Description: |-
+  Privacy-first, offline personal wealth tracker.
+  Tracks Bitcoin, stocks, real estate, gold, savings accounts and liabilities.
+  All data stays on-device — no account, no server, no telemetry.
+
+RepoType: git
+Repo: https://github.com/El-Gatoni/Legacy
+
+Builds:
+  - versionName: '1.0.0'
+    versionCode: 1
+    commit: v1.0.0
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '1.0.0'
+CurrentVersionCode: 1

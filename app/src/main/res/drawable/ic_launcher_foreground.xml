@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Stylised "L" with a green accent bar, centred in the 108dp safe zone -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Vertical stem of the L -->
+    <path
+        android:fillColor="#ffffff"
+        android:pathData="M36,22 L36,86 L74,86 L74,74 L48,74 L48,22 Z" />
+    <!-- Green accent underline -->
+    <path
+        android:fillColor="#34d399"
+        android:pathData="M36,80 L74,80 L74,86 L36,86 Z" />
+</vector>
