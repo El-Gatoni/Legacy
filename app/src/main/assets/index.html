@@ -2681,12 +2681,12 @@ function calcAll(){
   setT('c-pru',pru>0?fE(pru):'—');
   const perf=pru>0&&D.btcPrice>0?(D.btcPrice-pru)/pru*100:null;
   const perfEl=document.getElementById('c-perf');
-  if(perfEl)perfEl.innerHTML=perf!==null?`<span style="color:${perf>=0?'var(--grn)':'var(--red)'}">${perf>=0?'+':''}${perf.toFixed(1)}%</span>`:'—';
+  if(perfEl)perfEl.innerHTML=perf!==null?`<span style="color:${perf>=0?'var(--grn)':'var(--red)'}">${perf.toFixed(1)}%</span>`:'—';
   setT('c-invested',btcInvested>0?fE(btcInvested):'—');
   const valEl=document.getElementById('c-valeur');
   if(valEl)valEl.textContent=btcEur>0?fE(btcEur):'—';
   const pnlEl=document.getElementById('c-pnl');
-  if(pnlEl)pnlEl.innerHTML=pru>0&&D.btcPrice>0?`<span style="color:${btcPnl>=0?'var(--grn)':'var(--red)'}">${btcPnl>=0?'+':''}${fE(btcPnl)}</span>`:'—';
+  if(pnlEl)pnlEl.innerHTML=pru>0&&D.btcPrice>0?`<span style="color:${btcPnl>=0?'var(--grn)':'var(--red)'}">${fE(btcPnl)}</span>`:'—';
 
   const cTotBtc=D.collPrets.reduce((a,c)=>a+(+c.btcAlloc||0),0);
   setT('coll-total-btc',fB5(cTotBtc));
@@ -5126,8 +5126,8 @@ function renderBourseDisplay(){
   const perfPctEl=document.getElementById('b-perf-pct');
   const perfEurEl=document.getElementById('b-perf-eur');
   const perfCostEl=document.getElementById('b-perf-cost');
-  if(perfPctEl)perfPctEl.innerHTML=totPnlPct!==null?`<span style="color:${totPnlPct>=0?'var(--grn)':'var(--red)'}">${totPnlPct>=0?'+':''}${totPnlPct.toFixed(2)}%</span>`:'—';
-  if(perfEurEl)perfEurEl.innerHTML=totCost>0?`<span style="color:${totPnl>=0?'var(--grn)':'var(--red)'}">${totPnl>=0?'+':''}${fE(totPnl)}</span>`:'—';
+  if(perfPctEl)perfPctEl.innerHTML=totPnlPct!==null?`<span style="color:${totPnlPct>=0?'var(--grn)':'var(--red)'}">${totPnlPct.toFixed(2)}%</span>`:'—';
+  if(perfEurEl)perfEurEl.innerHTML=totCost>0?`<span style="color:${totPnl>=0?'var(--grn)':'var(--red)'}">${fE(totPnl)}</span>`:'—';
   if(perfCostEl)perfCostEl.textContent=totCost>0?fE(totCost):'—';
 
   // Count
@@ -5176,8 +5176,8 @@ function renderBourseDisplay(){
       </div>
       <div class="coffre-meta" style="padding-top:8px">
         <div><div class="pm-l">${tr('b_grid_cours')}</div><div class="pm-v">${fE2(+t.cours||0)}</div></div>
-        <div><div class="pm-l">${tr('b_kpi_pnl')}</div><div class="pm-v" style="color:${pnl===0?'#fff':pnl>=0?'var(--grn)':'var(--red)'}">${cost>0?(pnl>=0?'+':'')+fE(pnl):'—'}</div></div>
-        <div><div class="pm-l">${tr('b_grid_perf')}</div><div class="pm-v" style="color:${pnlPct===null?'#fff':pnlPct>=0?'var(--grn)':'var(--red)'}">${pnlPct!==null?(pnlPct>=0?'+':'')+pnlPct.toFixed(2)+'%':'—'}</div></div>
+        <div><div class="pm-l">${tr('b_kpi_pnl')}</div><div class="pm-v" style="color:${pnl===0?'#fff':pnl>=0?'var(--grn)':'var(--red)'}">${cost>0?+fE(pnl):'—'}</div></div>
+        <div><div class="pm-l">${tr('b_grid_perf')}</div><div class="pm-v" style="color:${pnlPct===null?'#fff':pnlPct>=0?'var(--grn)':'var(--red)'}">${pnlPct!==null?+pnlPct.toFixed(2)+'%':'—'}</div></div>
       </div>
       ${txs.length>0?`
       <div class="coffre-toggle" onclick="toggleCoffreItem(this.parentNode)">
@@ -5679,11 +5679,11 @@ function renderBiensDisplay(){
     <div class="pru-grid">
       <div class="pru-item">
         <div class="pru-lbl">${t('immo_kpi_equity')}</div>
-        <div class="pru-val" style="color:${!hasBiens?'#fff':totalEquite>=0?'var(--grn)':'var(--red)'}">${hasBiens?(totalEquite>=0?'+':'')+fE(totalEquite):'—'}</div>
+        <div class="pru-val" style="color:${!hasBiens?'#fff':totalEquite>=0?'var(--grn)':'var(--red)'}">${hasBiens?+fE(totalEquite):'—'}</div>
       </div>
       <div class="pru-item">
         <div class="pru-lbl">${t('immo_kpi_for_sale')}</div>
-        <div class="pru-val" style="color:${!hasBiens?'#fff':totalGainVente>=0?'var(--grn)':'var(--red)'}">${hasBiens?(totalGainVente>=0?'+':'')+fE(totalGainVente):'—'}</div>
+        <div class="pru-val" style="color:${!hasBiens?'#fff':totalGainVente>=0?'var(--grn)':'var(--red)'}">${hasBiens?+fE(totalGainVente):'—'}</div>
       </div>
       <div class="pru-item">
         <div class="pru-lbl">${t('immo_kpi_yield')}</div>
@@ -5736,7 +5736,7 @@ function renderBiensDisplay(){
       <div class="coffre-meta">
         <div><div class="pm-l">${t('immo_meta_estimation')}</div><div class="pm-v">${fE(est*part)}</div></div>
         <div><div class="pm-l">${t('immo_meta_credit')}</div><div class="pm-v" style="color:${credit>0?'var(--red)':'rgba(255,255,255,0.3)'}">${credit>0?fE(credit*part):'—'}</div></div>
-        <div><div class="pm-l">${t('immo_meta_for_sale')}</div><div class="pm-v" style="color:${gainVente>=0?'var(--grn)':'var(--red)'}">${gainVente>=0?'+':''}${fE(gainVente)}</div></div>
+        <div><div class="pm-l">${t('immo_meta_for_sale')}</div><div class="pm-v" style="color:${gainVente>=0?'var(--grn)':'var(--red)'}">${fE(gainVente)}</div></div>
       </div>
       <div class="coffre-meta" style="margin-top:6px;padding-top:8px">
         <div><div class="pm-l">${t('immo_meta_rent_month')}</div><div class="pm-v" style="color:#fff">${loyer>0?fE(loyer):'—'}</div></div>
@@ -6089,14 +6089,14 @@ function buildBienForm(bi){
   h+='<input value="'+esc(b.name||'')+'" placeholder="'+t('immo_form_name_placeholder')+'" onchange="D.biens['+bi+'].name=this.value;save();renderBiensDisplay()"></div>';
   h+='<div class="g2">';
   h+='<div class="ef"><label>'+t('immo_form_surface')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.surface||0)+'" onchange="D.biens['+bi+'].surface=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">m²</span></div></div>';
-  h+='<div class="ef"><label>'+t('immo_form_price_m2')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.prixm2||0)+'" onchange="D.biens['+bi+'].prixm2=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">${_curSym()}/${_areaSym()}</span></div></div>';
+  h+='<div class="ef"><label>'+t('immo_form_price_m2')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.prixm2||0)+'" onchange="D.biens['+bi+'].prixm2=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">'+_curSym()+'/'+_areaSym()+'</span></div></div>';
   h+='</div>';
 
   // ── Prix d'achat initial + Solde compte bancaire ──
   h+='<div class="ef"><label>'+t('immo_form_purchase_price')+' <span class="hint" style="display:inline;font-size:11px">'+t('immo_form_purchase_price_hint')+'</span></label>';
-  h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.prixAchat||0)+'" onchange="D.biens['+bi+'].prixAchat=+this.value;save();calcAll()"><span class="ef-suffix">${_curSym()}</span></div></div>';
+  h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.prixAchat||0)+'" onchange="D.biens['+bi+'].prixAchat=+this.value;save();calcAll()"><span class="ef-suffix">'+_curSym()+'</span></div></div>';
   h+='<div class="ef"><label>'+t('immo_form_bank_account')+'</label>';
-  h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.bankAccount||0)+'" onchange="D.biens['+bi+'].bankAccount=+this.value;save();calcAll()"><span class="ef-suffix">${_curSym()}</span></div></div>';
+  h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.bankAccount||0)+'" onchange="D.biens['+bi+'].bankAccount=+this.value;save();calcAll()"><span class="ef-suffix">'+_curSym()+'</span></div></div>';
 
   // ── Approvisionnements ──
   h+='<div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 8px">'+t('immo_form_appro_title')+'</div>';
@@ -6115,7 +6115,7 @@ function buildBienForm(bi){
     h+='<option value="me"'+(a.who==='me'?' selected':'')+'>'+t('immo_form_appro_type_me')+'</option>';
     h+='<option value="other"'+(a.who==='other'?' selected':'')+'>'+t('immo_form_appro_type_other')+'</option></select></div>';
     h+='<div class="ef" style="margin:0"><label>'+t('immo_form_appro_amount')+'</label>';
-    h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(a.amount||0)+'" onchange="D.biens['+bi+'].appros['+ai+'].amount=+this.value;save();calcAll()"><span class="ef-suffix">${_curSym()}</span></div></div>';
+    h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(a.amount||0)+'" onchange="D.biens['+bi+'].appros['+ai+'].amount=+this.value;save();calcAll()"><span class="ef-suffix">'+_curSym()+'</span></div></div>';
     h+='</div></div>';
   });
   h+='<button class="btn-add" style="width:100%;padding:10px;margin-bottom:4px" onclick="(D.biens['+bi+'].appros=D.biens['+bi+'].appros||[]).push({label:\'\',who:\'me\',amount:0});save();selectBienInline('+bi+',\''+fid+'\');calcAll()">'+t('immo_form_appro_add')+'</button>';
@@ -6130,14 +6130,14 @@ function buildBienForm(bi){
     h+='<button class="unit-del-x" onclick="D.biens['+bi+'].units.splice('+ui+',1);save();selectBienInline('+bi+',\''+fid+'\');calcAll()" title="'+t('immo_form_unit_delete_title')+'">&#215;</button>';
     h+='</div>';
     h+='<div class="ef" style="margin-bottom:12px"><label>'+t('immo_form_unit_rent_monthly')+'</label>';
-    h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(u.loyer||0)+'" onchange="D.biens['+bi+'].units['+ui+'].loyer=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">${_curSym()}</span></div></div>';
+    h+='<div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(u.loyer||0)+'" onchange="D.biens['+bi+'].units['+ui+'].loyer=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">'+_curSym()+'</span></div></div>';
     // Charges locatives — chaque ligne occupe toute la largeur
     h+='<div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">'+t('immo_form_unit_rental_charges_title')+'</div>';
     (u.rentalCharges||[]).forEach((rc,rci)=>{
       h+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">';
       h+='<div class="g2" style="flex:1;margin:0">';
       h+='<div class="ef" style="margin:0"><input style="height:36px;box-sizing:border-box" value="'+esc(rc.name||'')+'" placeholder="'+t('immo_form_unit_charge_name_placeholder')+'" onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].name=this.value;save()"></div>';
-      h+='<div class="ef" style="margin:0"><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" style="text-align:right" value="'+(rc.value||0)+'" onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].value=+this.value;save();calcAll()"><span class="ef-suffix">${_curSym()}</span></div></div>';
+      h+='<div class="ef" style="margin:0"><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" style="text-align:right" value="'+(rc.value||0)+'" onchange="D.biens['+bi+'].units['+ui+'].rentalCharges['+rci+'].value=+this.value;save();calcAll()"><span class="ef-suffix">'+_curSym()+'</span></div></div>';
       h+='</div>';
       h+='<button class="unit-del-x" onclick="D.biens['+bi+'].units['+ui+'].rentalCharges.splice('+rci+',1);save();selectBienInline('+bi+',\''+fid+'\');calcAll()" title="'+t('immo_form_unit_charge_delete_title')+'">&#215;</button>';
       h+='</div>';
@@ -6507,7 +6507,7 @@ let _orSpotEditing=false;
 const fG=v=>(+v||0).toLocaleString(_curLocale(),{maximumFractionDigits:3})+' g';
 const fG4=v=>(+v||0).toLocaleString(_curLocale(),{minimumFractionDigits:2,maximumFractionDigits:4})+' g';
 const fEg=v=>(+v||0).toLocaleString(_curLocale(),{minimumFractionDigits:2,maximumFractionDigits:2})+' '+_curSym()+'/g';
-const fPct=v=>((+v||0)>=0?'+':'')+(+v||0).toFixed(1)+' %';
+const fPct=v=>(+v||0).toFixed(1)+' %';
 // Poids d'or pur d'une position (g par unité × quantité totale de toutes les tx de cette position)
 function orPureWeight(pos){
   if(!pos)return 0;
@@ -6758,7 +6758,7 @@ function renderOrCoffre(){
       </div>
       <div class="coffre-meta">
         <div><div class="pm-l">${t('or_pos_meta_pur')}</div><div class="pm-v">${pur.toLocaleString(_curLocale(),{maximumFractionDigits:3})} g</div></div>
-        <div><div class="pm-l">${t('b_kpi_pnl')}</div><div class="pm-v" style="color:${cost>0?(melt>=cost?'var(--grn)':'var(--red)'):'#fff'}">${cost>0?(melt>=cost?'+':'')+fE(melt-cost):'—'}</div></div>
+        <div><div class="pm-l">${t('b_kpi_pnl')}</div><div class="pm-v" style="color:${cost>0?(melt>=cost?'var(--grn)':'var(--red)'):'#fff'}">${cost>0?fE(melt-cost):'—'}</div></div>
         <div><div class="pm-l">${t('or_pos_meta_prime')}</div><div class="pm-v">${primeAvg===null?'—':fPct(primeAvg)}</div></div>
       </div>
       ${txs.length>0?`
@@ -6843,7 +6843,7 @@ function renderOrPapier(){
       </div>
       <div class="etc-grid" style="grid-template-columns:1fr 1fr 1fr">
         <div><div class="l">${t('or_etc_grid_cours')}</div><div class="v">${fE2(+e.cours||0)}</div></div>
-        <div><div class="l">${t('or_etc_grid_pv')}</div><div class="v ${pv>=0?'pv-pos':'pv-neg'}">${cost>0?(pv>=0?'+':'')+fE(pv):'—'}</div></div>
+        <div><div class="l">${t('or_etc_grid_pv')}</div><div class="v ${pv>=0?'pv-pos':'pv-neg'}">${cost>0?+fE(pv):'—'}</div></div>
         <div><div class="l">${t('or_etc_grid_weight')}</div><div class="v">${weight.toFixed(1)}%</div></div>
       </div>
     </div>`;
@@ -6865,7 +6865,7 @@ function renderOrKPIs(){
   const papPnl=orPapierPnL();
   const papPvEl=document.getElementById('or-pap-pv');
   if(papPvEl){
-    papPvEl.textContent=(papPnl>=0?'+':'')+fE(papPnl);
+    papPvEl.textContent=+fE(papPnl);
     papPvEl.classList.toggle('pos',papPnl>0);
   }
   const ter=orPapierTerAvg();
@@ -7435,7 +7435,7 @@ function updateOrPhysPrime(){
     const pureTotal=poids*purete/1000*qty;
     const prixParGr=prix/pureTotal;
     const prime=(prixParGr/spot-1)*100;
-    primeVal.textContent=(prime>=0?'+':'')+prime.toFixed(1)+' %';
+    primeVal.textContent=+prime.toFixed(1)+' %';
     primeVal.style.color=prime>=0?'#fff':'var(--red)';
   } else {
     primeVal.textContent='--';
@@ -7848,9 +7848,9 @@ function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,imm
 
   // ── PV card (always right) ──
   const pvRows=[];
-  if(btcInvested>0||btcEur>0)pvRows.push({l:t('tab_bitcoin')+' <span style="color:var(--btc)">&#x20BF;</span>',v:btcEur-btcInvested});
-  if(bourseCost>0||bourseTotal>0)pvRows.push({l:t('tab_bourse')+' 📈',v:boursePnl});
-  if(D.biens.length>0)pvRows.push({l:t('tab_immo')+' 🏢',v:immoGainVente});
+  if(btcInvested>0||btcEur>0)pvRows.push({l:'<span style="color:var(--btc)">&#x20BF;</span>',v:btcEur-btcInvested});
+  if(bourseCost>0||bourseTotal>0)pvRows.push({l:'📈',v:boursePnl});
+  if(D.biens.length>0)pvRows.push({l:'🏢',v:immoGainVente});
   // Or PnL (physique + papier)
   const orPhysPnl=orPhysiquePnL();
   const orPapPnl=orPapierPnL();
@@ -7860,7 +7860,7 @@ function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,imm
   const orPapTot=orPapierTotal();
   const orPapCst=orPapierCost();
   if(orPhysCst>0||orPhysTot>0||orPapCst>0||orPapTot>0){
-    pvRows.push({l:t('tab_or')+' <svg style="width:11px;height:11px;vertical-align:-1px;display:inline-block"><use href="#lingots-icon"/></svg>',v:orTotalPnl});
+    pvRows.push({l:'<svg style="width:11px;height:11px;vertical-align:-1px;display:inline-block"><use href="#lingots-icon"/></svg>',v:orTotalPnl});
   }
   const pvTotal=pvRows.reduce((a,r)=>a+r.v,0);
   const pvCardHTML=`
@@ -7870,11 +7870,11 @@ function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,imm
         ${pvRows.length?pvRows.map(r=>`
           <div class="pv-sq-row">
             <span class="lbl">${r.l}</span>
-            <span class="vl ${r.v<0?'neg':''}">${r.v>=0?'+':''}${fE(r.v)}</span>
+            <span class="vl ${r.v<0?'neg':''}">${fE(r.v)}</span>
           </div>`).join('')+
           `<div class="pv-sq-total">
             <span class="lbl">${t('home_pv_total')}</span>
-            <span class="vl ${pvTotal<0?'neg':''}">${pvTotal>=0?'+':''}${fE(pvTotal)}</span>
+            <span class="vl ${pvTotal<0?'neg':''}">${fE(pvTotal)}</span>
           </div>`
         :`<div class="pv-sq-row"><span class="lbl" style="color:var(--tx3)">${t('home_pv_no_data')}</span></div>`}
       </div>
@@ -7892,7 +7892,7 @@ function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,imm
           <div>
             ${sqLabel(t('hc_btc_price'),'rgba(245,158,11,0.65)')}
             ${sqVal(fE(D.btcPrice),'var(--btc)',19)}
-            ${perf!==null?`<div style="margin-top:3px"><span class="sq-badge ${perf>=0?'up':'dn'}">${perf>=0?'+':''}${perf.toFixed(1)}%</span></div>`:''}
+            ${perf!==null?`<div style="margin-top:3px"><span class="sq-badge ${perf>=0?'up':'dn'}">${perf.toFixed(1)}%</span></div>`:''}
           </div>
           <div style="border-top:1px solid rgba(245,158,11,0.15);padding-top:6px">
             ${sqLabel(t('hc_btc_my_stack'),'rgba(245,158,11,0.65)')}
@@ -7916,13 +7916,13 @@ function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,imm
           <div>
             ${sqLabel(t('hc_bourse_total_val'))}
             ${sqVal(fE(bourseTotal),'var(--grn)',18)}
-            <div style="margin-top:3px"><span class="sq-badge ${boursePnl>=0?'up':'dn'}">${boursePnl>=0?'+':''}${fE(boursePnl)}</span></div>
+            <div style="margin-top:3px"><span class="sq-badge ${boursePnl>=0?'up':'dn'}">${fE(boursePnl)}</span></div>
           </div>
           ${bestT?`
           <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:6px;margin-top:2px">
             ${sqLabel(t('hc_bourse_best_perf'))}
             <div style="font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(bestT.name||bestT.symbol)}</div>
-            <span class="sq-badge ${bestPerf>=0?'up':'dn'}" style="margin-top:3px">${bestPerf>=0?'+':''}${bestPerf.toFixed(1)}%</span>
+            <span class="sq-badge ${bestPerf>=0?'up':'dn'}" style="margin-top:3px">${bestPerf.toFixed(1)}%</span>
           </div>`:''}
         </div>
       </div>`;
@@ -7953,7 +7953,7 @@ function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,imm
           <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:6px;margin-top:2px">
             ${sqLabel(t('hc_immo_best_sale'))}
             <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(bestBien.name||t('immo_property_default_name'))}</div>
-            <span class="sq-badge ${bestGain>=0?'up':'dn'}" style="margin-top:3px">${bestGain>=0?'+':''}${fE(bestGain)}</span>
+            <span class="sq-badge ${bestGain>=0?'up':'dn'}" style="margin-top:3px">${fE(bestGain)}</span>
           </div>`:''}
         </div>
       </div>`;
@@ -8003,12 +8003,12 @@ function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,imm
             <div>
               ${sqLabel(t('hc_titre_current_price'))}
               ${sqVal(fE2(t.cours||0),'#fff',18)}
-              ${pvPct!==null?`<span class="sq-badge ${pvPct>=0?'up':'dn'}" style="margin-top:3px">${pvPct>=0?'+':''}${pvPct.toFixed(1)}%</span>`:''}
+              ${pvPct!==null?`<span class="sq-badge ${pvPct>=0?'up':'dn'}" style="margin-top:3px">${pvPct.toFixed(1)}%</span>`:''}
             </div>
             <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:6px;margin-top:2px">
               ${sqLabel(t('hc_titre_pos',{n:t.qty||0}))}
               ${sqVal(fE(val),'var(--grn)',16)}
-              ${pvPct!==null?`${sqSub((pvEur>=0?'+':'')+fE(pvEur)+(pvEur>=0?' ✓':''),pvEur>=0?'var(--grn)':'var(--red)')}`:''}
+              ${pvPct!==null?`${sqSub(+fE(pvEur)+(pvEur>=0?' ✓':''),pvEur>=0?'var(--grn)':'var(--red)')}`:''}
             </div>
           </div>
         </div>`;
@@ -8634,9 +8634,9 @@ function renderEvoChart(){
     const diff=last-first;
     const pct=first!==0?diff/Math.abs(first)*100:0;
     const avg=diff/(hist.length-1);
-    if(varEl)varEl.innerHTML=`<span style="color:${diff>=0?'var(--grn)':'var(--red)'}">${diff>=0?'+':''}${fE(diff)}</span>`;
-    if(pctEl)pctEl.innerHTML=`<span style="color:${pct>=0?'var(--grn)':'var(--red)'}">${pct>=0?'+':''}${pct.toFixed(1)}%</span>`;
-    if(avgEl)avgEl.innerHTML=`<span style="color:${avg>=0?'var(--grn)':'var(--red)'}">${avg>=0?'+':''}${fE(avg)}</span>`;
+    if(varEl)varEl.innerHTML=`<span style="color:${diff>=0?'var(--grn)':'var(--red)'}">${fE(diff)}</span>`;
+    if(pctEl)pctEl.innerHTML=`<span style="color:${pct>=0?'var(--grn)':'var(--red)'}">${pct.toFixed(1)}%</span>`;
+    if(avgEl)avgEl.innerHTML=`<span style="color:${avg>=0?'var(--grn)':'var(--red)'}">${fE(avg)}</span>`;
   }else{
     const baseHist=isDaily?allDaily:allHist;
     const na=hist.length===0&&baseHist.length>0?t('home_evo_no_data_period'):'--';
