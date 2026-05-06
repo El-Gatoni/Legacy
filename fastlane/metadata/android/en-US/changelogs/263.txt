@@ -1,0 +1,1 @@
+v2.6.3 — Fix currency display (no US$/CA$ prefix, EUR symbol after amount), currency reminder on home card, immo surface field now respects ft² setting.
