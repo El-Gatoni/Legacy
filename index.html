@@ -6501,8 +6501,10 @@ function applyTabsConfig(){
     const ni=niMap[pageId];
     if(!ni)return;
     ni.style.order=String(pos);
-    ni.style.display=hidden.includes(pageId)?'none':'flex';
+    ni.style.display='flex';
   });
+  // Masquer explicitement les tabs cachés (getPageOrder les exclut déjà, mais le CSS par défaut est flex)
+  hidden.forEach(id=>{const ni=niMap[id];if(ni)ni.style.display='none';});
   // Accueil et Cash et Passif toujours visibles
   [0,4,5].forEach(id=>{
     const ni=niMap[id];
