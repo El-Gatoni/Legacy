@@ -208,7 +208,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 
 /* PRU grid */
 .pru-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:11px;min-width:0}
-.pru-item{background:var(--inner);border:1px solid var(--bdr);border-radius:11px;padding:9px 6px;text-align:center}
+.pru-item{background:var(--inner);border:1px solid var(--bdr);border-radius:11px;padding:9px 6px;text-align:center;display:flex;flex-direction:column;justify-content:space-between}
 .pru-lbl{font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:3px}
 .pru-val{font-size:15px;font-weight:700;color:#fff;overflow:hidden;word-break:break-word;min-width:0}
 
@@ -421,7 +421,13 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
 .hide-amounts .sq-val,.hide-amounts .alloc-amt,.hide-amounts .pv-sq-row .vl,
 .hide-amounts .pv-sq-total .vl,.hide-amounts .w-sq-btc,.hide-amounts [id^="kpi-"],
 .hide-amounts [id^="sq-btc-"],.hide-amounts [id^="b-"],.hide-amounts [id^="c-"],
-.hide-amounts [id^="coll-"],.hide-amounts [id^="p-total"]{
+.hide-amounts [id^="coll-"],.hide-amounts [id^="p-total"],
+.hide-amounts .coffre-val,.hide-amounts .coffre-qty,.hide-amounts .pm-v,
+.hide-amounts .or-total-val,.hide-amounts .or-list-total-v,.hide-amounts .pru-val,
+.hide-amounts .or-kpi-v,.hide-amounts .rent-val,.hide-amounts .or-spot-val,
+.hide-amounts .etc-val,.hide-amounts .etc-qty,.hide-amounts .immo-sum-val,
+.hide-amounts [id^="or-"],.hide-amounts [id^="cash-"],
+.hide-amounts [id^="evo-"],.hide-amounts [id^="prog-"]{
   filter:blur(8px);user-select:none;pointer-events:none;
 }
 .rent-item{background:var(--inner);border:1px solid var(--bdr);border-radius:11px;padding:8px 10px}
@@ -2785,6 +2791,7 @@ function calcAll(){
   renderBiensPassif();
   renderTxHistory();
   renderOrAll();
+  applyHideAmounts();
 }
 
 // ============================================================
