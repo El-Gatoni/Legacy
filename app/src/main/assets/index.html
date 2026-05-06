@@ -2760,7 +2760,7 @@ function calcAll(){
       </div>
       <div class="row" style="padding-top:0"><span class="rl">${t('passif_remaining_share')}</span><span class="rv" style="color:var(--red)">${fE((+(p.restant||0))*(+(p.part||100)/100))}</span></div>
       ${p.taux?`<div class="row"><span class="rl">${t('passif_rate')}</span><span class="rv">${p.taux}%</span></div>`:''}
-      ${p.mensualite?`<div class="row"><span class="rl">${t('passif_monthly')}</span><span class="rv">${t('passif_monthly_format',{amount:fE(p.mensualite)})}</span></div>`:''}
+      ${p.mensualite?`<div class="row"><span class="rl">${t('passif_monthly')}</span><span class="rv">${t('passif_monthly_format',{amount:fE2(p.mensualite)})}</span></div>`:''}
       <div style="margin-top:8px">
         <div style="display:flex;justify-content:space-between;margin-bottom:3px">
           <span style="font-size:11px;color:rgba(255,255,255,0.45)">${t('passif_repayment')}</span>
@@ -4779,7 +4779,10 @@ function _locale(){return (D&&D.lang==='en')?'en-GB':'fr-FR';}
 function setCurrency(cur){
   const valid=['EUR','USD','GBP','CHF','CAD'];
   if(!valid.includes(cur))return;
-  D.currency=cur;save();
+  D.currency=cur;
+  D.btcPrice=0;D.btcPriceDate='';
+  D.goldSpot=0;D.goldSpotDate='';
+  save();
   // Re-render everything affected by currency
   const sel=document.getElementById('cfg-currency-sel');
   if(sel)sel.value=cur;
@@ -4794,6 +4797,8 @@ function setCurrency(cur){
   // Update gold API hint
   const hint=document.getElementById('gold-api-hint');
   if(hint)hint.textContent=t('p_api_gold_hint',{cur:D.currency||'EUR'});
+  // Re-fetch BTC price in new currency
+  if(typeof fetchBTC==='function')fetchBTC();
 }
 function _areaUnit(){return (D&&D.areaUnit)||'m2';}
 function _areaSym(){return _areaUnit()==='ft2'?'ft²':'m²';}
@@ -5176,8 +5181,8 @@ function renderBourseDisplay(){
       </div>
       <div class="coffre-meta" style="padding-top:8px">
         <div><div class="pm-l">${tr('b_grid_cours')}</div><div class="pm-v">${fE2(+t.cours||0)}</div></div>
-        <div><div class="pm-l">${tr('b_kpi_pnl')}</div><div class="pm-v" style="color:${pnl===0?'#fff':pnl>=0?'var(--grn)':'var(--red)'}">${cost>0?+fE(pnl):'—'}</div></div>
-        <div><div class="pm-l">${tr('b_grid_perf')}</div><div class="pm-v" style="color:${pnlPct===null?'#fff':pnlPct>=0?'var(--grn)':'var(--red)'}">${pnlPct!==null?+pnlPct.toFixed(2)+'%':'—'}</div></div>
+        <div><div class="pm-l">${tr('b_kpi_pnl')}</div><div class="pm-v" style="color:${pnl===0?'#fff':pnl>=0?'var(--grn)':'var(--red)'}">${cost>0?fE(pnl):'—'}</div></div>
+        <div><div class="pm-l">${tr('b_grid_perf')}</div><div class="pm-v" style="color:${pnlPct===null?'#fff':pnlPct>=0?'var(--grn)':'var(--red)'}">${pnlPct!==null?pnlPct.toFixed(2)+'%':'—'}</div></div>
       </div>
       ${txs.length>0?`
       <div class="coffre-toggle" onclick="toggleCoffreItem(this.parentNode)">
@@ -5679,11 +5684,11 @@ function renderBiensDisplay(){
     <div class="pru-grid">
       <div class="pru-item">
         <div class="pru-lbl">${t('immo_kpi_equity')}</div>
-        <div class="pru-val" style="color:${!hasBiens?'#fff':totalEquite>=0?'var(--grn)':'var(--red)'}">${hasBiens?+fE(totalEquite):'—'}</div>
+        <div class="pru-val" style="color:${!hasBiens?'#fff':totalEquite>=0?'var(--grn)':'var(--red)'}">${hasBiens?fE(totalEquite):'—'}</div>
       </div>
       <div class="pru-item">
         <div class="pru-lbl">${t('immo_kpi_for_sale')}</div>
-        <div class="pru-val" style="color:${!hasBiens?'#fff':totalGainVente>=0?'var(--grn)':'var(--red)'}">${hasBiens?+fE(totalGainVente):'—'}</div>
+        <div class="pru-val" style="color:${!hasBiens?'#fff':totalGainVente>=0?'var(--grn)':'var(--red)'}">${hasBiens?fE(totalGainVente):'—'}</div>
       </div>
       <div class="pru-item">
         <div class="pru-lbl">${t('immo_kpi_yield')}</div>
@@ -6221,7 +6226,7 @@ function renderBiensPassif(){
     h+='</div></div></div>';
     if(hasCredit){
       h+='<div class="row" style="padding-top:0"><span class="rl">'+t('passif_remaining')+'</span><span class="rv" style="color:var(--red)">'+fE(credit*part)+'</span></div>';
-      if(b.mensualite)h+='<div class="row"><span class="rl">'+t('passif_monthly')+'</span><span class="rv">'+t('passif_monthly_format',{amount:fE(b.mensualite)})+'</span></div>';
+      if(b.mensualite)h+='<div class="row"><span class="rl">'+t('passif_monthly')+'</span><span class="rv">'+t('passif_monthly_format',{amount:fE2(b.mensualite)})+'</span></div>';
       if(b.tauxPret)h+='<div class="row"><span class="rl">'+t('passif_rate')+'</span><span class="rv">'+b.tauxPret+'%</span></div>';
       if(b.dateFinPret)h+='<div class="row"><span class="rl">'+t('common_end')+'</span><span class="rv">'+fmtDate(b.dateFinPret)+'</span></div>';
       if(chargesTotal>0)h+='<div class="row"><span class="rl">'+t('passif_acq_fees')+'</span><span class="rv">'+fE(chargesTotal)+'</span></div>';
@@ -6843,7 +6848,7 @@ function renderOrPapier(){
       </div>
       <div class="etc-grid" style="grid-template-columns:1fr 1fr 1fr">
         <div><div class="l">${t('or_etc_grid_cours')}</div><div class="v">${fE2(+e.cours||0)}</div></div>
-        <div><div class="l">${t('or_etc_grid_pv')}</div><div class="v ${pv>=0?'pv-pos':'pv-neg'}">${cost>0?+fE(pv):'—'}</div></div>
+        <div><div class="l">${t('or_etc_grid_pv')}</div><div class="v ${pv>=0?'pv-pos':'pv-neg'}">${cost>0?fE(pv):'—'}</div></div>
         <div><div class="l">${t('or_etc_grid_weight')}</div><div class="v">${weight.toFixed(1)}%</div></div>
       </div>
     </div>`;
@@ -6865,7 +6870,7 @@ function renderOrKPIs(){
   const papPnl=orPapierPnL();
   const papPvEl=document.getElementById('or-pap-pv');
   if(papPvEl){
-    papPvEl.textContent=+fE(papPnl);
+    papPvEl.textContent=fE(papPnl);
     papPvEl.classList.toggle('pos',papPnl>0);
   }
   const ter=orPapierTerAvg();
@@ -6884,7 +6889,7 @@ async function fetchGoldSpot(silent){
   const ctrl=new AbortController();
   const timeout=setTimeout(()=>ctrl.abort(),10000);
   try{
-    const res=await fetch('https://www.goldapi.io/api/XAU/EUR',{
+    const res=await fetch('https://www.goldapi.io/api/XAU/'+_currency(),{
       method:'GET',
       headers:{'x-access-token':D.goldApiKey.trim(),'Content-Type':'application/json'},
       signal:ctrl.signal
@@ -8008,7 +8013,7 @@ function updateHomecardDisplay(stackBtc,btcEur,bourseTotal,boursePnl,immoVal,imm
             <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:6px;margin-top:2px">
               ${sqLabel(t('hc_titre_pos',{n:t.qty||0}))}
               ${sqVal(fE(val),'var(--grn)',16)}
-              ${pvPct!==null?`${sqSub(+fE(pvEur)+(pvEur>=0?' ✓':''),pvEur>=0?'var(--grn)':'var(--red)')}`:''}
+              ${pvPct!==null?`${sqSub(fE(pvEur)+(pvEur>=0?' ✓':''),pvEur>=0?'var(--grn)':'var(--red)')}`:''}
             </div>
           </div>
         </div>`;
@@ -8283,10 +8288,11 @@ async function fetchBTC(){
   const ctrl=new AbortController();
   const timeout=setTimeout(()=>ctrl.abort(),10000);
   try{
-    const r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=eur',{signal:ctrl.signal});
+    const cur=_currency().toLowerCase();
+    const r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies='+cur,{signal:ctrl.signal});
     const d=await r.json();
     clearTimeout(timeout);
-    const newPrice=+(d?.bitcoin?.eur||0);
+    const newPrice=+(d?.bitcoin?.[cur]||0);
     // Garder l'ancien prix si l'API renvoie une valeur invalide
     if(newPrice>0){
       D.btcPrice=newPrice;

@@ -1,0 +1,1 @@
+v2.6.2 — Bug fixes: NaN values in IMMO/Bourse P&L and equity, mensualité decimals in synthesis, BTC/gold prices now respect selected currency.

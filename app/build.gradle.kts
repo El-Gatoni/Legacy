@@ -11,8 +11,8 @@ android {
         applicationId = "io.github.elgatoni.legacy"
         minSdk = 24
         targetSdk = 35
-        versionCode = 261
-        versionName = "2.6.1"
+        versionCode = 262
+        versionName = "2.6.2"
     }
 
     signingConfigs {
