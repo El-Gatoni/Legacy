@@ -937,7 +937,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     </div>
     <div style="padding:16px 4px 8px;text-align:center">
       <div style="font-size:12px;color:rgba(255,255,255,0.25);line-height:1.8">
-        Legacy v2.6.7<br>
+        Legacy v2.6.8<br>
         <span style="font-size:11px" data-i18n="p_footer_storage">Stockage local — aucun serveur</span>
       </div>
     </div>
@@ -6501,8 +6501,10 @@ function applyTabsConfig(){
     const ni=niMap[pageId];
     if(!ni)return;
     ni.style.order=String(pos);
-    ni.style.display=hidden.includes(pageId)?'none':'flex';
+    ni.style.display='flex';
   });
+  // Masquer explicitement les tabs cachés (getPageOrder les exclut déjà, mais le CSS par défaut est flex)
+  hidden.forEach(id=>{const ni=niMap[id];if(ni)ni.style.display='none';});
   // Accueil et Cash et Passif toujours visibles
   [0,4,5].forEach(id=>{
     const ni=niMap[id];
