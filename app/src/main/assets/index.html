@@ -421,13 +421,15 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
 .hide-amounts .sq-val,.hide-amounts .alloc-amt,.hide-amounts .pv-sq-row .vl,
 .hide-amounts .pv-sq-total .vl,.hide-amounts .w-sq-btc,.hide-amounts [id^="kpi-"],
 .hide-amounts [id^="sq-btc-"],.hide-amounts [id^="b-"],.hide-amounts [id^="c-"],
-.hide-amounts [id^="coll-"],.hide-amounts [id^="p-total"],
-.hide-amounts .coffre-val,.hide-amounts .coffre-qty,.hide-amounts .pm-v,
-.hide-amounts .or-total-val,.hide-amounts .or-list-total-v,.hide-amounts .pru-val,
-.hide-amounts .or-kpi-v,.hide-amounts .rent-val,.hide-amounts .or-spot-val,
+.hide-amounts [id^="p-total"],
+.hide-amounts .coffre-val,.hide-amounts .coffre-qty,.hide-amounts .coffre-name,
+.hide-amounts .pm-v,.hide-amounts .or-total-val,.hide-amounts .or-list-total-v,
+.hide-amounts .pru-val,.hide-amounts .or-kpi-v,.hide-amounts .rent-val,
 .hide-amounts .etc-val,.hide-amounts .etc-qty,.hide-amounts .immo-sum-val,
-.hide-amounts [id^="or-"],.hide-amounts [id^="cash-"],
-.hide-amounts [id^="evo-"],.hide-amounts [id^="prog-"]{
+.hide-amounts .tx-btc,.hide-amounts .tx-eur,.hide-amounts .amt,
+.hide-amounts #coll-total-btc,.hide-amounts #coll-total-eur,.hide-amounts #coll-total-emp,
+.hide-amounts [id^="evo-"],.hide-amounts [id^="prog-"],
+.hide-amounts #alloc-center-val{
   filter:blur(8px);user-select:none;pointer-events:none;
 }
 .rent-item{background:var(--inner);border:1px solid var(--bdr);border-radius:11px;padding:8px 10px}
@@ -1557,7 +1559,12 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     <button class="pin-key del" onclick="pinDel()">⌫</button>
   </div>
   <div class="pin-error-msg" id="pin-error"></div>
-  <div class="pin-reset" id="pin-reset-btn" onclick="pinReset()" style="display:none">Code oublié ? Réinitialiser</div>
+  <div id="pin-recovery-btn" onclick="pinToggleRecovery()" style="display:none;margin-top:16px;cursor:pointer;font-size:12px;color:rgba(255,255,255,0.3);text-align:center">Code oublié ? Phrase de récupération</div>
+  <div id="pin-recovery-wrap" style="display:none;margin-top:10px;width:100%;max-width:280px;text-align:center">
+    <input id="pin-recovery-input" type="text" placeholder="Phrase de récupération…" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:10px 12px;color:#fff;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:8px">
+    <button onclick="pinRecoverySubmit()" style="width:100%;padding:10px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:10px;color:#fff;font-family:inherit;font-size:14px;cursor:pointer">Vérifier</button>
+  </div>
+  <div class="pin-reset" id="pin-reset-btn" onclick="pinReset()" style="display:none;margin-top:16px">Réinitialiser l'application</div>
 </div>
 
 <!-- SWIPER -->
@@ -2805,7 +2812,7 @@ function renderCashEditors(){
       <div class="coffre-hdr" style="margin-bottom:0">
         <div class="coffre-t">
           <div class="coffre-name">${esc(c.name)}</div>
-          <div class="coffre-sub">${fE(c.value||0)}</div>
+          <div class="coffre-sub"><span class="amt">${fE(c.value||0)}</span></div>
         </div>
         <div class="coffre-menu-wrap">
           <button class="coffre-menu-btn" onclick="toggleCashMenu(this,event)">&#8943;</button>
@@ -2827,7 +2834,7 @@ function renderLivretEditors(){
       <div class="coffre-hdr" style="margin-bottom:0">
         <div class="coffre-t">
           <div class="coffre-name">${esc(l.name)}</div>
-          <div class="coffre-sub">${fE(l.value||0)}</div>
+          <div class="coffre-sub"><span class="amt">${fE(l.value||0)}</span></div>
         </div>
         <div class="coffre-menu-wrap">
           <button class="coffre-menu-btn" onclick="toggleCashMenu(this,event)">&#8943;</button>
@@ -5075,13 +5082,13 @@ function renderCollDisplay(){
       <div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
         <span style="font-size:12px;color:rgba(255,255,255,0.45)">${t('btc_coll_collateral')}</span>
         <div style="text-align:right">
-          <span style="font-size:14px;font-weight:700;color:var(--btc)">${fB8(btc)} ₿</span>
-          <span style="font-size:11px;color:rgba(255,255,255,0.35);margin-left:6px">${fE(eur)}</span>
+          <span class="amt" style="font-size:14px;font-weight:700;color:var(--btc)">${fB8(btc)} ₿</span>
+          <span class="amt" style="font-size:11px;color:rgba(255,255,255,0.35);margin-left:6px">${fE(eur)}</span>
         </div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
         <span style="font-size:12px;color:rgba(255,255,255,0.45)">${t('btc_coll_borrowed')}</span>
-        <span style="font-size:14px;font-weight:700;color:var(--red)">${fE(borrowed)}</span>
+        <span class="amt" style="font-size:14px;font-weight:700;color:var(--red)">${fE(borrowed)}</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0${c.liqPrice?';border-bottom:1px solid rgba(255,255,255,0.06)':''}">
         <span style="font-size:12px;color:rgba(255,255,255,0.45)">${t('btc_coll_ltv')}</span>
@@ -5089,7 +5096,7 @@ function renderCollDisplay(){
       </div>
       ${c.liqPrice?`<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0">
         <span style="font-size:12px;color:rgba(255,255,255,0.45)">${t('btc_coll_liq_price')}</span>
-        <span style="font-size:14px;font-weight:700;color:var(--red)">${fE(c.liqPrice)}</span>
+        <span class="amt" style="font-size:14px;font-weight:700;color:var(--red)">${fE(c.liqPrice)}</span>
       </div>`:''}
       <div class="bien-edit-inline" id="coll-btc-inline-${ci}"></div>
     </div>`;
@@ -6466,6 +6473,7 @@ function toggleTabHide(id,hide){
   if(hide){
     const visibleAssets=ASSET_IDS.filter(i=>!D.hiddenTabs.includes(i));
     if(visibleAssets.length<=1){alert('Au moins un actif doit rester visible.');renderTabsConfig();return;}
+    if(D.hiddenTabs.length>=2){showToast('Maximum 2 actifs peuvent être masqués');renderTabsConfig();return;}
     if(!D.hiddenTabs.includes(id))D.hiddenTabs.push(id);
   }else{
     D.hiddenTabs=D.hiddenTabs.filter(x=>x!==id);
@@ -8747,6 +8755,38 @@ async function sha256(str){
 
 function pinStoredHash(){return localStorage.getItem('legacy_pin_hash');}
 
+function pinStoredRecovery(){return localStorage.getItem('legacy_pin_recovery');}
+
+function pinToggleRecovery(){
+  const w=document.getElementById('pin-recovery-wrap');
+  if(w)w.style.display=w.style.display==='none'?'block':'none';
+}
+
+async function pinRecoverySubmit(){
+  const input=document.getElementById('pin-recovery-input');
+  if(!input||!input.value.trim())return;
+  const hash=await sha256(input.value.trim());
+  if(hash===pinStoredRecovery()){
+    localStorage.removeItem('legacy_pin_hash');
+    document.getElementById('pin-screen').classList.add('hidden');
+    showToast('Code PIN désactivé. Configurez-en un nouveau dans les paramètres.');
+    pinUpdateConfigPanel();
+  }else{
+    input.value='';
+    const err=document.getElementById('pin-error');
+    if(err){err.textContent='Phrase incorrecte';setTimeout(()=>{if(err)err.textContent='';},2000);}
+  }
+}
+
+async function pinSetRecovery(){
+  const phrase=prompt('Phrase de récupération\n\nCette phrase permet de débloquer l'app si vous oubliez votre PIN (sans effacer vos données).\n\nChoisissez une phrase mémorable :');
+  if(!phrase||!phrase.trim())return;
+  const hash=await sha256(phrase.trim());
+  localStorage.setItem('legacy_pin_recovery',hash);
+  showToast('Phrase de récupération enregistrée');
+  pinUpdateConfigPanel();
+}
+
 async function pinInit(){
   const hash=pinStoredHash();
   if(hash){
@@ -8757,6 +8797,7 @@ async function pinInit(){
     document.getElementById('pin-screen').classList.remove('hidden');
     document.getElementById('pin-sub').textContent='Saisissez votre code';
     document.getElementById('pin-reset-btn').style.display='block';
+    if(pinStoredRecovery()){const rb=document.getElementById('pin-recovery-btn');if(rb)rb.style.display='block';}
     pinUpdateDots();
   }
   pinUpdateConfigPanel();
@@ -8767,7 +8808,7 @@ function pinKey(k){
   if(_pinBuffer.length>=_maxLen)return;
   _pinBuffer+=k;
   pinUpdateDots();
-  if(_pinBuffer.length===4){
+  if(_pinBuffer.length===_maxLen){
     setTimeout(()=>pinSubmit(),120);
   }
 }
@@ -8883,12 +8924,14 @@ function pinUpdateConfigPanel(){
   if(!content)return;
   if(pinStoredHash()){
     const curLen=localStorage.getItem('legacy_pin_len')||'4';
+    const hasRecovery=!!pinStoredRecovery();
     content.innerHTML='<div style="display:flex;flex-direction:column;gap:10px">'
       +'<div style="font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:2px">'+t('p_pin_current_code',{n:curLen})+'</div>'
       +'<div style="display:flex;gap:8px">'
       +'<button class="btn btn-dark" style="flex:1" onclick="pinSetNew(4)">'+t('p_pin_change_4')+'</button>'
       +'<button class="btn btn-dark" style="flex:1" onclick="pinSetNew(6)">'+t('p_pin_change_6')+'</button>'
       +'</div>'
+      +'<button class="btn btn-dark" onclick="pinSetRecovery()">'+(hasRecovery?'Modifier la phrase de récupération':'Ajouter une phrase de récupération')+'</button>'
       +'<button class="btn" style="background:rgba(248,113,113,0.12);border-color:rgba(248,113,113,0.3);color:var(--red)" onclick="pinDisable()">'+t('p_pin_disable_btn')+'</button>'
       +'</div>';
   }else{
