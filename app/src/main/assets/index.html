@@ -8779,7 +8779,7 @@ async function pinRecoverySubmit(){
 }
 
 async function pinSetRecovery(){
-  const phrase=prompt('Phrase de récupération\n\nCette phrase permet de débloquer l'app si vous oubliez votre PIN (sans effacer vos données).\n\nChoisissez une phrase mémorable :');
+  const phrase=prompt("Phrase de récupération\n\nCette phrase permet de débloquer l'app si vous oubliez votre PIN (sans effacer vos données).\n\nChoisissez une phrase mémorable :");
   if(!phrase||!phrase.trim())return;
   const hash=await sha256(phrase.trim());
   localStorage.setItem('legacy_pin_recovery',hash);
