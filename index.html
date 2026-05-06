@@ -937,7 +937,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     </div>
     <div style="padding:16px 4px 8px;text-align:center">
       <div style="font-size:12px;color:rgba(255,255,255,0.25);line-height:1.8">
-        Legacy v2.8.0<br>
+        Legacy v2.6.7<br>
         <span style="font-size:11px" data-i18n="p_footer_storage">Stockage local — aucun serveur</span>
       </div>
     </div>
@@ -2187,7 +2187,10 @@ const EMPTY={
   notifBtcHigh:0,
   notifBtcLow:0,
   notifNetHigh:0,
-  addFeesToPRU:true
+  addFeesToPRU:true,
+  showColls:true,
+  btcPriceDate:'',
+  bourseFetchDate:''
 };
 
 let D=(()=>{
@@ -2228,7 +2231,7 @@ let D=(()=>{
       if(!p.notePages)p.notePages={accueil:true,bitcoin:false,bourse:false,immo:false,cash:false,passif:false,or:false};
       if(!p.currency)p.currency='EUR';
       if(!p.fxRates)p.fxRates={};
-      if(!p.fxRatesDate===undefined)p.fxRatesDate='';
+      if(p.fxRatesDate===undefined)p.fxRatesDate='';
       if(!p.areaUnit)p.areaUnit='m2'; if(!p.notePages.cash)p.notePages.cash=false; if(p.notePages.or===undefined)p.notePages.or=false;
       if(!p.btcGoal)p.btcGoal=0.1;
       if(!p.lang){
@@ -2450,9 +2453,9 @@ function animateNetVal(end){
     // easeOutQuart
     const ease=1-Math.pow(1-progress,4);
     const val=Math.floor(ease*end);
-    el.textContent=val.toLocaleString(_curLocale())+'\u00a0€';
+    el.textContent=_fmtAmt(val,0,0);
     if(progress<1)requestAnimationFrame(step);
-    else el.textContent=end.toLocaleString(_curLocale())+'\u00a0€';
+    else el.textContent=_fmtAmt(end,0,0);
   };
   requestAnimationFrame(step);
 }
@@ -4822,7 +4825,6 @@ function setCurrency(cur){
 function _areaUnit(){return (D&&D.areaUnit)||'m2';}
 function _areaSym(){return _areaUnit()==='ft2'?'ft²':'m²';}
 function _areaConv(m2){return _areaUnit()==='ft2'?+(m2*10.764).toFixed(1):+m2;}
-function _areaToM2(val){return _areaUnit()==='ft2'?+(val/10.764).toFixed(2):+val;}
 function setAreaUnit(unit){
   D.areaUnit=unit;save();
   if(typeof renderBiensDisplay==='function')renderBiensDisplay();
@@ -4954,8 +4956,6 @@ function setBtcWalletUnit(u){
   renderWalletDisplay();
 }
 // Legacy alias — plus utilisé mais conservé pour rétrocompat
-function setBtcUnit(u){setBtcCardUnit(u);}
-function setBtcUnitPref(u){setBtcCardUnit(u);}
 function _updateBtcStackDisplay(stackBtc){
   const el=document.getElementById('c-stack-display');
   if(!el)return;
@@ -4977,7 +4977,6 @@ function toggleBtcTxPanel(){
 }
 
 // ── Tx history menu ──
-function toggleTxHistMenu(btn,e){e.stopPropagation();_openMenu(btn,btn.nextElementSibling);}
 
 
 // ── Shimmer helpers ──
@@ -5494,7 +5493,6 @@ function _renderTitreInline(i, mode){
   }
 }
 
-function _saveTitreAchatInline(i){_saveTitreUpdate(i);}
 function _previewNewPru(i){
   const curQty=+(document.getElementById('txi-cur-qty-'+i)||{value:0}).value||0;
   const curPru=+(document.getElementById('txi-cur-pru-'+i)||{value:0}).value||0;
@@ -7497,7 +7495,7 @@ function updateOrPhysFraisTotal(){
   const totalBox=document.getElementById('or-phys-frais-total');
   const totalVal=document.getElementById('or-phys-frais-total-val');
   if(totalBox&&totalVal){
-    if(total>0){totalBox.style.display='flex';totalVal.textContent=total.toLocaleString(_curLocale())+' €';}
+    if(total>0){totalBox.style.display='flex';totalVal.textContent=_fmtAmt(total,2,2);}
     else totalBox.style.display='none';
   }
 }
