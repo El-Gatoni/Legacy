@@ -1,0 +1,1 @@
+v2.6.4 — Bourse: cleaner stock card subtitle (Ticker · Qty · PRU · weight%), auto/manual badge repositioned, P&L/Performance pinned to bottom. IMMO: price label now shows m²/ft² based on settings.
