@@ -1569,6 +1569,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     <div class="card">
       <div class="or-total-lbl" data-i18n="home_net_worth">Patrimoine net</div>
       <div class="net-val" id="kpi-net" style="text-align:center">--</div>
+      <div id="kpi-cur-lbl" style="text-align:center;font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;letter-spacing:.5px"></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
       <div class="or-kpi">
@@ -2346,13 +2347,15 @@ let _lastNotif={};
 // ============================================================
 // FORMATTERS
 // ============================================================
-const CURRENCY_SYMBOLS={EUR:'€',USD:'$',GBP:'£',CHF:'Fr.',CAD:'CA$'};
+const CURRENCY_SYMBOLS={EUR:'€',USD:'$',GBP:'£',CHF:'Fr.',CAD:'$'};
 const CURRENCY_LOCALES={EUR:'fr-FR',USD:'en-US',GBP:'en-GB',CHF:'de-CH',CAD:'en-CA'};
 function _currency(){return (D&&D.currency)||'EUR';}
 function _curSym(){return CURRENCY_SYMBOLS[_currency()]||_currency();}
 function _curLocale(){return D&&D.lang==='en'?'en-GB':CURRENCY_LOCALES[_currency()]||'fr-FR';}
-const fE=v=>new Intl.NumberFormat(_curLocale(),{style:'currency',currency:_currency(),maximumFractionDigits:0}).format(v||0);
-const fE2=v=>new Intl.NumberFormat(_curLocale(),{style:'currency',currency:_currency(),minimumFractionDigits:2,maximumFractionDigits:2}).format(v||0);
+function _numLocale(){return CURRENCY_LOCALES[_currency()]||'fr-FR';}
+function _fmtAmt(v,minDec,maxDec){const sym=_curSym(),n=new Intl.NumberFormat(_numLocale(),{minimumFractionDigits:minDec,maximumFractionDigits:maxDec}).format(+v||0);if(_currency()==='EUR')return n+' '+sym;return sym.length>1?sym+' '+n:sym+n;}
+const fE=v=>_fmtAmt(v,0,0);
+const fE2=v=>_fmtAmt(v,2,2);
 const fB8=v=>{const n=+v||0;const s=n.toFixed(8).replace(/\.?0+$/,'');return s;};
 const fB5=v=>{const n=+v||0;const s=n.toFixed(8).replace(/\.?0+$/,'');return s;};
 const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -2608,6 +2611,8 @@ function calcAll(){
   if(kpiNetEl)kpiNetEl.style.color=net>=0?'var(--grn)':'var(--red)';
   if(_netAnimDone){setT('kpi-net',fE(net));}
   else{animateNetVal(Math.round(net));}
+  const curLbl=document.getElementById('kpi-cur-lbl');
+  if(curLbl)curLbl.textContent=_currency();
   highlightUpdate(['kpi-brut','kpi-fin']);
   setT('kpi-brut',fE(brut));
   setT('kpi-fin',fE(financier));
@@ -6093,7 +6098,7 @@ function buildBienForm(bi){
   h+='<div class="ef"><label>'+t('immo_form_name')+'</label>';
   h+='<input value="'+esc(b.name||'')+'" placeholder="'+t('immo_form_name_placeholder')+'" onchange="D.biens['+bi+'].name=this.value;save();renderBiensDisplay()"></div>';
   h+='<div class="g2">';
-  h+='<div class="ef"><label>'+t('immo_form_surface')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.surface||0)+'" onchange="D.biens['+bi+'].surface=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">m²</span></div></div>';
+  h+='<div class="ef"><label>'+t('immo_form_surface')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.surface||0)+'" onchange="D.biens['+bi+'].surface=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">'+_areaSym()+'</span></div></div>';
   h+='<div class="ef"><label>'+t('immo_form_price_m2')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.prixm2||0)+'" onchange="D.biens['+bi+'].prixm2=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">'+_curSym()+'/'+_areaSym()+'</span></div></div>';
   h+='</div>';
 
@@ -6511,7 +6516,7 @@ let _orSpotEditing=false;
 // ── Helpers ──
 const fG=v=>(+v||0).toLocaleString(_curLocale(),{maximumFractionDigits:3})+' g';
 const fG4=v=>(+v||0).toLocaleString(_curLocale(),{minimumFractionDigits:2,maximumFractionDigits:4})+' g';
-const fEg=v=>(+v||0).toLocaleString(_curLocale(),{minimumFractionDigits:2,maximumFractionDigits:2})+' '+_curSym()+'/g';
+const fEg=v=>{const sym=_curSym(),n=(+v||0).toLocaleString(_numLocale(),{minimumFractionDigits:2,maximumFractionDigits:2});return _currency()==='EUR'?n+' '+sym+'/g':(sym.length>1?sym+' ':sym)+n+'/g';};
 const fPct=v=>(+v||0).toFixed(1)+' %';
 // Poids d'or pur d'une position (g par unité × quantité totale de toutes les tx de cette position)
 function orPureWeight(pos){
