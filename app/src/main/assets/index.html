@@ -561,7 +561,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
 .coffre-val{font-size:17px;font-weight:700;color:#fff;letter-spacing:-.3px}
 .coffre-qty{font-size:11px;color:rgba(255,255,255,0.45);margin-top:1px}
 .coffre-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding-top:10px;border-top:1px solid var(--bdr);min-width:0}
-.coffre-meta>div{min-width:0;overflow:hidden}
+.coffre-meta>div{min-width:0;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between}
 .coffre-meta .pm-l{font-size:10px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .coffre-meta .pm-v{font-size:13px;color:#fff;font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
@@ -3819,7 +3819,7 @@ I18N.fr={
   'immo_form_name':`Nom du bien`,
   'immo_form_name_placeholder':`ex: Appartement Lyon 2e`,
   'immo_form_surface':`Surface`,
-  'immo_form_price_m2':`Prix au m²`,
+  'immo_form_price_m2':`Prix au {sym}`,
   'immo_form_purchase_price':`Prix d'achat initial`,
   'immo_form_purchase_price_hint':`utilisé pour la rentabilité locative`,
   'immo_form_bank_account':`Solde compte bancaire`,
@@ -4498,7 +4498,7 @@ I18N.en={
   'immo_form_name':`Property name`,
   'immo_form_name_placeholder':`e.g. Lyon 2nd Apartment`,
   'immo_form_surface':`Surface`,
-  'immo_form_price_m2':`Price per m²`,
+  'immo_form_price_m2':`Price per {sym}`,
   'immo_form_purchase_price':`Initial purchase price`,
   'immo_form_purchase_price_hint':`used for rental yield`,
   'immo_form_bank_account':`Bank account balance`,
@@ -5165,15 +5165,16 @@ function renderBourseDisplay(){
     const txs=t.txs||[];
     const valColor=cost>0?(val>=cost?'var(--grn)':'var(--red)'):'#fff';
     const pruSub=cost>0?` &middot; PRU ${fE2(+t.pru||0)}`:'';
+    const poidsSub=poids>0?` &middot; ${poids.toFixed(1)}%`:'';
     return `<div class="coffre-item" id="titre-card-${i}" data-lp-del="lpDelTitre" data-idx="${i}">
       <div class="coffre-hdr" style="margin-bottom:8px">
         <div class="coffre-t">
           <div class="coffre-name">${esc(t.name||tr('b_titre_default_name'))}</div>
-          <div class="coffre-sub">${esc(t.symbol||'—')} &middot; ${(+t.qty||0).toLocaleString(_curLocale())} ${(+t.qty||0)>1?tr('b_count_titres'):tr('b_count_titre')}${pruSub} &middot; <span style="color:${t.useApi?'var(--grn)':'rgba(255,255,255,0.35)'}">${t.useApi?tr('b_auto'):tr('b_manual')}</span></div>
+          <div class="coffre-sub">${esc(t.symbol||'—')} &middot; ${(+t.qty||0).toLocaleString(_curLocale())} ${(+t.qty||0)>1?tr('b_count_titres'):tr('b_count_titre')}${pruSub}${poidsSub}</div>
         </div>
         <div class="coffre-r">
           <div class="coffre-val" style="color:${valColor}">${fE(val)}</div>
-          <div class="coffre-qty" style="color:${poids>0?'rgba(255,255,255,0.45)':'var(--tx3)'}">${poids.toFixed(1)}${tr('b_portfolio_share')}</div>
+          <div class="coffre-qty" style="color:${t.useApi?'var(--grn)':'rgba(255,255,255,0.35)'}">${t.useApi?tr('b_auto'):tr('b_manual')}</div>
         </div>
         <div class="coffre-menu-wrap">
           <button class="coffre-menu-btn" onclick="toggleTitreMenu(this,event)">&#8943;</button>
@@ -6099,7 +6100,7 @@ function buildBienForm(bi){
   h+='<input value="'+esc(b.name||'')+'" placeholder="'+t('immo_form_name_placeholder')+'" onchange="D.biens['+bi+'].name=this.value;save();renderBiensDisplay()"></div>';
   h+='<div class="g2">';
   h+='<div class="ef"><label>'+t('immo_form_surface')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.surface||0)+'" onchange="D.biens['+bi+'].surface=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">'+_areaSym()+'</span></div></div>';
-  h+='<div class="ef"><label>'+t('immo_form_price_m2')+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.prixm2||0)+'" onchange="D.biens['+bi+'].prixm2=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">'+_curSym()+'/'+_areaSym()+'</span></div></div>';
+  h+='<div class="ef"><label>'+t('immo_form_price_m2',{sym:_areaSym()})+'</label><div class="ef-suffix-wrap"><input type="number" inputmode="decimal" step="any" value="'+(b.prixm2||0)+'" onchange="D.biens['+bi+'].prixm2=+this.value;save();calcAll();renderBiensDisplay()"><span class="ef-suffix">'+_curSym()+'/'+_areaSym()+'</span></div></div>';
   h+='</div>';
 
   // ── Prix d'achat initial + Solde compte bancaire ──
