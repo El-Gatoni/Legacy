@@ -2191,7 +2191,11 @@ const EMPTY={
   addFeesToPRU:true,
   showColls:true,
   btcPriceDate:'',
-  bourseFetchDate:''
+  bourseFetchDate:'',
+  pinHash:null,
+  pinLen:4,
+  pinRecovery:null,
+  pinRecoveryQ:''
 };
 
 let D=(()=>{
@@ -2266,10 +2270,29 @@ let D=(()=>{
       if(!p.notifNetHigh)p.notifNetHigh=0;
       if(p.addFeesToPRU===undefined)p.addFeesToPRU=true;
       p.titres=p.titres.map((t,i)=>({id:t.id||'t'+i,...t,useApi:t.useApi!==undefined?t.useApi:true}));
+      if(p.pinHash===undefined)p.pinHash=null;
+      if(!p.pinLen)p.pinLen=4;
+      if(p.pinRecovery===undefined)p.pinRecovery=null;
+      if(p.pinRecoveryQ===undefined)p.pinRecoveryQ='';
       return p;
     }
   }catch(e){}
   return JSON.parse(JSON.stringify(EMPTY));
+})();
+
+(()=>{
+  const oldHash=localStorage.getItem('legacy_pin_hash');
+  if(oldHash&&!D.pinHash){
+    D.pinHash=oldHash;
+    D.pinLen=parseInt(localStorage.getItem('legacy_pin_len')||'4');
+    D.pinRecovery=localStorage.getItem('legacy_pin_recovery')||null;
+    D.pinRecoveryQ=localStorage.getItem('legacy_pin_recovery_q')||'';
+    localStorage.removeItem('legacy_pin_hash');
+    localStorage.removeItem('legacy_pin_len');
+    localStorage.removeItem('legacy_pin_recovery');
+    localStorage.removeItem('legacy_pin_recovery_q');
+    save();
+  }
 })();
 
 // ═══════════════════════════════════════════════════════════════
@@ -8344,7 +8367,8 @@ async function fetchBTC(){
 // ============================================================
 function exportJSON(){
   const a=document.createElement('a');
-  const url=URL.createObjectURL(new Blob([JSON.stringify(D,null,2)],{type:'application/json'}));
+  const {pinHash:_ph,pinLen:_pl,pinRecovery:_pr,pinRecoveryQ:_pq,...exportData}=D;
+  const url=URL.createObjectURL(new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'}));
   a.href=url;a.download='legacy_'+new Date().toISOString().slice(0,10)+'.json';
   a.click();URL.revokeObjectURL(url);
   localStorage.setItem('legacy_last_export',Date.now());
@@ -8755,13 +8779,15 @@ let _pinTemp='';
 let _pinUnlocked=false; // true une fois le PIN saisi dans la session courante
 
 async function sha256(str){
-  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  try{
+    const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }catch(e){showToast('Erreur de chiffrement');return null;}
 }
 
-function pinStoredHash(){return localStorage.getItem('legacy_pin_hash');}
-function pinStoredRecovery(){return localStorage.getItem('legacy_pin_recovery');}
-function pinStoredRecoveryQ(){return localStorage.getItem('legacy_pin_recovery_q')||'';}
+function pinStoredHash(){return D.pinHash||null;}
+function pinStoredRecovery(){return D.pinRecovery||null;}
+function pinStoredRecoveryQ(){return D.pinRecoveryQ||'';}
 
 function pinToggleRecovery(){
   const w=document.getElementById('pin-recovery-wrap');
@@ -8780,10 +8806,8 @@ async function pinRecoverySubmit(){
   if(!input||!input.value.trim())return;
   const hash=await sha256(input.value.trim().toLowerCase());
   if(hash===pinStoredRecovery()){
-    localStorage.removeItem('legacy_pin_hash');
-    localStorage.removeItem('legacy_pin_len');
-    localStorage.removeItem('legacy_pin_recovery');
-    localStorage.removeItem('legacy_pin_recovery_q');
+    D.pinHash=null;D.pinLen=4;D.pinRecovery=null;D.pinRecoveryQ='';
+    save();
     _pinUnlocked=false;
     showToast('Code PIN réinitialisé. Configurez-en un nouveau dans les paramètres.');
     setTimeout(()=>location.reload(),1200);
@@ -8807,8 +8831,10 @@ async function pinSaveRecovery(){
   const a=aEl.value.trim();
   if(!q||!a){showToast('Remplissez la question et la réponse');return;}
   const hash=await sha256(a.toLowerCase());
-  localStorage.setItem('legacy_pin_recovery_q',q);
-  localStorage.setItem('legacy_pin_recovery',hash);
+  if(!hash)return;
+  D.pinRecoveryQ=q;
+  D.pinRecovery=hash;
+  save();
   showToast('Question de sécurité enregistrée');
   pinUpdateConfigPanel();
 }
@@ -8832,7 +8858,7 @@ async function pinInit(){
 }
 
 function pinKey(k){
-  const _maxLen=parseInt(localStorage.getItem('legacy_pin_len')||'4');
+  const _maxLen=D.pinLen||4;
   if(_pinBuffer.length>=_maxLen)return;
   _pinBuffer+=k;
   pinUpdateDots();
@@ -8849,7 +8875,7 @@ function pinDel(){
 }
 
 function pinUpdateDots(){
-  const _maxLen=parseInt(localStorage.getItem('legacy_pin_len')||'4');
+  const _maxLen=D.pinLen||4;
   for(let i=0;i<6;i++){
     const d=document.getElementById('pd'+i);
     if(d){
@@ -8871,7 +8897,7 @@ function pinShowError(msg){
 }
 
 async function pinSubmit(){
-  const pinLen=parseInt(localStorage.getItem('legacy_pin_len')||'4');
+  const pinLen=D.pinLen||4;
   if(_pinBuffer.length<pinLen)return;
   if(_pinMode==='unlock'){
     const hash=await sha256(_pinBuffer);
@@ -8890,8 +8916,11 @@ async function pinSubmit(){
   }else if(_pinMode==='confirm'){
     if(_pinBuffer===_pinTemp){
       const hash=await sha256(_pinBuffer);
-      localStorage.setItem('legacy_pin_hash',hash);
-      localStorage.setItem('legacy_pin_len',String(_pinBuffer.length));
+      if(!hash)return;
+      D.pinHash=hash;
+      D.pinLen=_pinBuffer.length;
+      _pinUnlocked=true;
+      save();
       _pinMode='unlock';
       _pinBuffer='';
       _pinTemp='';
@@ -8926,7 +8955,7 @@ Confirmer la réinitialisation ?`)){
 
 function pinSetNew(len){
   len=len||4;
-  localStorage.setItem('legacy_pin_len',String(len));
+  D.pinLen=len;save();
   _pinMode='set';
   _pinBuffer='';
   _pinTemp='';
@@ -8940,10 +8969,8 @@ function pinSetNew(len){
 
 function pinDisable(){
   if(confirm(`Désactiver le code PIN ?`)){
-    localStorage.removeItem('legacy_pin_hash');
-    localStorage.removeItem('legacy_pin_len');
-    localStorage.removeItem('legacy_pin_recovery');
-    localStorage.removeItem('legacy_pin_recovery_q');
+    D.pinHash=null;D.pinLen=4;D.pinRecovery=null;D.pinRecoveryQ='';
+    save();
     _pinUnlocked=false;
     pinUpdateConfigPanel();
     showToast('Code PIN désactivé');
@@ -8956,7 +8983,7 @@ function pinUpdateConfigPanel(){
   const content=document.getElementById('pin-config-content');
   if(!content)return;
   if(pinStoredHash()){
-    const curLen=localStorage.getItem('legacy_pin_len')||'4';
+    const curLen=String(D.pinLen||4);
     const hasRecovery=!!pinStoredRecovery();
     const storedQ=pinStoredRecoveryQ();
     const inputStyle='width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:9px;padding:9px 12px;color:#fff;font-size:13px;font-family:inherit;outline:none;box-sizing:border-box';
