@@ -2,6 +2,7 @@ package io.github.elgatoni.legacy
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -100,12 +101,22 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Interface JavaScript → Android pour sauvegarder les exports
+        // Interface JavaScript → Android pour sauvegarder les exports et ouvrir des liens externes
         webView.addJavascriptInterface(object {
             @JavascriptInterface
             fun saveFile(dataUrl: String, filename: String, mimeType: String) {
                 val bytes = Base64.decode(dataUrl.substringAfter(","), Base64.DEFAULT)
                 saveToDownloads(bytes, filename, mimeType)
+            }
+            @JavascriptInterface
+            fun openUrl(url: String) {
+                try {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    runOnUiThread { Toast.makeText(this@MainActivity, "Impossible d'ouvrir le lien", Toast.LENGTH_SHORT).show() }
+                }
             }
         }, "Android")
 
