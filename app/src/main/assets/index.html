@@ -937,7 +937,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     </div>
     <div style="padding:16px 4px 8px;text-align:center">
       <div style="font-size:12px;color:rgba(255,255,255,0.25);line-height:1.8">
-        Legacy v2.6.8<br>
+        Legacy v2.6.9<br>
         <span style="font-size:11px" data-i18n="p_footer_storage">Stockage local — aucun serveur</span>
       </div>
     </div>
@@ -1559,9 +1559,10 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     <button class="pin-key del" onclick="pinDel()">⌫</button>
   </div>
   <div class="pin-error-msg" id="pin-error"></div>
-  <div id="pin-recovery-btn" onclick="pinToggleRecovery()" style="display:none;margin-top:16px;cursor:pointer;font-size:12px;color:rgba(255,255,255,0.3);text-align:center">Code oublié ? Phrase de récupération</div>
+  <div id="pin-recovery-btn" onclick="pinToggleRecovery()" style="display:none;margin-top:16px;cursor:pointer;font-size:12px;color:rgba(255,255,255,0.3);text-align:center">Code oublié ?</div>
   <div id="pin-recovery-wrap" style="display:none;margin-top:10px;width:100%;max-width:280px;text-align:center">
-    <input id="pin-recovery-input" type="text" placeholder="Phrase de récupération…" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:10px 12px;color:#fff;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:8px">
+    <div id="pin-recovery-question" style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:10px;font-style:italic"></div>
+    <input id="pin-recovery-input" type="text" placeholder="Votre réponse…" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:10px 12px;color:#fff;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:8px">
     <button onclick="pinRecoverySubmit()" style="width:100%;padding:10px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:10px;color:#fff;font-family:inherit;font-size:14px;cursor:pointer">Vérifier</button>
   </div>
   <div class="pin-reset" id="pin-reset-btn" onclick="pinReset()" style="display:none;margin-top:16px">Réinitialiser l'application</div>
@@ -8751,6 +8752,7 @@ function evoSetView(view,btn){
 let _pinBuffer='';
 let _pinMode='unlock'; // 'unlock' | 'set' | 'confirm'
 let _pinTemp='';
+let _pinUnlocked=false; // true une fois le PIN saisi dans la session courante
 
 async function sha256(str){
   const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
@@ -8758,50 +8760,72 @@ async function sha256(str){
 }
 
 function pinStoredHash(){return localStorage.getItem('legacy_pin_hash');}
-
 function pinStoredRecovery(){return localStorage.getItem('legacy_pin_recovery');}
+function pinStoredRecoveryQ(){return localStorage.getItem('legacy_pin_recovery_q')||'';}
 
 function pinToggleRecovery(){
   const w=document.getElementById('pin-recovery-wrap');
-  if(w)w.style.display=w.style.display==='none'?'block':'none';
+  if(!w)return;
+  const open=w.style.display!=='none';
+  if(!open){
+    const q=pinStoredRecoveryQ();
+    const qEl=document.getElementById('pin-recovery-question');
+    if(qEl)qEl.textContent=q?q:'Question de sécurité';
+  }
+  w.style.display=open?'none':'block';
 }
 
 async function pinRecoverySubmit(){
   const input=document.getElementById('pin-recovery-input');
   if(!input||!input.value.trim())return;
-  const hash=await sha256(input.value.trim());
+  const hash=await sha256(input.value.trim().toLowerCase());
   if(hash===pinStoredRecovery()){
     localStorage.removeItem('legacy_pin_hash');
-    document.getElementById('pin-screen').classList.add('hidden');
-    showToast('Code PIN désactivé. Configurez-en un nouveau dans les paramètres.');
-    pinUpdateConfigPanel();
+    localStorage.removeItem('legacy_pin_len');
+    localStorage.removeItem('legacy_pin_recovery');
+    localStorage.removeItem('legacy_pin_recovery_q');
+    _pinUnlocked=false;
+    showToast('Code PIN réinitialisé. Configurez-en un nouveau dans les paramètres.');
+    setTimeout(()=>location.reload(),1200);
   }else{
     input.value='';
     const err=document.getElementById('pin-error');
-    if(err){err.textContent='Phrase incorrecte';setTimeout(()=>{if(err)err.textContent='';},2000);}
+    if(err){err.textContent='Réponse incorrecte';setTimeout(()=>{if(err)err.textContent='';},2000);}
   }
 }
 
-async function pinSetRecovery(){
-  const phrase=prompt("Phrase de récupération\n\nCette phrase permet de débloquer l'app si vous oubliez votre PIN (sans effacer vos données).\n\nChoisissez une phrase mémorable :");
-  if(!phrase||!phrase.trim())return;
-  const hash=await sha256(phrase.trim());
+function pinToggleRecoveryForm(){
+  const f=document.getElementById('pin-recovery-form');
+  if(f)f.style.display=f.style.display==='none'?'block':'none';
+}
+
+async function pinSaveRecovery(){
+  const qEl=document.getElementById('pr-question');
+  const aEl=document.getElementById('pr-answer');
+  if(!qEl||!aEl)return;
+  const q=qEl.value.trim();
+  const a=aEl.value.trim();
+  if(!q||!a){showToast('Remplissez la question et la réponse');return;}
+  const hash=await sha256(a.toLowerCase());
+  localStorage.setItem('legacy_pin_recovery_q',q);
   localStorage.setItem('legacy_pin_recovery',hash);
-  showToast('Phrase de récupération enregistrée');
+  showToast('Question de sécurité enregistrée');
   pinUpdateConfigPanel();
 }
 
 async function pinInit(){
   const hash=pinStoredHash();
-  if(hash){
-    // PIN actif -> afficher ecran de verrouillage
+  if(hash&&!_pinUnlocked){
     _pinMode='unlock';
     _pinBuffer='';
     _pinTemp='';
+    const rb=document.getElementById('pin-recovery-btn');
+    const rw=document.getElementById('pin-recovery-wrap');
+    if(rb)rb.style.display=pinStoredRecovery()?'block':'none';
+    if(rw)rw.style.display='none';
     document.getElementById('pin-screen').classList.remove('hidden');
     document.getElementById('pin-sub').textContent='Saisissez votre code';
     document.getElementById('pin-reset-btn').style.display='block';
-    if(pinStoredRecovery()){const rb=document.getElementById('pin-recovery-btn');if(rb)rb.style.display='block';}
     pinUpdateDots();
   }
   pinUpdateConfigPanel();
@@ -8852,6 +8876,7 @@ async function pinSubmit(){
   if(_pinMode==='unlock'){
     const hash=await sha256(_pinBuffer);
     if(hash===pinStoredHash()){
+      _pinUnlocked=true;
       document.getElementById('pin-screen').classList.add('hidden');
     }else{
       pinShowError('Code incorrect');
@@ -8929,15 +8954,25 @@ function pinUpdateConfigPanel(){
   if(pinStoredHash()){
     const curLen=localStorage.getItem('legacy_pin_len')||'4';
     const hasRecovery=!!pinStoredRecovery();
+    const storedQ=pinStoredRecoveryQ();
+    const inputStyle='width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:9px;padding:9px 12px;color:#fff;font-size:13px;font-family:inherit;outline:none;box-sizing:border-box';
     content.innerHTML='<div style="display:flex;flex-direction:column;gap:10px">'
       +'<div style="font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:2px">'+t('p_pin_current_code',{n:curLen})+'</div>'
       +'<div style="display:flex;gap:8px">'
       +'<button class="btn btn-dark" style="flex:1" onclick="pinSetNew(4)">'+t('p_pin_change_4')+'</button>'
       +'<button class="btn btn-dark" style="flex:1" onclick="pinSetNew(6)">'+t('p_pin_change_6')+'</button>'
       +'</div>'
-      +'<button class="btn btn-dark" onclick="pinSetRecovery()">'+(hasRecovery?'Modifier la phrase de récupération':'Ajouter une phrase de récupération')+'</button>'
+      +'<button class="btn btn-dark" onclick="pinToggleRecoveryForm()">'+(hasRecovery?'Modifier la question de sécurité':'Ajouter une question de sécurité')+'</button>'
+      +'<div id="pin-recovery-form" style="display:none;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:11px;padding:12px;display:flex;flex-direction:column;gap:8px">'
+      +(storedQ?'<div style="font-size:11px;color:rgba(255,255,255,0.35)">Question actuelle : '+storedQ+'</div>':'')
+      +'<input id="pr-question" type="text" placeholder="Votre question (ex: Nom de votre premier animal ?)" style="'+inputStyle+'">'
+      +'<input id="pr-answer" type="text" placeholder="Votre réponse" style="'+inputStyle+'">'
+      +'<button class="btn btn-grn" onclick="pinSaveRecovery()">Enregistrer</button>'
+      +'</div>'
       +'<button class="btn" style="background:rgba(248,113,113,0.12);border-color:rgba(248,113,113,0.3);color:var(--red)" onclick="pinDisable()">'+t('p_pin_disable_btn')+'</button>'
       +'</div>';
+    const f=document.getElementById('pin-recovery-form');
+    if(f)f.style.display='none';
   }else{
     content.innerHTML='<div style="display:flex;gap:8px">'
       +'<button class="btn btn-dark" style="flex:1" onclick="pinSetNew(4)">'+t('p_pin_4_digits')+'</button>'

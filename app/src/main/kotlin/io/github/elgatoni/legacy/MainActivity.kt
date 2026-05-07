@@ -134,6 +134,23 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    private var pauseTime = 0L
+
+    override fun onPause() {
+        super.onPause()
+        pauseTime = System.currentTimeMillis()
+    }
+
+    // Verrouille l'écran PIN si l'app était en arrière-plan plus de 3 secondes
+    override fun onResume() {
+        super.onResume()
+        if (pauseTime > 0 && System.currentTimeMillis() - pauseTime > 3_000) {
+            webView.evaluateJavascript(
+                "_pinUnlocked=false;if(typeof pinInit==='function')pinInit();", null
+            )
+        }
+    }
+
     private fun saveToDownloads(bytes: ByteArray, filename: String, mimeType: String) {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
