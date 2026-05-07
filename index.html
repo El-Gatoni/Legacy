@@ -8366,11 +8366,19 @@ async function fetchBTC(){
 // UTILS
 // ============================================================
 function exportJSON(){
-  const a=document.createElement('a');
-  const {pinHash:_ph,pinLen:_pl,pinRecovery:_pr,pinRecoveryQ:_pq,...exportData}=D;
-  const url=URL.createObjectURL(new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'}));
-  a.href=url;a.download='legacy_'+new Date().toISOString().slice(0,10)+'.json';
-  a.click();URL.revokeObjectURL(url);
+  const skip=new Set(['pinHash','pinLen','pinRecovery','pinRecoveryQ']);
+  const json=JSON.stringify(D,(k,v)=>skip.has(k)?undefined:v,2);
+  const filename='legacy_'+new Date().toISOString().slice(0,10)+'.json';
+  if(typeof Android!=='undefined'){
+    const b64=btoa(unescape(encodeURIComponent(json)));
+    Android.saveFile('data:application/json;base64,'+b64,filename,'application/json');
+  }else{
+    const url=URL.createObjectURL(new Blob([json],{type:'application/json'}));
+    const a=document.createElement('a');
+    a.href=url;a.download=filename;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url),5000);
+  }
   localStorage.setItem('legacy_last_export',Date.now());
   checkDeadlines();updateGearWarningDot();
 }
