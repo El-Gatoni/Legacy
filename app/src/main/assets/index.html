@@ -937,7 +937,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
     </div>
     <div style="padding:16px 4px 8px;text-align:center">
       <div style="font-size:12px;color:rgba(255,255,255,0.25);line-height:1.8">
-        Legacy v2.6.9<br>
+        Legacy v2.7.0<br>
         <span style="font-size:11px" data-i18n="p_footer_storage">Stockage local — aucun serveur</span>
       </div>
     </div>
@@ -8796,7 +8796,7 @@ async function pinRecoverySubmit(){
 
 function pinToggleRecoveryForm(){
   const f=document.getElementById('pin-recovery-form');
-  if(f)f.style.display=f.style.display==='none'?'block':'none';
+  if(f)f.style.display=f.style.display==='none'?'flex':'none';
 }
 
 async function pinSaveRecovery(){
@@ -8941,6 +8941,10 @@ function pinSetNew(len){
 function pinDisable(){
   if(confirm(`Désactiver le code PIN ?`)){
     localStorage.removeItem('legacy_pin_hash');
+    localStorage.removeItem('legacy_pin_len');
+    localStorage.removeItem('legacy_pin_recovery');
+    localStorage.removeItem('legacy_pin_recovery_q');
+    _pinUnlocked=false;
     pinUpdateConfigPanel();
     showToast('Code PIN désactivé');
   }
@@ -8963,7 +8967,7 @@ function pinUpdateConfigPanel(){
       +'<button class="btn btn-dark" style="flex:1" onclick="pinSetNew(6)">'+t('p_pin_change_6')+'</button>'
       +'</div>'
       +'<button class="btn btn-dark" onclick="pinToggleRecoveryForm()">'+(hasRecovery?'Modifier la question de sécurité':'Ajouter une question de sécurité')+'</button>'
-      +'<div id="pin-recovery-form" style="display:none;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:11px;padding:12px;display:flex;flex-direction:column;gap:8px">'
+      +'<div id="pin-recovery-form" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:11px;padding:12px;flex-direction:column;gap:8px">'
       +(storedQ?'<div style="font-size:11px;color:rgba(255,255,255,0.35)">Question actuelle : '+storedQ+'</div>':'')
       +'<input id="pr-question" type="text" placeholder="Votre question (ex: Nom de votre premier animal ?)" style="'+inputStyle+'">'
       +'<input id="pr-answer" type="text" placeholder="Votre réponse" style="'+inputStyle+'">'
