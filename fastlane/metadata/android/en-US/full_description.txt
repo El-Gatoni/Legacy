@@ -1,0 +1,25 @@
+Legacy is a privacy-first, offline personal wealth tracker.
+
+All data stays on your device — no account, no server, no telemetry.
+
+FEATURES
+• Net & gross wealth dashboard with live BTC and stock prices (optional)
+• Bitcoin stack tracking with automatic P&L and DCA
+• Real-estate portfolio: purchase price, current value, outstanding loans
+• Savings accounts and bonds (Livrets)
+• Stock portfolio with PRU tracking
+• Physical and paper gold (ETC) with spot price support
+• Liability tracker (loans, collateral debts)
+• Wealth evolution chart with 1W / 2W / 1M / 6M / YTD / 1Y / Max filters
+• Export / import JSON backup
+• PIN lock
+• Bilingual: French & English
+
+PRIVACY
+Legacy stores everything in the browser's localStorage on your device.
+The only network requests are price fetches (BTC via CoinGecko, stocks via Yahoo Finance).
+Stock prices can be disabled per ticker.
+No analytics, no ads, no tracking.
+
+LICENSE
+GPL-3.0-only — source code available at https://github.com/El-Gatoni/Legacy

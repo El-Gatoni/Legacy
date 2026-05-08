@@ -1,0 +1,25 @@
+Legacy est un tracker de patrimoine personnel, privé et hors-ligne.
+
+Toutes les données restent sur votre appareil — aucun compte, aucun serveur, aucune télémétrie.
+
+FONCTIONNALITÉS
+• Tableau de bord patrimoine net & brut avec prix BTC et actions en direct (optionnel)
+• Suivi de stack Bitcoin avec P&L automatique et DCA
+• Portefeuille immobilier : prix d'achat, valeur actuelle, crédits en cours
+• Comptes épargne et livrets
+• Portefeuille actions avec suivi du PRU
+• Or physique et or papier (ETC) avec support du cours spot
+• Tracker de passif (prêts, dettes collatérales)
+• Graphique d'évolution du patrimoine avec filtres 1S / 2S / 1M / 6M / YTD / 1A / Max
+• Export / import sauvegarde JSON
+• Verrouillage par code PIN
+• Bilingue : Français & Anglais
+
+CONFIDENTIALITÉ
+Legacy stocke tout dans le localStorage du navigateur, sur votre appareil.
+Les seules requêtes réseau sont des récupérations de prix (BTC via CoinGecko,
+actions via Yahoo Finance). Les cours actions sont désactivables titre par titre.
+Pas d'analytics, pas de publicités, pas de tracking.
+
+LICENCE
+GPL-3.0-only — code source disponible sur https://github.com/El-Gatoni/Legacy
