@@ -8588,7 +8588,6 @@ async function triggerPwaInstall(){
 
 installPWA();
 setDate();
-pinInit();
 initAll();
 applyHideAmounts();
 applyTabsConfig();
@@ -8785,6 +8784,7 @@ let _pinBuffer='';
 let _pinMode='unlock'; // 'unlock' | 'set' | 'confirm'
 let _pinTemp='';
 let _pinUnlocked=false; // true une fois le PIN saisi dans la session courante
+pinInit();
 
 async function sha256(str){
   try{
