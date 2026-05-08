@@ -1,0 +1,1 @@
+v2.6.6 — Code PIN : phrase de récupération, support du PIN à 6 chiffres. Configuration des onglets : maximum 2 onglets masquables. Masquage ciblé des montants sensibles.

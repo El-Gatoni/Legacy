@@ -1,0 +1,1 @@
+v2.7.4 — PIN lock now works reliably on first launch: fixed a JavaScript initialisation order bug (TDZ) that silently prevented the lock screen from appearing.

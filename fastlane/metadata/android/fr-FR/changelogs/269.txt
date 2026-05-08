@@ -1,0 +1,1 @@
+v2.6.9 — Verrouillage PIN au retour de l'arrière-plan (re-verrouillage après 3 s). Ajout du flux de récupération par question/réponse de sécurité.

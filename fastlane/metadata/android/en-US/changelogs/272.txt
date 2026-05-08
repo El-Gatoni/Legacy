@@ -1,0 +1,1 @@
+v2.7.2 — JSON export fixed on Android: direct bridge call to Android.saveFile() bypasses the blob/revokeObjectURL race condition that silently failed on WebView.

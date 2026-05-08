@@ -1,0 +1,1 @@
+v2.7.0 — Wealth history chart: bi-weekly (2W) filter added alongside 1M / 6M / YTD / 1Y / Max. Daily snapshots stored for 90 days. PIN storage migrated into the main data object for reliable persistence. Minor PIN panel fixes.

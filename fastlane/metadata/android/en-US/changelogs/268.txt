@@ -1,0 +1,1 @@
+v2.6.8 — PIN panel buttons fixed. Tab hide now correctly applies display:none on nav icons. Ko-fi button opens in external browser.

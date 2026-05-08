@@ -1,0 +1,1 @@
+v2.6.5 — Le masquage des montants couvre maintenant toutes les classes d'actifs (BTC, or, actions, immobilier). Alignement des cartes KPI Investissement.

@@ -1,0 +1,1 @@
+v2.7.0 — Graphique d'évolution : filtre bi-hebdomadaire (2S) ajouté aux filtres 1M / 6M / YTD / 1A / Max. Instantanés journaliers conservés 90 jours. Stockage du PIN migré dans l'objet de données principal. Corrections mineures du panneau PIN.

@@ -1,0 +1,1 @@
+v2.6.6 — PIN lock: recovery phrase, 6-digit PIN support. Tab configuration: max 2 tabs hidden. Targeted blur for sensitive amounts.

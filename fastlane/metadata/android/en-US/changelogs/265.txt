@@ -1,0 +1,1 @@
+v2.6.5 — Amounts blur now covers all asset classes (BTC, gold, stocks, real estate). Investment KPI cards aligned consistently.

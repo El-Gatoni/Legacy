@@ -1,0 +1,1 @@
+v2.7.2 — Export JSON corrigé sur Android : appel direct au pont natif Android.saveFile(), contournant la race condition blob/revokeObjectURL qui échouait silencieusement dans le WebView.

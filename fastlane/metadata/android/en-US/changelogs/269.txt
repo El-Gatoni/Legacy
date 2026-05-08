@@ -1,0 +1,1 @@
+v2.6.9 — PIN lock on app resume (re-locks after 3 s in background). Security question / answer recovery flow added.

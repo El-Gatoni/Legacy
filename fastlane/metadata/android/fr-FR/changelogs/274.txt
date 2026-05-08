@@ -1,0 +1,1 @@
+v2.7.4 — Le verrouillage PIN fonctionne désormais de façon fiable dès le premier lancement : correction d'un bug d'ordre d'initialisation JavaScript (TDZ) qui empêchait silencieusement l'écran de verrouillage d'apparaître.
