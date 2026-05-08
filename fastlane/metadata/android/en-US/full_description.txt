@@ -10,15 +10,15 @@ FEATURES
 • Stock portfolio with PRU tracking
 • Physical and paper gold (ETC) with spot price support
 • Liability tracker (loans, collateral debts)
-• Wealth evolution chart with 2W / 1M / 6M / YTD / 1Y / Max filters
+• Wealth evolution chart with 1W / 2W / 1M / 6M / YTD / 1Y / Max filters
 • Export / import JSON backup
 • PIN lock
 • Bilingual: French & English
 
 PRIVACY
 Legacy stores everything in the browser's localStorage on your device.
-The only network requests are optional price fetches (BTC via CoinGecko,
-stocks via Yahoo Finance, gold via GoldAPI.io) which you can disable.
+The only network requests are price fetches (BTC via CoinGecko, stocks via Yahoo Finance).
+Stock prices can be disabled per ticker.
 No analytics, no ads, no tracking.
 
 LICENSE

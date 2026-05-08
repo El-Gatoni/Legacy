@@ -1618,6 +1618,7 @@ body.hide-amounts .rv,.hide-amounts .net-val,.hide-amounts .ns-v,
         <div class="chart-evo-kpi"><div class="chart-evo-kpi-l" data-i18n="home_evo_avg">Moy. mensuelle</div><div class="chart-evo-kpi-v" id="evo-avg">--</div></div>
       </div>
       <div class="chart-evo-period-row" id="evo-period-row">
+        <button class="evo-period-btn" onclick="evoPeriod('1w',this)" data-i18n="home_evo_1w">1S</button>
         <button class="evo-period-btn" onclick="evoPeriod('2w',this)" data-i18n="home_evo_2w">2S</button>
         <button class="evo-period-btn" onclick="evoPeriod('1m',this)" data-i18n="home_evo_1m">1M</button>
         <button class="evo-period-btn" onclick="evoPeriod('6m',this)" data-i18n="home_evo_6m">6M</button>
@@ -4123,6 +4124,7 @@ Rendez-vous dans Paramètres → A propos pour découvrir toutes les fonctionnal
   'b_update_saved':`Position mise à jour`,
   'b_menu_update_position':`Mettre à jour la position`,
   'home_evo_perf':`Perf.`,
+  'home_evo_1w':`1S`,
   'home_evo_2w':`2S`,
   'home_evo_1m':`1M`,
   'home_evo_6m':`6M`,
@@ -4802,6 +4804,7 @@ Go to Settings → About to discover all the app's features.`,
   'b_update_saved':`Position updated`,
   'b_menu_update_position':`Update position`,
   'home_evo_perf':`Perf.`,
+  'home_evo_1w':`1W`,
   'home_evo_2w':`2W`,
   'home_evo_1m':`1M`,
   'home_evo_6m':`6M`,
@@ -8664,7 +8667,12 @@ function renderEvoChart(){
   const allHist=D.patrimonyHistory||[];
   const allDaily=D.patrimonyHistoryDaily||[];
   let hist,isDaily;
-  if(_evoPeriod==='2w'){
+  if(_evoPeriod==='1w'){
+    const cutoff=new Date();cutoff.setDate(cutoff.getDate()-7);
+    const cutoffStr=cutoff.toISOString().slice(0,10);
+    hist=allDaily.filter(p=>p.date>=cutoffStr);
+    isDaily=true;
+  }else if(_evoPeriod==='2w'){
     const cutoff=new Date();cutoff.setDate(cutoff.getDate()-14);
     const cutoffStr=cutoff.toISOString().slice(0,10);
     hist=allDaily.filter(p=>p.date>=cutoffStr);
