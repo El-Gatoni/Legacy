@@ -1,0 +1,1 @@
+v2.7.6 — Fixed: custom navigation tab order is now correctly preserved across app restarts.
