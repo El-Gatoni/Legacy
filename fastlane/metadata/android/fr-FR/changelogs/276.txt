@@ -1,0 +1,1 @@
+v2.7.6 — Correction : l'ordre personnalisé des onglets de navigation est désormais correctement conservé après redémarrage de l'application.

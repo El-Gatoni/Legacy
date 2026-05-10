@@ -2254,9 +2254,8 @@ let D=(()=>{
       if(p.hideAmounts===undefined)p.hideAmounts=false;
       if(!p.homeCard)p.homeCard='btc';
       if(!p.hiddenTabs)p.hiddenTabs=[];
-      // Migration tabOrder : tableau → objet, ancien défaut {1:1,2:2,3:3}, et ajout clé 6 (Or)
-      if(!p.tabOrder||Array.isArray(p.tabOrder)||
-        (typeof p.tabOrder==='object'&&p.tabOrder[1]===1&&p.tabOrder[2]===2&&p.tabOrder[3]===3)){
+      // Migration tabOrder : tableau → objet invalide. L'ajout clé 6 (Or) est géré ci-dessous.
+      if(!p.tabOrder||Array.isArray(p.tabOrder)){
         p.tabOrder={1:3,2:2,3:1,6:4};
       }
       // Migration ajout Or : si la clé 6 manque, l'attribuer au rang max+1 (= après les actifs existants)
